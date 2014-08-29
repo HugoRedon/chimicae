@@ -41,9 +41,22 @@
 		        eventsControlsStats();
 		        lightFloorSkybox();
 		       
-		        var cubeMaterial = new THREE.MeshLambertMaterial( {color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.5} );
-		        var redMaterial = new THREE.MeshLambertMaterial( {color: 0xff0000, side: THREE.DoubleSide ,opacity: 0.5} );
-				
+		        //var cubeMaterial = new THREE.MeshLambertMaterial( {color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.5} );
+		        //var redMaterial = new THREE.MeshLambertMaterial( {color: 0xff0000, side: THREE.DoubleSide ,opacity: 0.5} );
+		        var redMaterial =new THREE.MeshPhongMaterial( { 
+		            color: 0x440000, 
+		            ambient: 0x2200ee, // should generally match color
+		            specular: 0x050505,
+		            side: THREE.DoubleSide,
+		            shininess: 100
+		        } ) ;
+		        var cubeMaterial =new THREE.MeshPhongMaterial( { 
+		            color: 0x000044, 
+		            ambient: 0x2200ee, // should generally match color
+		            specular: 0x050505,
+		            side: THREE.DoubleSide,
+		            shininess: 100
+		        } ) ;
 		        var jsondata1 = #{plotBean.jsonData};
 		        var jsondata2 = #{plotBean.secondJson};
 		        var jsondata3 = #{plotBean.thirdJson};
@@ -325,7 +338,16 @@
 				text3d.computeBoundingBox();
 				var centerOffset = -0.5 * ( text3d.boundingBox.max.x - text3d.boundingBox.min.x );
 
-				var textMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, overdraw: 0.5 } );
+				//var textMaterial = new THREE.MeshBasicMaterial( { color: 0x8B4500, overdraw: 0.5 } );
+				var textMaterial =new THREE.MeshPhongMaterial( { 
+		            color: 0x8B4500, 
+		            ambient: 0x2200ee, // should generally match color
+		            specular: 0x050505,
+		            side: THREE.DoubleSide,
+		            shininess: 100
+		        } ) ;
+
+				
 				text = new THREE.Mesh( text3d, textMaterial );
 
 				//text.position.x = centerOffset;

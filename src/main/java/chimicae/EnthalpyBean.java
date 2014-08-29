@@ -173,7 +173,7 @@ public class EnthalpyBean implements Serializable {
 		minCTemperature = minCTemperature*0.4;
 		
 		
-		double tempStep= 1;
+		double tempStep= 10;
 		
 		double temperature = minCTemperature;
 		het.setTemperature(temperature);
@@ -183,7 +183,7 @@ public class EnthalpyBean implements Serializable {
 		double lEnthalpy = het.getLiquid().calculateMolarVolume();
 		double vEnthalpy = het.getVapor().calculateMolarVolume();
 		double enthalpyDiff = Math.abs(vEnthalpy)-Math.abs(lEnthalpy);
-		while(Math.abs(enthalpyDiff) > .001 && temperature < maxCT*2 ){
+		while(Math.abs(enthalpyDiff) > .1 && temperature < maxCT*2 ){
 			het.setTemperature(temperature);
 			satPressure(het);
 			lEnthalpy = het.getLiquid().calculateMolarVolume();
@@ -204,7 +204,7 @@ public class EnthalpyBean implements Serializable {
 			}else{
 				int iterations =((HeterogeneousMixture) heterogeneous).dewPressure(pressure);	
 			}
-			
+
 		}else if (heterogeneous instanceof HeterogeneousSubstance){
 			int iterations =((HeterogeneousSubstance) heterogeneous).dewPressure();
 		}
