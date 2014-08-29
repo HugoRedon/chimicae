@@ -144,7 +144,7 @@ public class EnthalpyBean implements Serializable {
 	}
 	
 	
-	public double[] maxTempForGibbs(Homogeneous homogeneous){
+	public double[] maxMinTempMolarVolumeDiff(Homogeneous homogeneous){
 		double minCTemperature =0;
 		double maxCT =0;
 		
@@ -183,7 +183,7 @@ public class EnthalpyBean implements Serializable {
 		double lEnthalpy = het.getLiquid().calculateMolarVolume();
 		double vEnthalpy = het.getVapor().calculateMolarVolume();
 		double enthalpyDiff = Math.abs(vEnthalpy)-Math.abs(lEnthalpy);
-		while(Math.abs(enthalpyDiff) > .1 && temperature < maxCT*2 ){
+		while(Math.abs(enthalpyDiff) > .01 && temperature < maxCT*2 ){
 			het.setTemperature(temperature);
 			satPressure(het);
 			lEnthalpy = het.getLiquid().calculateMolarVolume();
@@ -437,7 +437,7 @@ public class EnthalpyBean implements Serializable {
 
 		Heterogeneous substance= prepareHeterogeneous(homogeneousBean.getSelectedHomogeneous());
 				
-		double[] maxMin = maxTempForGibbs(homogeneousBean.getSelectedHomogeneous());
+		double[] maxMin = maxMinTempMolarVolumeDiff(homogeneousBean.getSelectedHomogeneous());
 		double min_temp = maxMin[1];
 		double max_temp = maxMin[0];
 		
@@ -533,5 +533,105 @@ public class EnthalpyBean implements Serializable {
 		return "webGLPlotTemplate";
 	}	
 	
+
+	public String volumePlot(){
+
+		Heterogeneous substance= prepareHeterogeneous(homogeneousBean.getSelectedHomogeneous());
+				
+		double[] maxMin = maxMinTempMolarVolumeDiff(homogeneousBean.getSelectedHomogeneous());
+		double min_temp = maxMin[1]*(0.9d/0.4d);
+		double max_temp = maxMin[0];
+		
+		double min_pressure = 0;
+		double max_pressure =0;
+		
+		Integer n = 40;
+		double tempPass = (max_temp - min_temp)/n.doubleValue();
+		
+		Position[] po = new Position[n*n];
+		Integer count =0;
+		for(Integer i = 0; i < n; i++){
+			double temp = min_temp + i.doubleValue()* tempPass;
+			substance.setTemperature(temp);
+			satPressure(substance);
+			
+			Double pressure = substance.getPressure();
+			min_pressure = (min_pressure == 0)?pressure: min_pressure;
+			min_pressure = (pressure < min_pressure)? pressure: min_pressure;
+			max_pressure = (pressure > max_pressure)? pressure: max_pressure;
+			
+			Double liquidEnthalpy = substance.getLiquid().calculateMolarVolume();
+			Double vaporEnthalpy = substance.getVapor().calculateMolarVolume();
+					
+			double enthalpyStep  = (vaporEnthalpy- liquidEnthalpy)/n.doubleValue(); 
+			for(Integer j = 0; j< n; j++){
+				double enthalpy = liquidEnthalpy + j.doubleValue() * enthalpyStep;
+				Position position = new Position(pressure,enthalpy,  temp);
+				po[count++]=position;
+			}
+			//list.add(new Position(pressure,vaporEnthalpy,  temp));
+		}
+		
+		
+		
+		double min_pressureSaved = min_pressure;
+		max_pressure = max_pressure *1.3;
+		min_pressure = 0.9* min_pressure;
+		
+		Position[] positionsl = new Position[n*n];
+		Integer countl =0;
+		for(Integer i = 0; i < n; i++){
+			double temp = min_temp + i.doubleValue()* tempPass;
+			substance.setTemperature(temp);
+			satPressure(substance);
+			//substance.dewPressure();
+			double pressure = substance.getPressure();						
+			double pressPass = (max_pressure- pressure) / n.doubleValue();
+			for(Integer j = 0 ; j < n;j++){
+				double press= pressure + j.doubleValue() * pressPass;
+				substance.setPressure(press);
+				double liquidEnthalpy = substance.getLiquid().calculateMolarVolume();
+				//double liquidVolume = substance.getLiquid().calculateMolarVolume();
+				positionsl[countl++] = new Position(press,liquidEnthalpy,temp);
+			}
+		}
+		
+		
+		//double aboveCritical = max_temp * 1.05; 
+		
+		Position[] positionsV= new Position[n*n]; 
+		Integer countv =0;
+		for(Integer i = 0; i < n; i++){
+			double temp = min_temp + i.doubleValue()* tempPass;
+			substance.setTemperature(temp);
+			satPressure(substance);
+			//substance.dewPressure();
+			double pressure = substance.getPressure();
+			
+			
+			double pressPass= (pressure- min_pressure)/Double.valueOf(n);	
+			for(Integer j=0 ; j < n; j++){
+					double press = pressure - j.doubleValue() * pressPass;
+					substance.setPressure(press);
+					double vaporEnthalpy = substance.getVapor().calculateMolarVolume();	
+					//double vaporVolume = substance.getVapor().calculateMolarVolume();
+					positionsV[countv++] = new Position(press,vaporEnthalpy,temp);
+			}
+			
+		}
+		plotBean.setThirdPlot(true);
+		plotBean.setThirdJson(new Gson().toJson(positionsV));
+
+		plotBean.setSecondPlot(true);
+		plotBean.setSecondJson(new Gson().toJson(po));
+		
+		plotBean.setJsonData(new Gson().toJson( positionsl));
+		
+		plotBean.setxAxisLabel("Presión [Pa]");
+		plotBean.setyAxisLabel("Volumen Molar[m³/kmol]");
+		plotBean.setzAxisLabel("Temperatura [K]");
+		
+		return "webGLPlotTemplate";
+	}	
 
 }

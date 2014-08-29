@@ -61,19 +61,55 @@
 		        var jsondata2 = #{plotBean.secondJson};
 		        var jsondata3 = #{plotBean.thirdJson};
 
-		        var jsons;
-		        
+		        var jsons=[];
+				
+
+
+				if(#{plotBean.firstPlot}){
+					jsons.push(jsondata1);
+				}
+				if(#{plotBean.secondPlot}){
+			        jsons.push(jsondata2);
+		        }
 		        if(#{plotBean.thirdPlot}){
-			        jsons = [jsondata1,jsondata2,jsondata3];
+		        	jsons.push(jsondata3);
 		        	
-		        }else if(#{plotBean.secondPlot}){
-			        jsons = [jsondata2,jsondata1];
-		        }else{
-			        jsons = [jsondata1];
 		        }
 		        
-		        normalizeAndAddGeometries(jsons,[cubeMaterial,redMaterial,cubeMaterial]);		        			  
+	        	normalizeAndAddGeometries(jsons,[cubeMaterial,redMaterial,cubeMaterial]);	
+		      	
+
+		        //forLines();	        			  
 		    }
+			/* function forLines(){
+				 var material = new THREE.LineBasicMaterial({
+				        color: 0x0000ff
+				    });
+				 var material2 = new THREE.LineBasicMaterial({
+				        color: 0xff0000
+				    });
+				    
+			    var jsonline1 = #{plotBean.lineJson};
+			    var jsonline2 = #{plotBean.secondLineJson};
+
+			    normalizeVars([jsonline1,jsonline2]);
+			    createAndAddLineGeometry(jsonline1,material);
+			    createAndAddLineGeometry(jsonline2,material2);
+			    
+			} */
+
+			function createAndAddLineGeometry(jsonline1,material){
+				var geometry = new THREE.Geometry();
+	            for(var i = 0; i<jsonline1.length ; i++){
+	                var x = jsonline1[i].x;
+	                var y = jsonline1[i].y;
+	                var z = jsonline1[i].z;
+	                geometry.vertices.push(new THREE.Vector3(x,y,z));			         
+	            }
+	            var line = new THREE.Line(geometry, material);
+	            scene.add(line);
+			}
+		    
 
 		    function normalizeAndAddGeometries(jsons,materials){
 		    	normalizeVars(jsons);

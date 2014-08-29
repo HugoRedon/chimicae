@@ -49,14 +49,14 @@
 					<h:commandLink action="#{plotBean.setControls('gibbs')}" value="Energía libre de Gibbs" target="main" />
 				</h3> </li>
 				<li><h3>
-					<h:link value="Volumen molar" outcome="pressure" target="main"/>
+					<h:commandLink action="#{plotBean.setControls('volume')}" value="Volumen molar" target="main" />
 				</h3> </li>
-				<li><h3>
-					<h:link value="Temperatura de saturación" outcome="pressure" target="main"/>
+				<!-- <li><h3>
+					<h:commandLink action="#{plotBean.setControls('saturationTemperature')}" value="Temperatura de saturación" target="main" />					
 				</h3> </li>
 				<li><h3>
 					<h:link value="Presión de saturación" outcome="pressure" target="main"/>
-				</h3> </li>
+				</h3> </li> -->
 				
 			</ul>
 			</h:form>

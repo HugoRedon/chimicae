@@ -23,6 +23,10 @@ public class PlotBean implements Serializable {
 	private String zAxisLabel ="eje Z";
 	
 	
+	private Boolean secondLine;
+	private Boolean firstPlot=new Boolean(true);
+	
+	private String secondLineJson;
 	
 	private Boolean line = new Boolean(false);
 	public Boolean getLine() {
@@ -128,6 +132,30 @@ public class PlotBean implements Serializable {
 
 	public void setzAxisLabel(String zAxisLabel) {
 		this.zAxisLabel = zAxisLabel;
+	}
+
+	public Boolean getSecondLine() {
+		return secondLine;
+	}
+
+	public void setSecondLine(Boolean secondLine) {
+		this.secondLine = secondLine;
+	}
+
+	public Boolean getFirstPlot() {
+		return firstPlot;
+	}
+
+	public void setFirstPlot(Boolean firstPlot) {
+		this.firstPlot = firstPlot;
+	}
+
+	public String getSecondLineJson() {
+		return secondLineJson;
+	}
+
+	public void setSecondLineJson(String secondLineJson) {
+		this.secondLineJson = secondLineJson;
 	}
 	
 
