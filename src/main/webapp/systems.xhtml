@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:composition template="template.xhtml">
+		<ui:define name="content">
+		<h:form>
+			<h:dataTable value="#{homogeneousBean.homogeneousList}" var="homogeneous">
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Tipo"/>
+					</f:facet>
+					<h:outputText value="#{homogeneousBean.instanceOf(homogeneous)}"/>
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="# Compouestos"/>
+					</f:facet>
+					<h:outputText value="#{homogeneousBean.numberOfCompounds(homogeneous)}"/>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Ecuación cúbica"/>
+					</f:facet>
+					<h:outputText value="#{homogeneous.cubicEquationOfState.name}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Alfa"/>
+					</f:facet>
+					<h:outputText value="#{homogeneousBean.alphaExpresion(homogeneous)}"/>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Fase"/>
+					</f:facet>
+					<h:outputText value="#{homogeneous.phase}"/>
+				</h:column>
+				<h:column>	
+					<h:commandButton action="#{homogeneousBean.remove(homogeneous)}" value="Eliminar" />
+				</h:column>		
+			</h:dataTable>
+		</h:form>
+		</ui:define>
+	</ui:composition>
+</html>

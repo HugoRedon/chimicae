@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:composition template="/template.xhtml">
+	
+	<ui:define name="content">
+	<h:form  id="compoundsForm">
+		<h1><h:outputText value="Compuestos puros"/></h1>
+		<h:panelGrid columns="2" styleClass="compoundsGrid">
+		
+			<h:panelGroup>
+				<h:panelGrid columns="3">
+					<h:outputText value="Buscar"/>
+					<h:inputText value="#{availableCompounds.compoundName}" />
+					<h:commandButton action="#{availableCompounds.lookForCompounds}" value="Buscar" />
+				</h:panelGrid>
+				<h:dataTable value="#{availableCompounds.compoundsFound}" var="compound">
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Compuesto" />
+						</f:facet>
+						<h:outputText value="#{compound.name}"/>
+					</h:column>
+					<h:column>
+						<h:commandButton action="#{availableCompounds.addSelected(compound)}" value="Agregar" >
+							<f:ajax render="compoundsForm:compoundsPanel"/>
+						</h:commandButton>
+					</h:column>
+				</h:dataTable>
+			
+			</h:panelGroup>
+			
+		
+		
+		<h:panelGroup  styleClass="aligntop" id="compoundsPanel">	
+				
+			<h:dataTable value="#{availableCompounds.compounds}" var="compound" border="1">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Compuesto" />
+				</f:facet>
+				<h:outputText value="#{compound.name}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Tc [K]" />
+				</f:facet>
+				<h:outputText value="#{compound.criticalTemperature}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Pc [Pa]" />
+				</f:facet>
+				<h:outputText value="#{compound.criticalPressure}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="w " />
+				</f:facet>
+				<h:outputText value="#{compound.acentricFactor}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="H" />
+				</f:facet>
+				<h:outputText value="#{compound.enthalpyofFormationofIdealgasat298_15Kand101325Pa}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="S" />
+				</f:facet>
+				<h:outputText value="#{compound.absoluteEntropyofIdealGasat298_15Kand101325Pa}" />
+			</h:column>
+			
+			
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value=""/>
+				</f:facet>
+				<h:commandButton action="#{availableCompounds.removeCompound(compound)}" value="Eliminar" />
+			</h:column>
+			
+		</h:dataTable>
+			
+		</h:panelGroup>
+				
+		</h:panelGrid>
+		</h:form>
+	</ui:define>
+	</ui:composition>
+</html>

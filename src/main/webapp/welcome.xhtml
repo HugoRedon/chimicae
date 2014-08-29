@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:composition template="template.xhtml">
+	<ui:define name="content">
+	<h1>Chimicae</h1>
+		
+		<h2>Materia</h2>
+		
+		<ul>
+			<li>
+				<h2>Creación</h2>
+				<ul>
+					<li><h3>
+						<h:link value="Compuesto Puro" outcome="compounds"  target="main"/>
+					</h3></li>
+					<li><h3>
+						<h:link value="Substancia" outcome="substance" target="main"/>	
+					</h3></li>
+					<li><h3>
+						<h:link value="Mezcla" outcome="mixture" target="main"/>	
+					</h3></li>
+				</ul>
+			</li>
+			
+			<li><h2>Cálculos</h2></li>
+			<h:form>
+			<ul>
+				<li><h3>
+					<h:commandLink action="#{plotBean.setControls('pressure')}" value="Presión" target="main" />
+				</h3> </li>
+				<li><h3>
+					<h:commandLink action="#{plotBean.setControls('compresibility')}" value="Factor de compresibilidad" target="main" />
+				</h3> </li>				
+				<li><h3>
+					<h:commandLink action="#{plotBean.setControls('fugacity')}" value="Fugacidad" target="main" />
+				</h3> </li>
+				<li><h3>
+					<h:commandLink action="#{plotBean.setControls('enthalpy')}" value="Entalpía" target="main" />
+					
+				</h3> </li>
+				<li><h3>
+					<h:commandLink action="#{plotBean.setControls('entropy')}" value="Entropía" target="main" />					
+				</h3> </li>
+				<li><h3>
+					<h:commandLink action="#{plotBean.setControls('gibbs')}" value="Energía libre de Gibbs" target="main" />
+				</h3> </li>
+				<li><h3>
+					<h:link value="Volumen molar" outcome="pressure" target="main"/>
+				</h3> </li>
+				<li><h3>
+					<h:link value="Temperatura de saturación" outcome="pressure" target="main"/>
+				</h3> </li>
+				<li><h3>
+					<h:link value="Presión de saturación" outcome="pressure" target="main"/>
+				</h3> </li>
+				
+			</ul>
+			</h:form>
+			
+			
+			
+			<li><h2>Estimación de parámetros</h2></li>
+			<h:form>
+				<ul>
+					<li><h3>
+						<h:commandLink action="alphaOptimization" 
+						value="Parámetros de \(\alpha\)"  target="main"/>
+					</h3></li>
+				</ul>
+				<ul>
+					<li><h3>
+						<h:commandLink action="alphaOptimization" 
+						value="Parámetros binarios"  target="main"/>
+					</h3></li>
+				</ul>
+			</h:form>
+		</ul>
+			
+		
+			
+
+	</ui:define>
+		
+	</ui:composition>
+
+</html>

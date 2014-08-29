@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:composition template="template.xhtml">
+		<ui:define name="content">
+		
+			<h:panelGrid columns="2">
+				<h:outputText value="Ecuación de estado cúbica"/>
+				<h:outputText value="#{homogeneousBean.selectedHomogeneousAsSubstance.cubicEquationOfState.name}" />
+				<h:outputText value="Expresión de alfa"/>
+				<h:outputText value="#{homogeneousBean.selectedHomogeneousAsSubstance.alpha.name}" />
+				<h:outputText value="Estado de agregación"/>
+				<h:outputText value="#{homogeneousBean.selectedHomogeneousAsSubstance.phase}" />
+				<h:outputText value="Compuesto"/>
+				<h:outputText value="#{homogeneousBean.selectedHomogeneousAsSubstance.component.name}" />
+			</h:panelGrid>
+			
+			
+			<h:link value="Ver todos los sistemas" outcome="systems"/>
+		</ui:define>
+	</ui:composition>
+</html>

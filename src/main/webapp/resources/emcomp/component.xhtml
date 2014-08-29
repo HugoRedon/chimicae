@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <composite:interface>
+    	<composite:attribute name="compound" type="termo.component.Compound" required="true"/>
+        <composite:implementation>
+            <h:panelGrid columns="2" cellpadding="10" cellspacing="2" border="0">
+                <h3>Componente </h3>
+                <h:selectOneMenu label="Componente" 
+                                 value="#{cc.attrs.compound}" 
+                                 converter="#{componentConverter}">
+                    <f:selectItems value="#{availableCompounds.compounds}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+        </composite:implementation>
+    </composite:interface>
+</html>
+

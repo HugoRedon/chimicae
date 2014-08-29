@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:emcomp="http://xmlns.jcp.org/jsf/composite/emcomp"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+	<ui:composition template="template.xhtml">
+		<ui:define name="content">
+			<h:form target="plotFrame">
+			<f:ajax render="@form">
+				<emcomp:homogeneous />
+			</f:ajax>
+			<c:if test="#{homogeneousBean.isMixture()}" >
+				<h:selectOneMenu value="#{homogeneousBean.selectedCompound}" 
+						converter="#{homogeneousBean.converterCompoundForSelectedMixture()}" >
+					<f:selectItems value="#{homogeneousBean.selectedHomogeneousCompounds()}" var="homogeneous"/>
+				</h:selectOneMenu>
+			</c:if>
+			
+			
+			<h:panelGrid columns="5">
+					<h:outputText value="Presión [Pa]:(" />
+					<h:inputText value="#{fugacityBean.minPressure}"/> 
+					<h:outputText value="-" />
+					<h:inputText value="#{fugacityBean.maxPressure}"/>
+					<h:outputText value=")" />
+					
+					<h:outputText value="Temperatura [K]:(" />
+					<h:inputText value="#{fugacityBean.minTemperature}" />
+					<h:outputText value="-" />
+					<h:inputText value="#{fugacityBean.maxTemperature}"/>
+					<h:outputText value=")" />
+				</h:panelGrid>
+				<h:commandButton action="#{fugacityBean.generateFugacityLiquidVaporPlot}" value="Graficar" />
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</html>

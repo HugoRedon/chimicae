@@ -7,6 +7,15 @@
     <packaging>war</packaging>
     <version>1.0</version>
     <name>chimicae</name>
+    
+     <repositories>
+       <repository>
+         <id>snapshots-repo</id>
+         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+         <releases><enabled>false</enabled></releases>
+         <snapshots><enabled>true</enabled></snapshots>
+       </repository>
+     </repositories>
   
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,10 +27,21 @@
     
     <dependencies>
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+        	<groupId>com.github.hugoredon</groupId>
+        	<artifactId>materia</artifactId>
+        	<version>3.5-SNAPSHOT</version>
+        	
         </dependency>
     </dependencies>
 

@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:emcomp="http://xmlns.jcp.org/jsf/composite/emcomp">
+
+	<ui:composition template="template.xhtml">
+	<ui:define name="content">
+		<h:form id="mixtureForm">
+			<h1><h:outputText value="Mezcla"/> </h1>
+			<f:ajax render="@form">
+				<emcomp:eos editParams="true" equationOfState="#{createMixture.cubic}" />
+				<emcomp:phase phase="#{createMixture.phase}"/>
+				<emcomp:mixingRule mixingRule="#{createMixture.mixingRule}"/>
+			</f:ajax>
+				
+				
+			<f:ajax execute="@form" render="mixtureForm:mixtureTable mixtureForm:messages"
+						listener="#{createMixture.mixtureTableAction}">
+				<h:dataTable value="#{createMixture.compoundAlphaFractions}" var="row" id="mixtureTable">
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Compuesto" />
+						</f:facet>
+						<h:selectOneMenu value="#{row.compound}" converter="#{componentConverter}">
+							<f:selectItems value="#{createMixture.remainingCompounds}"/>
+						</h:selectOneMenu>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							Expresión de \(\alpha\)
+						</f:facet>
+						<h:selectOneMenu value="#{row.alpha}" converter="#{alphaConverter}">
+							<f:selectItems value="#{eqProUtils.alphaList}"/>
+						</h:selectOneMenu>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Fración molar" />
+						</f:facet>
+						<h:inputText value="#{row.fraction}"  />
+					</h:column>
+					<h:column>
+						
+						<h:commandButton action="#{createMixture.removeRow(row)}" value="Eliminar"  />
+					</h:column>
+					<f:facet name="footer">
+						<h:commandButton action="#{createMixture.addRow}" value="Agregar" >
+							<f:ajax render="mixtureForm:mixtureTable"/>
+						</h:commandButton>
+					</f:facet>
+				</h:dataTable>
+			</f:ajax>
+			<h:commandButton action="#{setParameters.clean()}" value="Parámetros" />
+			
+				<br/>
+			
+			<h:commandButton action="#{createMixture.create()}" value="Aceptar" />
+			<h:messages id="messages"/>
+		
+		</h:form>
+		</ui:define>
+	</ui:composition>
+</html>

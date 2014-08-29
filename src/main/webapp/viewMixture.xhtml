@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:composition template="template.xhtml">
+		<ui:define name="content">
+			<h:outputText value="#{createMixture.mixture.cubicEquationOfState.name}"/>
+			<h:outputText value="#{createMixture.mixture.mixingRule.name}"/>
+			<h:outputText value="#{createMixture.mixture.phase}"/>
+			
+			<table>
+				<ui:repeat  var="pi" value="#{createMixture.getListAsSet(createMixture.mixture.pureSubstances)}" >
+					<tr>
+						<td>	
+							<h:outputText value="#{pi.component.name}"/>
+						</td>		
+						<td>
+							<h:outputText value="#{pi.alpha}"/>
+						</td>
+						<td>
+							<h:outputText value="#{pi.molarFraction}"/>
+						</td>
+					</tr>
+				</ui:repeat>
+			</table>
+			
+			<table>
+				<ui:repeat var="ci" value="#{createMixture.getListCAsSet(createMixture.mixture.components)}">
+					<tr>
+					<ui:repeat var="cj" value="#{createMixture.getListCAsSet(createMixture.mixture.components)}">
+						<td>
+						<h:outputText value="#{createMixture.mixture.binaryParameters.getValue(ci,cj)}"/>
+						</td>
+					</ui:repeat>
+					</tr>
+				</ui:repeat>
+			</table>
+ 			<h:link value="Ver todos los sistemas" outcome="systems"/>
+		</ui:define>
+	</ui:composition>
+</html>

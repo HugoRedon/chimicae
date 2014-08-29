@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:composition template="template.xhtml">
+		<ui:define name="content">
+		
+			<h2>Parámetros</h2>
+			<h:form>
+			<table>
+				<ui:repeat var="compoundi" value="#{createMixture.compoundAlphaFractions}">
+					<tr>
+						<ui:repeat var="compoundj" value="#{createMixture.compoundAlphaFractions}">
+						<td>
+							<h:outputText value="(#{compoundi.compound.name},#{compoundj.compound.name})"/>
+							<h:inputText value="#{setParameters.binariesForVDW(compoundi.compound,compoundj.compound).value}" />
+						</td>
+						</ui:repeat>
+					</tr>
+				</ui:repeat>
+			</table>
+			<h:commandButton action="#{setParameters.save()}" value="Aceptar"  />
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:emcomp="http://xmlns.jcp.org/jsf/composite/emcomp"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:composition template="googlePlotTemplate.xhtml">
+		<ui:define name="content">
+			<h:form target="main">
+				<f:ajax render="@form">
+					<emcomp:heterogeneousSubstance/>
+				
+				<h:dataTable value="#{heterogeneousBean.getParametersList()}" var="parameter">
+					<h:column>	
+						<f:facet name="header">
+							<h:outputText value="Parámetro" />
+						</f:facet>
+						<h:outputText value="#{parameter.name}" />
+					</h:column>
+					<h:column >
+                               <f:facet name="header">
+                                   <h:outputText value="Parámetro"/>
+                               </f:facet>
+                               <h:inputText value="#{parameter.value}" />
+                            </h:column>
+                            <h:column >
+                                <f:facet name="header">
+                                    <h:outputText value="fijo"/>  
+                                </f:facet>
+                                <h:selectBooleanCheckbox  value="#{parameter.fix}"/>
+                            </h:column>
+                             <h:column >
+                                <f:facet name="header">
+                                    <h:outputText value="Restricción en variación"/>  
+                                </f:facet>
+                                <h:selectBooleanCheckbox  value="#{parameter.constrain}"/>
+                            </h:column>
+                            <h:column  >
+                                <f:facet name="header">
+                                    <h:outputText value="Máxima variación"/>  
+                                </f:facet>
+                                <h:inputText value="#{parameter.maxVariation}"/>
+                            </h:column>
+                            <f:facet name="footer" >
+                            	<f:ajax render="@form">
+                                	<h:commandButton  value="Restablecer parámetros a cero"
+                                         action="#{heterogeneousBean.resetParametersToZero()}"/>
+                             	</f:ajax>
+                            </f:facet>                
+				</h:dataTable>
+				</f:ajax>
+				<h:commandButton  action="#{heterogeneousBean.optimizeSelected()}"
+				 value="Estimar parámetros" />
+				<h:messages/>
+				
+				<h:panelGroup id="charts">
+ 			    <emcomp:ChartTable googleChartInfo="#{heterogeneousBean.dataTable()}"
+			                                           divId="dataTable"/>
+			    <emcomp:ChartTable googleChartInfo="#{heterogeneousBean.errorGraphData()}"
+			                       divId="error"/>
+			    <emcomp:ChartTable googleChartInfo="#{heterogeneousBean.errorVsIteration()}"
+			                       divId="history"/> -
+			</h:panelGroup> 
+			</h:form>
+			
+			
+			
+		</ui:define>
+	</ui:composition>
+</html>

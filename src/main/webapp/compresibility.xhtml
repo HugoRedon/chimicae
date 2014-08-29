@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:emcomp="http://xmlns.jcp.org/jsf/composite/emcomp">
+
+	<ui:composition template="template.xhtml">
+		<ui:define name="content">
+		<h:form target="plotFrame">
+			<emcomp:homogeneous />
+			
+			<h:panelGrid columns="5">
+					<h:outputText value="Presión [Pa]:(" />
+					<h:inputText value="#{pressureBean.minPressure}"/> 
+					<h:outputText value="-" />
+					<h:inputText value="#{pressureBean.maxPressure}"/>
+					<h:outputText value=")" />
+					
+					<h:outputText value="Temperatura [K]:(" />
+					<h:inputText value="#{pressureBean.minTemperature}" />
+					<h:outputText value="-" />
+					<h:inputText value="#{pressureBean.maxTemperature}"/>
+					<h:outputText value=")" />
+				</h:panelGrid>
+				<h:commandButton action="#{pressureBean.generateCompresibilityFactorPlot}" value="Graficar" />
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</html>
