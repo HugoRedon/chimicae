@@ -250,7 +250,7 @@
 	
 	
 			function lightFloorSkybox(){
-			 
+				//scene.add( new THREE.AmbientLight( 0xffffff ) );
 			    // LIGHT
 			    var light = new THREE.PointLight(0xffffff);
 			    light.position.set(0,0,2500);
@@ -258,8 +258,21 @@
 	
 			    var light2 = new THREE.PointLight(0xffffff);
 			    light2.position.set(2500,2500,2500);
-			    scene.add(light2);
+			    light2.castShadow =true;
+			    
+
+			    var light3 = new THREE.PointLight(0xffffff);
+			    light3.position.set(-300,-300,100);
+			    light3.castShadow =true;
+			    scene.add(light3);
+			    
+		
+
+			    /* var sprite = new THREE.Sprite( new THREE.SpriteCanvasMaterial( { color: 0xff0040 } ) );
+			    light.add( sprite ); */
+				scene.add(light2);
 			    scene.add(light);
+			    
 			    // FLOOR
 			    
 			    var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x555555, wireframe: true, side:THREE.DoubleSide } ); 
