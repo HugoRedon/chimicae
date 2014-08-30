@@ -41,7 +41,7 @@ public class ParameterViewModel{
     public void setMaxVariation(double variation){
         solver.getMaxVariationParameters()[index] = variation;
     }
-    public String getName(){    	
+    public String getName(){
         return alpha.getParameterName(index);
     }
     

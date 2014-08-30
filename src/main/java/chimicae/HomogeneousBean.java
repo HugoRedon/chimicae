@@ -1,5 +1,7 @@
 package chimicae;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,7 +17,6 @@ import javax.inject.Named;
 
 import termo.binaryParameter.InteractionParameter;
 import termo.component.Compound;
-import termo.component.VanDerWaalsParameters;
 import termo.eos.EquationsOfState;
 import termo.eos.alpha.Alphas;
 import termo.eos.mixingRule.VDWMixingRule;
@@ -30,6 +31,8 @@ import termo.phase.Phase;
 public class HomogeneousBean implements Serializable {
 
 	private static final long serialVersionUID = -1688094863072127882L;
+	
+	PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 	private List<Homogeneous> homogeneousList= new ArrayList<>();
 	
@@ -189,5 +192,18 @@ public class HomogeneousBean implements Serializable {
 	public HomogeneousBean() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	public void add(Homogeneous homogeneous){
+		List<Homogeneous> homogeneousListOld = new ArrayList<>();
+		for(Homogeneous h: homogeneousList){
+			homogeneousListOld.add(h);
+		}
+		this.homogeneousList.add(homogeneous);
+		pcs.firePropertyChange("homogeneous",  homogeneousListOld, this.homogeneousList);
+	}
+	public void addPropertyChangelistener(PropertyChangeListener pcl){
+		pcs.addPropertyChangeListener(pcl);
+	}
+	
 
 }

@@ -104,7 +104,8 @@ public class CreateMixture implements Serializable {
 		}
 		
 		mixture = mix.build();
-		homogeneousBean.getHomogeneousList().add(mixture);
+		homogeneousBean.add(mixture);
+		//homogeneousBean.getHomogeneousList().add(mixture);
 		
 		return "viewMixture";
 	}
