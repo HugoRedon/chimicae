@@ -1,5 +1,13 @@
 package chimicae;
 
+import hugo.productions.google.ChartType;
+import hugo.productions.google.GoogleColumn;
+import hugo.productions.google.GoogleColumnType;
+import hugo.productions.google.GoogleDataTable;
+import hugo.productions.google.GoogleGraphInfo;
+import hugo.productions.google.GoogleOptions;
+import hugo.productions.google.GoogleRow;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
@@ -26,7 +34,9 @@ import termo.matter.Homogeneous;
 import termo.matter.Mixture;
 import termo.matter.Substance;
 import termo.matter.builder.HeterogeneousMixtureBuilder;
+import termo.optimization.Parameters_Error;
 import termo.optimization.errorfunctions.ErrorFunction;
+import termo.optimization.errorfunctions.TemperatureMixtureErrorData;
 
 @Named("binaryOptimizationBean")
 @SessionScoped
@@ -198,4 +208,146 @@ public class BinaryOptimizationBean implements Serializable,PropertyChangeListen
 	public void setSelectedMix(HeterogeneousMixture selectedMix) {
 		this.selectedMix = selectedMix;
 	}
+	
+	 public GoogleGraphInfo errorGraphData(){
+	        GoogleDataTable result = new GoogleDataTable();
+	        result.addColumns( 
+	                new GoogleColumn("fraction", "Fracción molar (líquido)", GoogleColumnType.number),
+	                new GoogleColumn("error", "Error relativo", GoogleColumnType.number));
+	        for (TemperatureMixtureErrorData row: selectedMix.getErrorfunction().getErrorForEachExperimentalData()){
+	            double liquidFraction = row.getLiquidFraction();
+	            double error = row.getRelativeError();
+	            
+	            if(Double.isNaN(error)){
+	                result.addRow(new GoogleRow(liquidFraction));
+	            }else{
+	                result.addRow(new GoogleRow(liquidFraction,error));
+	            }
+	        }
+
+	        GoogleGraphInfo errorGraph = new GoogleGraphInfo();
+	        errorGraph.setData(result);
+	         errorGraph.setOptions(GoogleOptions.googleOptions(
+	               "Error relativo",
+	               "Fracción molar (líquido)" ,
+	               "Error relativo",
+	               ChartType.scatter));
+	        return errorGraph;
+
+	        
+	    }
+	 
+	    
+
+	      public GoogleGraphInfo errorVsIteration(){
+	        GoogleDataTable result = new GoogleDataTable();
+	         
+	        result.addColumns(
+	                new GoogleColumn("iteration", "Iteración", GoogleColumnType.number),
+	                new GoogleColumn("error", "error total", GoogleColumnType.number)
+	                );
+	        
+	        int numberOfParameters = selectedMix.getErrorfunction().numberOfParameters();
+	        for(Integer i = 0; i < numberOfParameters ; i++){
+	           result.addColumn(new GoogleColumn(String.valueOf(i),"Parametro "+ i , GoogleColumnType.number));
+	        }
+	        
+	       
+	        boolean clearBecauseOfError = false; //todo corregir codigo
+	        for (Parameters_Error row:selectedMix.getErrorfunction().getOptimizer().getConvergenceHistory()){
+	            double error = row.getError();
+	            int iter = row.getIteration();
+	            
+	            
+	            Number[]  collectionToAdd = new Number[numberOfParameters + 2];
+	            //System.out.println("numberofparameters + 2"+(numberOfParameters + 2));
+	            collectionToAdd[0] = iter;
+	            collectionToAdd[1] = ifNotANumberOrInfinityNull(error);
+	            for(int i = 0; i < numberOfParameters;i++){
+	                
+	                try{
+	                    collectionToAdd[i+2] 
+	                            = ifNotANumberOrInfinityNull(
+	                                    row.getParameters()[i]);
+
+	                }catch(IndexOutOfBoundsException ex){
+	                    System.out.println("IndexOutofBoundsException ");
+	                    System.out.println("i=" + i );
+	                    System.out.println("collectionToAdd.length=" + collectionToAdd.length);
+	                    clearBecauseOfError = true;
+	                }
+	            }
+	            
+	            result.addRow(new GoogleRow(collectionToAdd));
+	            
+	        }
+	        if(clearBecauseOfError ){
+	        	selectedMix.getErrorfunction().getOptimizer().setConvergenceHistory(new ArrayList());
+	            
+	        }
+	         GoogleGraphInfo historyConvergence = new GoogleGraphInfo();
+	       historyConvergence.setData(result);
+	       historyConvergence.setOptions(GoogleOptions.googleOptions(
+	               "Historia de convergencia",
+	               "Iteración",
+	               "Error, parametros de alpha",
+	               ChartType.multipleScatter));
+	       
+	       
+	       return historyConvergence;
+	    }
+	    private Double ifNotANumberOrInfinityNull(Double aNumber){
+	        return  (Double.isNaN(aNumber) || Double.isInfinite(aNumber))?null:aNumber;
+	    }
+	    public GoogleGraphInfo dataTable(){
+	         System.out.println("paint");
+	        GoogleDataTable table = new GoogleDataTable( );
+	        Compound sel = selectedMix.getErrorfunction().getReferenceComponent();
+	        table.addColumns(
+	            new GoogleColumn("molarFraction", "Fracción molar " + sel , GoogleColumnType.number),
+	            new GoogleColumn("Texp", "Temperatura experimental [K] (liquido)" , GoogleColumnType.number),
+	            new GoogleColumn("Tcalc", "Temperatura calculada [K] (liquido)" , GoogleColumnType.number),
+	            new GoogleColumn("TexpV", "Temperatura experimental [K] (vapor)", GoogleColumnType.number),
+	            new GoogleColumn("TcalcV", "Temperatura calculada [K] (vapor)", GoogleColumnType.number)
+	        );
+	      
+	        for (TemperatureMixtureErrorData row: selectedMix.getErrorfunction().getErrorForEachExperimentalData()){
+	            double liquidFraction = row.getLiquidFraction();
+	            
+	            double expT = row.getExperimentalTemperature();            
+	            Double calcT = row.getCalculatedTemperature();
+	            calcT = (Double.isNaN(calcT)?null: calcT);
+	            
+	            table.addRow(new GoogleRow(liquidFraction, expT,calcT));
+	            
+	        }
+	        for (TemperatureMixtureErrorData row: selectedMix.getErrorfunction().getErrorForEachExperimentalData()){
+	             double expT = row.getExperimentalTemperature();   
+	             double expY = row.getExperimentalVaporFraction();
+	             table.addRow( new GoogleRow(expY, null,null,expT));
+	        }
+	        for (TemperatureMixtureErrorData row: selectedMix.getErrorfunction().getErrorForEachExperimentalData()){
+	            double expT = row.getExperimentalTemperature();   
+	            double expY = row.getExperimentalVaporFraction();
+	            Double calcT = row.getCalculatedTemperature();
+	            Double calcY = row.getCalculatedVaporFraction();
+
+	            calcT = (Double.isNaN(calcT)?null: calcT);
+	            calcY = (Double.isNaN(calcY)? null: calcY);
+	            table.addRow( new GoogleRow(calcY,null, null,null,  calcT));
+	            
+	        }
+	             
+	        
+	        
+	        
+	        GoogleGraphInfo pressureComparison = new GoogleGraphInfo();
+	        pressureComparison.setData(table);
+	         pressureComparison.setOptions(GoogleOptions.googleOptions(
+	               "Fracción molar vs Temperatura", 
+	               "Fracción molar", 
+	               "Temperatura[K]",ChartType.scatterFunctionScatterFunction));
+	        return pressureComparison;
+	    }
+	     
 }

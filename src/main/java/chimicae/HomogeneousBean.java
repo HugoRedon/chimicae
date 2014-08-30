@@ -66,11 +66,12 @@ public class HomogeneousBean implements Serializable {
 		
 		homogeneousList.add(sub);
 		
-		
+		InteractionParameter k = new InteractionParameter();
+		k.setSymmetric(true);
 		Mixture mix = new MixtureBuilder().setEquationOfState(EquationsOfState.pengRobinson())
 				.setAlpha(Alphas.getStryjekAndVeraExpression())
 				.addCompounds(water,methanol)
-				.setInteractionParameter(new InteractionParameter())
+				.setInteractionParameter(k)
 				.setPhase(Phase.VAPOR).setMixingRule(new VDWMixingRule()).build();
 		homogeneousList.add(mix);
 		selectedHomogeneous=sub;

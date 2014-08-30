@@ -8,7 +8,7 @@
 	<ui:composition template="googlePlotTemplate.xhtml">
 		<ui:define name="content">
 			<h:form target="main">
-				<h:selectOneMenu value="#{binaryOptimizationBean.selectedMix}">
+				<h:selectOneMenu value="#{binaryOptimizationBean.selectedMix}" converter="#{hmc}">
 					<f:selectItems value="#{binaryOptimizationBean.hmList}" var="het" itemLabel="#{binaryOptimizationBean.id(het)}"/>
 				</h:selectOneMenu>
 				<h:dataTable value="#{binaryOptimizationBean.getParameterList()}" var="parameter">
@@ -50,6 +50,21 @@
                             </f:facet>
 				</h:dataTable>
 				 
+				 <h:commandButton action="#{binaryOptimizationBean.selectedMix.errorfunction.minimize()}"
+				 	value="Estimar parámetros"/>
+				 
+				 <h:panelGroup id="emcompEquilibria"  >
+                     <h:outputText value="#{binaryOptimizationBean.selectedMix.errorfunction.optimizer.message}"/>
+                     <emcomp:ChartTable divId="equilibria" 
+                             chartType="Scatter"
+                            googleChartInfo="#{binaryOptimizationBean.dataTable()}"/>
+                     <emcomp:ChartTable divId="relativeError"
+                                        chartType="Scatter"
+                                        googleChartInfo="#{binaryOptimizationBean.errorGraphData()}"/>
+                     <emcomp:ChartTable divId="convergenceHistory"
+                                        chartType="Scatter"
+                                        googleChartInfo="#{binaryOptimizationBean.errorVsIteration()}"/>                   
+                  </h:panelGroup>
 				
 			</h:form>
 		</ui:define>
