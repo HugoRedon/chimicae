@@ -67,6 +67,10 @@ public class PressureBean implements Serializable {
 		}
 		
 		String verticesJson = new Gson().toJson(vertices);
+		plotBean.setxAxisLabel("Temperatura [K]");
+		plotBean.setyAxisLabel("Presión [Pa]");
+		plotBean.setzAxisLabel("Factor de compresibilidad");
+		
 		plotBean.setJsonData(verticesJson);
 		plotBean.setLine(false);
 		plotBean.setSecondPlot(false);

@@ -8,6 +8,7 @@
 	<ui:composition template="googlePlotTemplate.xhtml">
 		<ui:define name="content">
 			<h:form target="main">
+				<h:outputText value="Mezcla heterogénea"/>
 				<h:selectOneMenu value="#{binaryOptimizationBean.selectedMix}" converter="#{hmc}">
 					<f:selectItems value="#{binaryOptimizationBean.hmList}" var="het" itemLabel="#{binaryOptimizationBean.id(het)}"/>
 				</h:selectOneMenu>
