@@ -8,15 +8,15 @@
 	<ui:composition template="googlePlotTemplate.xhtml">
 		<ui:define name="content">
 			<h:form target="main">
-				<h:selectOneMenu value="#{binaryOptimizationBean.selectedMix}" converter="#{hmc}">
-					<f:selectItems value="#{binaryOptimizationBean.hmList}"/>
+				<h:selectOneMenu value="#{binaryOptimizationBean.selectedMix}">
+					<f:selectItems value="#{binaryOptimizationBean.hmList}" var="het" itemLabel="#{binaryOptimizationBean.id(het)}"/>
 				</h:selectOneMenu>
-				<!-- <h:dataTable value="binaryOptimizationBean.getParameterList()" var="parameter">
+				<h:dataTable value="#{binaryOptimizationBean.getParameterList()}" var="parameter">
 					<h:column>	
 						<f:facet name="header">
 							<h:outputText value="Parámetro" />
 						</f:facet>
-						<h:outputText value="#{parameter.name}" />
+						<h:outputText value="#{parameter.getName()}" />
 					</h:column>
 					<h:column >
                                <f:facet name="header">
@@ -49,7 +49,7 @@
                              	</f:ajax>
                             </f:facet>
 				</h:dataTable>
-				 -->
+				 
 				
 			</h:form>
 		</ui:define>

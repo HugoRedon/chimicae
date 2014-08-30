@@ -1,6 +1,7 @@
 package chimicae;
 
 import termo.eos.alpha.Alpha;
+import termo.optimization.ContainsParameters;
 import termo.optimization.NewtonMethodSolver;
 
 /**
@@ -10,11 +11,11 @@ import termo.optimization.NewtonMethodSolver;
 public class ParameterViewModel{
     int index;
     NewtonMethodSolver  solver;
-    Alpha alpha;
-    public ParameterViewModel(int index, NewtonMethodSolver solver,Alpha alpha) {
+    ContainsParameters containsParameters;
+    public ParameterViewModel(int index, NewtonMethodSolver solver,ContainsParameters withParameters) {
         this.index = index;
         this.solver = solver;
-        this.alpha = alpha;
+        this.containsParameters = withParameters;
     }
     
     public double getValue(){
@@ -42,7 +43,7 @@ public class ParameterViewModel{
         solver.getMaxVariationParameters()[index] = variation;
     }
     public String getName(){
-        return alpha.getParameterName(index);
+        return containsParameters.getParameterName(index);
     }
     
   

@@ -69,7 +69,8 @@ public class HomogeneousBean implements Serializable {
 		
 		Mixture mix = new MixtureBuilder().setEquationOfState(EquationsOfState.pengRobinson())
 				.setAlpha(Alphas.getStryjekAndVeraExpression())
-				.addCompounds(water,methanol).setInteractionParameter(new InteractionParameter())
+				.addCompounds(water,methanol)
+				.setInteractionParameter(new InteractionParameter())
 				.setPhase(Phase.VAPOR).setMixingRule(new VDWMixingRule()).build();
 		homogeneousList.add(mix);
 		selectedHomogeneous=sub;

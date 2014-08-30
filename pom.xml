@@ -40,7 +40,7 @@
         <dependency>
         	<groupId>com.github.hugoredon</groupId>
         	<artifactId>materia</artifactId>
-        	<version>3.5-SNAPSHOT</version>
+        	<version>3.6-SNAPSHOT</version>
         	
         </dependency>
     </dependencies>

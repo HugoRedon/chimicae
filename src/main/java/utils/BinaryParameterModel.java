@@ -1,6 +1,7 @@
 package utils;
 
 import termo.component.Compound;
+import termo.eos.mixingRule.MixingRule;
 
 public class BinaryParameterModel {
 	private Compound compoundi;
@@ -30,5 +31,5 @@ public class BinaryParameterModel {
 	}
 	public void setValue(Double value) {
 		this.value = value;
-	}
+	}	
 }

@@ -76,9 +76,7 @@ public class HeterogeneousBean implements Serializable {
 	}
     public List<ParameterViewModel> getParametersList(){
         List<ParameterViewModel> result = new ArrayList();
-//        if(selectedHeterogeneousSubstance==null){
-//        	init();
-//        }
+
         ErrorFunction errorFunction = selectedHeterogeneousSubstance.getErrorFunction();
         int numberOfParams = errorFunction.numberOfParameters();
         
