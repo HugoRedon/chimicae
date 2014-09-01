@@ -9,6 +9,7 @@
             <composite:attribute name="mixingRule" type="termo.eos.mixingRule.MixingRule" required="true"/>
             <composite:implementation>
                 <h:panelGrid columns="2">
+                	<h3>Regla de Mezclado</h3>
                     <h:selectOneMenu value="#{cc.attrs.mixingRule}"
                                      converter="#{mixingRuleConverter}">
                         <f:selectItems value="#{eqProUtils.mixingRules}"/>

@@ -7,6 +7,7 @@
 
 	<ui:composition template="googlePlotTemplate.xhtml">
 		<ui:define name="content">
+		<h2>Estimación de parámetros de la regla de mezclado</h2>
 			<h:form target="main">
 				<h:outputText value="Mezcla heterogénea"/>
 				<h:selectOneMenu value="#{binaryOptimizationBean.selectedMix}" converter="#{hmc}">

@@ -3,3 +3,14 @@
 .compoundsGrid td {
     vertical-align: top;
 }
+
+body{
+	/* color:#000077; */
+}
+
+.current{
+	color:#EE7600;
+}
+a{
+	text-decoration: none;
+}

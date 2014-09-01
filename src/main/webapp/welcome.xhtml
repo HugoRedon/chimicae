@@ -6,51 +6,51 @@
 
 	<ui:composition template="template.xhtml">
 	<ui:define name="content">
-	<h1>Chimicae</h1>
-		
-		<h2>Materia</h2>
-		
-		<ul>
+	
+	
+	<h1>Chimicae</h1>		
+		<h:form>
+		<ul >
 			<li>
 				<h2>Creación</h2>
 				<ul>
-					<li><h3>
-						<h:link value="Compuesto Puro" outcome="compounds"  target="main"/>
-					</h3></li>
-					<li><h3>
-						<h:link value="Substancia" outcome="substance" target="main"/>	
-					</h3></li>
-					<li><h3>
-						<h:link value="Mezcla" outcome="mixture" target="main"/>	
-					</h3></li>
+					<li>
+						<h:commandLink value="Compuesto Puro" action="compounds"  target="main" />
+					</li>
+					<li>
+						<h:commandLink value="Substancia" action="substance" target="main"/>	
+					</li>
+					<li>
+						<h:commandLink value="Mezcla" action="mixture" target="main"/>	
+					</li>
 				</ul>
 			</li>
 			
-			<li><h2>Cálculos</h2></li>
-			<h:form>
+			<li><h2>Gráficos</h2></li>
+			
 			<ul>
-				<li><h3>
-					<h:commandLink action="#{plotBean.setControls('pressure')}" value="Presión" target="main" />
-				</h3> </li>
-				<li><h3>
-					<h:commandLink action="#{plotBean.setControls('compresibility')}" value="Factor de compresibilidad" target="main" />
-				</h3> </li>				
-				<li><h3>
-					<h:commandLink action="#{plotBean.setControls('fugacity')}" value="Fugacidad" target="main" />
-				</h3> </li>
-				<li><h3>
-					<h:commandLink action="#{plotBean.setControls('enthalpy')}" value="Entalpía" target="main" />
+				<li>
+					<h:commandLink action="#{plotBean.setControls('pressure')}" value="Presión-Volumen-Temperatura" target="main" />
+				 </li>
+				<li>
+					<h:commandLink action="#{plotBean.setControls('compresibility')}" value="Z-Presión-Temperatura" target="main" />
+				 </li>				
+				<li>
+					<h:commandLink  action="#{plotBean.setControls('fugacity')}" value="Fugacidad-Presión-Temperatura" target="main" />
+				 </li>
+				<li>
+					<h:commandLink action="#{plotBean.setControls('enthalpy')}" value="Temperatura-Entalpía-Presión" target="main" />
 					
-				</h3> </li>
-				<li><h3>
-					<h:commandLink action="#{plotBean.setControls('entropy')}" value="Entropía" target="main" />					
-				</h3> </li>
-				<li><h3>
-					<h:commandLink action="#{plotBean.setControls('gibbs')}" value="Energía libre de Gibbs" target="main" />
-				</h3> </li>
-				<li><h3>
-					<h:commandLink action="#{plotBean.setControls('volume')}" value="Volumen molar" target="main" />
-				</h3> </li>
+				 </li>
+				<li>
+					<h:commandLink  action="#{plotBean.setControls('entropy')}" value="Temperatura-Entropía-Presión" target="main" />					
+				 </li>
+				<li>
+					<h:commandLink  action="#{plotBean.setControls('gibbs')}" value="Temperatura-Gibbs-Presión" target="main" />
+				 </li>
+				<li>
+					<h:commandLink  action="#{plotBean.setControls('volume')}" value="Temperatura-Volumen-Presión" target="main" />
+				 </li>
 				<!-- <li><h3>
 					<h:commandLink action="#{plotBean.setControls('saturationTemperature')}" value="Temperatura de saturación" target="main" />					
 				</h3> </li>
@@ -59,28 +59,28 @@
 				</h3> </li> -->
 				
 			</ul>
-			</h:form>
+			
 			
 			
 			
 			<li><h2>Estimación de parámetros</h2></li>
-			<h:form>
+			
 				<ul>
-					<li><h3>
+					<li>
 						<h:commandLink action="alphaOptimization" 
 						value="Parámetros de \(\alpha\)"  target="main"/>
-					</h3></li>
+					</li>
 				</ul>
 				<ul>
-					<li><h3>
-						<h:commandLink action="binaryOptimization" 
+					<li>
+						<h:commandLink  action="binaryOptimization" 
 						value="Parámetros binarios"  target="main"/>
-					</h3></li>
+					</li>
 				</ul>
-			</h:form>
+			
 		</ul>
 			
-		
+		</h:form>
 			
 
 	</ui:define>

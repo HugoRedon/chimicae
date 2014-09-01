@@ -7,6 +7,7 @@
 
 	<ui:composition template="googlePlotTemplate.xhtml">
 		<ui:define name="content">
+		<h2>Estimación de parámetros de \(\alpha\)</h2>
 			<h:form target="main">
 				<f:ajax render="@form">
 					<emcomp:heterogeneousSubstance/>
@@ -20,7 +21,7 @@
 					</h:column>
 					<h:column >
                                <f:facet name="header">
-                                   <h:outputText value="Parámetro"/>
+                                   <h:outputText value="Valor"/>
                                </f:facet>
                                <h:inputText value="#{parameter.value}" />
                             </h:column>
@@ -65,7 +66,9 @@
 			</h:form>
 			
 			
-			
+			<script>
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+            </script>
 		</ui:define>
 	</ui:composition>
 </html>

@@ -14,7 +14,7 @@
 </composite:interface>
 <composite:implementation>
 	<h:panelGrid columns="2">
-		<h:outputText value="Sistema homogéneo" />
+		<h:outputText value="Sistema" />
 		<h:selectOneMenu value="#{homogeneousBean.selectedHomogeneous}" converter="#{homogeneousConveter}">
 			<f:selectItems value="#{homogeneousBean.homogeneousList}" itemLabel="#{homogeneousConveter.homogeneousId(homogeneous)}" var="homogeneous" />
 		</h:selectOneMenu>

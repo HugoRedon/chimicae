@@ -8,7 +8,7 @@
 	<ui:composition template="template.xhtml">
 	<ui:define name="content">
 		<h:form id="mixtureForm">
-			<h1><h:outputText value="Mezcla"/> </h1>
+			<h2><h:outputText value="Mezcla"/> </h2>
 			<f:ajax render="@form">
 				<emcomp:eos editParams="true" equationOfState="#{createMixture.cubic}" />
 				<emcomp:phase phase="#{createMixture.phase}"/>
@@ -60,6 +60,9 @@
 			<h:messages id="messages"/>
 		
 		</h:form>
+		<script>
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+            </script>
 		</ui:define>
 	</ui:composition>
 </html>
