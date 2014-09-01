@@ -22,7 +22,15 @@ public class PlotBean implements Serializable {
 	private String yAxisLabel = "eje Y";
 	private String zAxisLabel ="eje Z";
 	
+	private String plotInfo="Tipo de gráfico";
 	
+	public String getPlotInfo() {
+		return plotInfo;
+	}
+
+	public void setPlotInfo(String plotInfo) {
+		this.plotInfo = plotInfo;
+	}
 	private Boolean secondLine;
 	private Boolean firstPlot=new Boolean(true);
 	

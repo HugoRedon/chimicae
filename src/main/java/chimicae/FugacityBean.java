@@ -88,7 +88,7 @@ public class FugacityBean implements Serializable {
 		
 		plotBean.setJsonData(new Gson().toJson(list.toArray(vertices)));
 		plotBean.setSecondJson(new Gson().toJson(vaporlist.toArray(vaporVertices)));
-		
+		plotBean.setPlotInfo("Fugacidad-Presión-Temperatura: Vapor(plano rojo),Líquido(plano azul)");
 		plotBean.setxAxisLabel("Temperatura [K]");
 		plotBean.setyAxisLabel("Presión [Pa]");
 		plotBean.setzAxisLabel("Fugacidad");

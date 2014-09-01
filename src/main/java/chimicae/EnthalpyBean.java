@@ -322,7 +322,7 @@ public class EnthalpyBean implements Serializable {
 		
 		plotBean.setJsonData(new Gson().toJson( positionsl));
 		
-		
+		plotBean.setPlotInfo("Temperatura-Entalpía-Presión");
 		plotBean.setxAxisLabel("Presión [Pa]");
 		plotBean.setyAxisLabel("Entalpía []");
 		plotBean.setzAxisLabel("Temperatura [K]");
@@ -423,7 +423,7 @@ public class EnthalpyBean implements Serializable {
 		plotBean.setSecondJson(new Gson().toJson(po));
 		
 		plotBean.setJsonData(new Gson().toJson( positionsl));
-		
+		plotBean.setPlotInfo("Temperatura-Entropía-Presión");
 		plotBean.setxAxisLabel("Presión [Pa]");
 		plotBean.setyAxisLabel("Entropía []");
 		plotBean.setzAxisLabel("Temperatura [K]");
@@ -525,7 +525,7 @@ public class EnthalpyBean implements Serializable {
 		plotBean.setSecondJson(new Gson().toJson(po));
 		
 		plotBean.setJsonData(new Gson().toJson( positionsl));
-		
+		plotBean.setPlotInfo("Temperatura-Gibbs-Presión");
 		plotBean.setxAxisLabel("Presión [Pa]");
 		plotBean.setyAxisLabel("E. Gibbs []");
 		plotBean.setzAxisLabel("Temperatura [K]");
@@ -626,7 +626,7 @@ public class EnthalpyBean implements Serializable {
 		plotBean.setSecondJson(new Gson().toJson(po));
 		
 		plotBean.setJsonData(new Gson().toJson( positionsl));
-		
+		plotBean.setPlotInfo("Temperatura-Volumen-Presión");
 		plotBean.setxAxisLabel("Presión [Pa]");
 		plotBean.setyAxisLabel("Volumen Molar[m³/kmol]");
 		plotBean.setzAxisLabel("Temperatura [K]");

@@ -70,7 +70,7 @@ public class PressureBean implements Serializable {
 		plotBean.setxAxisLabel("Temperatura [K]");
 		plotBean.setyAxisLabel("Presión [Pa]");
 		plotBean.setzAxisLabel("Factor de compresibilidad");
-		
+		plotBean.setPlotInfo("Z-Presión-Temperatura");
 		plotBean.setJsonData(verticesJson);
 		plotBean.setLine(false);
 		plotBean.setSecondPlot(false);
