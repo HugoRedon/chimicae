@@ -202,7 +202,8 @@ public class EnthalpyBean implements Serializable {
 			if(pressure == 0){
 				((HeterogeneousMixture) heterogeneous).dewPressure();
 			}else{
-				int iterations =((HeterogeneousMixture) heterogeneous).dewPressure(pressure);	
+				int iterations =((HeterogeneousMixture) heterogeneous).dewPressure(pressure);
+				
 			}
 
 		}else if (heterogeneous instanceof HeterogeneousSubstance){
