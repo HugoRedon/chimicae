@@ -12,12 +12,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import models.Envelope;
+import models.MixtureEnvelope;
+import models.PointInfo;
+import models.SubstanceEnvelope;
 import termo.component.Compound;
+import termo.matter.Heterogeneous;
 import termo.matter.HeterogeneousMixture;
 import termo.matter.HeterogeneousSubstance;
 import termo.matter.Homogeneous;
@@ -30,17 +37,74 @@ import termo.matter.builder.HeterogeneousMixtureBuilder;
 public class PhaseEnvelopeBean implements Serializable {
 
 	private static final long serialVersionUID = 6940496006074883582L;
+	public HeterogeneousMixture getHeterogeneous(Mixture mix){
+		HeterogeneousMixture hetMixture =new HeterogeneousMixtureBuilder().fromMixture(mix);
+		return hetMixture;
+	}
+	public HeterogeneousSubstance getHeterogeneous(Substance substance){
+		return new HeterogeneousSubstance(substance.getCubicEquationOfState(),
+				substance.getAlpha(),substance.getComponent());
+	}
+	public Heterogeneous getHeterogeneous(Homogeneous homogeneous){
+		if(homogeneous instanceof Mixture)
+			return getHeterogeneous((Mixture)homogeneous);
+		else 
+			return getHeterogeneous((Substance)homogeneous);
+	}
+	
+	List<Envelope> envelopes = new ArrayList<>();
+	public List<Envelope> getEnvelopes() {
+		return envelopes;
+	}
+	public void setEnvelopes(List<Envelope> envelopes) {
+		this.envelopes = envelopes;
+	}
 
-	public PhaseEnvelopeBean() {
-		// TODO Auto-generated constructor stub
+	Envelope selectedEnvelope ;
+	
+	public Envelope getSelectedEnvelope() {
+		return selectedEnvelope;
+	}
+	public void setSelectedEnvelope(Envelope selectedEnvelope) {
+		this.selectedEnvelope = selectedEnvelope;
+	}
+	@PostConstruct
+	public void phaseEnvelopeBean() {
+		
+		for(Homogeneous homogeneous:homogeneousBean.getHomogeneousList()){
+			Heterogeneous heterogeneous =getHeterogeneous(homogeneous);
+			Envelope env;
+			if(heterogeneous instanceof HeterogeneousSubstance){
+				env = new SubstanceEnvelope(heterogeneous.toString(), 
+						(HeterogeneousSubstance)heterogeneous);
+			}else{
+				env = new MixtureEnvelope(heterogeneous.toString(),
+						(HeterogeneousMixture)heterogeneous);
+			}
+			
+			envelopes.add(env);
+		}
+		selectedEnvelope = envelopes.get(0);
 	}
 	
 	@Inject HomogeneousBean homogeneousBean;
 	
+	public void draw(){
+		
+	}
+	
+	public boolean isMixture(){
+		return selectedEnvelope instanceof MixtureEnvelope;
+	}
+	
+	public MixtureEnvelope asMixtureEnvelope(){
+		if(isMixture()){
+			return (MixtureEnvelope) selectedEnvelope;
+		}
+		return null;
+	}
+	
 	public GoogleGraphInfo dataTable(){
-		Homogeneous homogeneous = homogeneousBean.getSelectedHomogeneous();
-		
-		
 		
 		GoogleGraphInfo graphInfo = new GoogleGraphInfo();
 		GoogleDataTable data = new GoogleDataTable();
@@ -49,7 +113,7 @@ public class PhaseEnvelopeBean implements Serializable {
 				new GoogleColumn("press", "Presión burbuja[Pa]", GoogleColumnType.number),
 				new GoogleColumn("press", "Presión rocío[Pa]", GoogleColumnType.number));
 								
-		Collection<GoogleRow> rows = getRows(homogeneous,data);
+		Collection<GoogleRow> rows = getRows(data);
 		data.addRows(rows);
 		
 		graphInfo.setData(data);
@@ -59,124 +123,48 @@ public class PhaseEnvelopeBean implements Serializable {
 				"Presión [Pa]", ChartType.multipleFunction));
 		return graphInfo;
 	}
-	public HeterogeneousSubstance getHeterogeneous(Substance substance){
-		return new HeterogeneousSubstance(substance.getCubicEquationOfState(),
-				substance.getAlpha(),substance.getComponent());
-	}
+
 
 	
-	public Collection<GoogleRow> getRows(Homogeneous homogeneous,GoogleDataTable data){
-		Collection<GoogleRow> rows = new ArrayList<>();
-		
-		if(homogeneous instanceof Substance){
+	public Collection<GoogleRow> getRows(GoogleDataTable data){
+		Collection<GoogleRow> rows = new ArrayList<>();			
+		if(selectedEnvelope instanceof SubstanceEnvelope){			
+			rows = getRows((SubstanceEnvelope)selectedEnvelope,1,1); 			
+		}else if(selectedEnvelope instanceof MixtureEnvelope){
+			rows = getRows((MixtureEnvelope)selectedEnvelope);
+			//rows.addAll(getRowsDew((Mixture)homogeneous));
 			
-			rows = getRows((Substance)homogeneous,1,1); 
+			int nc = ((MixtureEnvelope) selectedEnvelope)
+					.getHeterogeneousMixture().getComponents().size();
 			
-		}else if(homogeneous instanceof Mixture){
-			rows = getRows((Mixture)homogeneous);
-			rows.addAll(getRowsDew((Mixture)homogeneous));
-			int nc = ((Mixture) homogeneous).getComponents().size();
-			
-			Iterator<Substance> iterator  = ((Mixture) homogeneous).getPureSubstances().iterator(); 
+			Iterator<Substance> iterator  = ((MixtureEnvelope) selectedEnvelope)
+					.getHeterogeneousMixture().getLiquid()
+					.getPureSubstances().iterator(); 
 			for(int i = 3; i <= nc + 2; i++){
 				Substance sub = iterator.next();
+				HeterogeneousSubstance heterogeneous= getHeterogeneous(sub);
+				SubstanceEnvelope subEnv = new SubstanceEnvelope(heterogeneous.toString()
+						, heterogeneous);
 				data.addColumn(new GoogleColumn("comp" +sub.getComponent().getName(),
 					sub.getComponent().getName(), GoogleColumnType.number));
-				rows.addAll(getRows(sub,i ,nc));
+				rows.addAll(getRows(subEnv,i ,nc));
 			}
 			
 		}
 		return rows;
 	}
 	
-	public HeterogeneousMixture getHeterogeneous(Mixture mix){
-		HeterogeneousMixture hetMixture =new HeterogeneousMixtureBuilder().fromMixture(mix);
-		return hetMixture;
-	}
-	
-	
-
-	
-	
-	
-	public Collection<GoogleRow> getRows(Mixture mix){
-		Collection<GoogleRow> liquidlineRows = new ArrayList<>();
-		Collection<GoogleRow> vaporlineRows = new ArrayList<>();
+	public Collection<GoogleRow> getRows(MixtureEnvelope mix){
+		Collection<GoogleRow> rows = new ArrayList<>();
 		
-		double minCriticalPressure =getMinimumCriticalPressure(mix);		
-		double minCriticalTemperature =getMinimumCriticalTemperature(mix);		
-		HeterogeneousMixture heterogeneousMixture = getHeterogeneous(mix);
-		
-		double pressure = minCriticalPressure*0.3;		
-		
-		
-		heterogeneousMixture.setPressure(pressure);
-		int bubbleIterations =heterogeneousMixture.bubbleTemperature();
-		double bubbleTemperature = heterogeneousMixture.getTemperature();
-		
-//		int dewIterations = heterogeneousMixture.dewTemperature();
-//		double dewTemperature = heterogeneousMixture.getTemperature();
-		
-				
-		liquidlineRows.add(new GoogleRow(bubbleTemperature,pressure));
-//		vaporlineRows.add(new GoogleRow(dewTemperature,pressure));
-		
-		System.out.println("iterations: " +bubbleIterations + "("+ bubbleTemperature + ","+pressure+")");
-		
-		double pressureStep = (minCriticalPressure- pressure)/50d;
-		
-		double nextPressure = pressure + pressureStep;
-		heterogeneousMixture.setPressure(nextPressure);
-		 bubbleIterations =heterogeneousMixture.bubbleTemperature(bubbleTemperature);
-		double nextTemperature = heterogeneousMixture.getTemperature();
-		
-		liquidlineRows.add(new GoogleRow(nextTemperature,nextPressure));
-		
-		double slope = (Math.log(nextPressure)-Math.log(pressure) )
-					   /(Math.log(nextTemperature)-Math.log(bubbleTemperature));
-		
-		
-		double volumeDifference = Math.abs(heterogeneousMixture.getVapor().calculateMolarVolume())
-				-Math.abs(heterogeneousMixture.getLiquid().calculateMolarVolume());
-		
-		System.out.println("iterations: " +bubbleIterations + "("+ bubbleTemperature + ","+pressure+")" + volumeDifference);
-		
-		
-		double temperatureStep = 10;
-		while(Math.abs(volumeDifference) > volumeDifferenceTolerance  ){
-			pressure = nextPressure;
-			bubbleTemperature = nextTemperature;
-			bubbleIterations = 0;
-			if(slope < 2){//bubble or dew point pressures
-				nextTemperature = bubbleTemperature + temperatureStep;
-				heterogeneousMixture.setTemperature(nextTemperature);
-				bubbleIterations = heterogeneousMixture.bubblePressure(pressure);
-				nextPressure = heterogeneousMixture.getPressure();
-				
-				
-			}else{//bubble or dew point temperature
-				nextPressure = pressure + pressureStep;
-				heterogeneousMixture.setPressure(nextPressure);
-				bubbleIterations = heterogeneousMixture.bubbleTemperature(bubbleTemperature);
-				nextTemperature = heterogeneousMixture.getTemperature();				
-			}
-			System.out.println("iterations"+bubbleIterations);
-			liquidlineRows.add(new GoogleRow(nextTemperature,nextPressure));
-			System.out.println("iterations: " +bubbleIterations + "("+ nextTemperature + ","+nextPressure+")" + volumeDifference);
-			slope = (Math.log(nextPressure)-Math.log(pressure) )
-					   /(Math.log(nextTemperature)-Math.log(bubbleTemperature));
-			volumeDifference = Math.abs(heterogeneousMixture.getLiquid().calculateMolarVolume())
-					-Math.abs(heterogeneousMixture.getVapor().calculateMolarVolume());
+		mix.calculateEnvelope();
+		for(PointInfo pi : mix.getLiquidLine()){
+			rows.add(new GoogleRow(pi.getTemperature(),pi.getPressure()));
 		}
-		
-		
-		
-		
-		
-		
-		return liquidlineRows;	
-		
-	
+		for(PointInfo pi : mix.getVaporLine()){
+			rows.add(new GoogleRow(pi.getTemperature(),null,pi.getPressure()));
+		}			
+		return rows;			
 	}
 	double volumeDifferenceTolerance = 0.07;
 	
@@ -192,7 +180,7 @@ public class PhaseEnvelopeBean implements Serializable {
 		Collection<GoogleRow> rows = new ArrayList<>();
 		
 		double minCriticalPressure =getMinimumCriticalPressure(mix);
-		double minCriticalTemperature =getMinimumCriticalTemperature(mix);
+		//double minCriticalTemperature =getMinimumCriticalTemperature(mix);
 		
 					
 		HeterogeneousMixture heterogeneousMixture = getHeterogeneous(mix);
@@ -388,26 +376,19 @@ public class PhaseEnvelopeBean implements Serializable {
 		return minCriticalPressure;
 	}
 	
-	public Collection<GoogleRow> getRows(Substance sub ,int index,int nc){
+	public Collection<GoogleRow> getRows(SubstanceEnvelope sub ,int index,int nc){
 		Collection<GoogleRow> rows = new ArrayList<>();
-		double ct = sub.getComponent().getCriticalTemperature();
-		double minT = ct*0.5;
-		
-		HeterogeneousSubstance heterogeneousSubstance = getHeterogeneous(sub);
-		
-		Integer n = 40;
-		double tempStep = (ct - minT)/n.doubleValue();
-		for(Integer i = 0; i< n; i++){
-			double temperature = minT + i.doubleValue()*tempStep;
-			heterogeneousSubstance.setTemperature(temperature);
-			heterogeneousSubstance.saturationPressure();
-			double pressure = heterogeneousSubstance.getPressure();
+		sub.calculateEnvelope();
+		for (PointInfo pi:sub.getLiquidLine()){
 			Double[] numbers = new Double[3+nc];
-			numbers[0]= temperature;
-			numbers[index] =pressure ;
+			numbers[0] = pi.getTemperature();
+			numbers[index] = pi.getPressure();
 			rows.add(new GoogleRow(numbers));
 		}
 		return rows;
 	}
 
 }
+
+
+

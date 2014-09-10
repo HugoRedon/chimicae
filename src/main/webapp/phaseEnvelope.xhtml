@@ -3,19 +3,29 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
         xmlns:emcomp="http://xmlns.jcp.org/jsf/composite/emcomp"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      >
 
 	<ui:composition template="googlePlotTemplate.xhtml">
 		<ui:define name="content">
 		<h:form>
-			<f:ajax render="@form">
-				<emcomp:homogeneous/>
-				<h:panelGrid columns="2">
-					<h:outputText value="criterio" />
-					<h:inputText value="#{phaseEnvelopeBean.volumeDifferenceTolerance}" />
-				</h:panelGrid>
-				
+			<f:ajax render="controls">
+			<h:selectOneMenu value="#{phaseEnvelopeBean.selectedEnvelope}" converter="#{envelopeConverter}">
+				<f:selectItems value="#{phaseEnvelopeBean.envelopes}"/>
+			</h:selectOneMenu>
 			</f:ajax>
+			<h:panelGroup id="controls">
+			<c:if test="#{phaseEnvelopeBean.isMixture()}" >
+			<h:panelGrid columns="2">
+				<h:outputText value="criterio"/>
+				<h:inputText value="#{phaseEnvelopeBean.asMixtureEnvelope().volumeDifferenceTolerance}"/>
+			</h:panelGrid>
+			</c:if>
+			</h:panelGroup>
+			<h:commandButton action="#{phaseEnvelopeBean.draw}" value="Dibujar" />
+				
+			
 		 	<emcomp:ChartTable divId="equilibria" 
                              chartType="Scatter"
                             googleChartInfo="#{phaseEnvelopeBean.dataTable()}"/>
