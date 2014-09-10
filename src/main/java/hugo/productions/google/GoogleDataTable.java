@@ -1,7 +1,9 @@
 package hugo.productions.google;
 
-import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.Collection;
+
+import com.google.gson.Gson;
 
 /**
  *
@@ -25,6 +27,11 @@ public class GoogleDataTable {
         this.getRows().add(row);
     }
     public void addRows(GoogleRow... rows){
+        for(GoogleRow row: rows){
+            this.getRows().add(row);
+        }
+    }
+    public void addRows(Collection<GoogleRow> rows){
         for(GoogleRow row: rows){
             this.getRows().add(row);
         }

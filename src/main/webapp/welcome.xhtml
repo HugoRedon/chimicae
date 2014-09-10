@@ -26,9 +26,13 @@
 				</ul>
 			</li>
 			
-			<li><h2>Gráficos</h2></li>
+			<li><h2>Gráficos</h2>
 			
 			<ul>
+				<li>
+					<h:commandLink action="phaseEnvelope" 
+					value="Envolvente de fases"  target="main"/>
+				</li>
 				<li>
 					<h:commandLink action="#{plotBean.setControls('pressure')}" value="Presión-Volumen-Temperatura" target="main" />
 				 </li>
@@ -60,7 +64,7 @@
 				
 			</ul>
 			
-			
+			</li>
 			
 			
 			<li><h2>Estimación de parámetros</h2></li>

@@ -49,6 +49,11 @@ public class GoogleOptions {
             options.addSerie(1, function);
             options.addSerie(2, scatter);
             options.addSerie(3, function);
+        }else if (chartType.equals(ChartType.multipleFunction)){
+        	int n = 20;
+        	for(int i = 0; i <n; i++){
+        		options.addSerie(i, new GoogleOptionSerie(0, 2));
+        	}
         }
                 
 

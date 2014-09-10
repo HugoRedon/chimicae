@@ -11,5 +11,5 @@ package hugo.productions.google;
  * @author Hugo
  */
 public enum ChartType{
-    function,scatter,scatterFunction,multipleScatter,functionScatter, scatterFunctionScatterFunction
+    function,scatter,scatterFunction,multipleScatter,functionScatter, scatterFunctionScatterFunction,multipleFunction
 }
