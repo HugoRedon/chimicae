@@ -9,7 +9,24 @@ public abstract class  Envelope{
 	String name;
 	List<PointInfo> liquidLine = new ArrayList<>();
 	List<PointInfo> vaporLine= new ArrayList<>();
+	List<PointInfo[]> vaporAreaTemperatureLines = new ArrayList<>();
+	List<PointInfo[]> liquidAreaTemperatureLines = new ArrayList<>();
 	
+	
+	public List<PointInfo[]> getVaporAreaTemperatureLines() {
+		return vaporAreaTemperatureLines;
+	}
+	public void setVaporAreaTemperatureLines(
+			List<PointInfo[]> vaporAreaTemperatureLines) {
+		this.vaporAreaTemperatureLines = vaporAreaTemperatureLines;
+	}
+	public List<PointInfo[]> getLiquidAreaTemperatureLines() {
+		return liquidAreaTemperatureLines;
+	}
+	public void setLiquidAreaTemperatureLines(
+			List<PointInfo[]> liquidAreaTemperatureLines) {
+		this.liquidAreaTemperatureLines = liquidAreaTemperatureLines;
+	}
 	public Envelope(String name) {
 		this.name = name;
 	}	

@@ -1,0 +1,448 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	
+	<h:head>
+		<title>Chimicae</title>
+		<meta charset="utf-8"/>
+	 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+		 
+		<h:outputStylesheet name="css/style.css"  />
+		
+		<h:outputScript name="js/three.min.js"  />
+		<h:outputScript name="js/Detector.js"  />
+		<h:outputScript name="js/Stats.js"  />
+		<h:outputScript name="js/controls/TrackballControls.js"  />
+		<h:outputScript name="js/THREEx.KeyboardState.js"  />
+		<h:outputScript name="js/THREEx.FullScreen.js"  />
+		<h:outputScript name="js/THREEx.WindowResize.js"  />
+		<h:outputScript name="fonts/ubuntu_light.typeface.js"/>
+		
+	</h:head> 
+	<h:body> 
+		<ui:insert name="content">
+			 <div id="ThreeJS" style="position: absolute; left:0px; top:0px" ></div>
+			 <div id="info"> #{linesPlotsBean.info}</div>
+		    <script>
+		  //<![CDATA[
+		    var container, scene, camera, renderer, controls, stats;
+		    var keyboard = new THREEx.KeyboardState();
+		    var clock = new THREE.Clock();
+		    // custom global variables
+		    var MovingCube;
+		    init();
+		    animate();
+		
+		   function init(){
+			   	MovingCube = new THREE.Object3D();
+		        sceneCameraRenderer();
+		        eventsControlsStats();
+		        lightFloorSkybox();
+
+				var vaporAreaTemperatureLines=#{linesPlotsBean.vaporAreaTemperatureLines};
+		        var liquidAreaLines=#{linesPlotsBean.liquidAreaTemperatureLines};
+			    var liquidLinejson= #{linesPlotsBean.liquidLineJson};
+			    var vaporLinejson = #{linesPlotsBean.vaporLineJson};
+
+			    
+
+			    var material = new THREE.LineBasicMaterial({
+	                color: 0x0000ff
+	            });
+			    var redmaterial = new THREE.LineBasicMaterial({
+	                color: 0xff0000
+	            });
+	           var jsonline= enthalpyLine(liquidLinejson);
+	           var vaporJsonLine= enthalpyLine(vaporLinejson);
+
+	           var jsonsLines =[jsonline,vaporJsonLine]; 
+				var liquidLines=[jsonline];
+				liquidAreaLines.forEach(function(entry){
+						var line = enthalpyLine(entry);
+						//console.log(line[0].x);
+						jsonsLines.push(line);
+						liquidLines.push(line);
+						//jsonsLines.push(enthalpyLine);
+						
+					});
+
+				var vaporLines=[vaporJsonLine];
+				vaporAreaTemperatureLines.forEach(function(entry){
+						var line = enthalpyLine(entry);
+						jsonsLines.push(line);
+						vaporLines.push(line);
+					});
+
+				
+	           normalizeVars(jsonsLines);
+
+	           liquidLines.forEach(function(entry){
+					createAndAddLineGeometry(entry ,material);
+		          });
+	           vaporLines.forEach(function(entry){
+	        	   createAndAddLineGeometry(entry ,redmaterial);
+		           });
+
+				
+	         // createAndAddLineGeometry(jsonline,material);
+	          //createAndAddLineGeometry(vaporJsonLine,redmaterial);
+		         			  
+		    }
+
+
+
+		    function enthalpyLine(jsonArrayPointInfo){
+			    var jsonline=[];
+	           for (var i = 0; i< jsonArrayPointInfo.length; i++) {
+		              var position ={
+		                        z :jsonArrayPointInfo[i].temperature,
+		                        x: jsonArrayPointInfo[i].pressure,
+		                        y : jsonArrayPointInfo[i].enthalpy
+		                      };
+
+		              jsonline[i] = position;
+		           };
+		           return jsonline;
+		    }
+			/* function forLines(){
+				 var material = new THREE.LineBasicMaterial({
+				        color: 0x0000ff
+				    });
+				 var material2 = new THREE.LineBasicMaterial({
+				        color: 0xff0000
+				    });
+				    
+			    var jsonline1 = #{plotBean.lineJson};
+			    var jsonline2 = #{plotBean.secondLineJson};
+
+			    normalizeVars([jsonline1,jsonline2]);
+			    createAndAddLineGeometry(jsonline1,material);
+			    createAndAddLineGeometry(jsonline2,material2);
+			    
+			} */
+
+			function createAndAddLineGeometry(jsonline1,material){
+				var geometry = new THREE.Geometry();
+	            for(var i = 0; i<jsonline1.length ; i++){
+	                var x = jsonline1[i].x;
+	                var y = jsonline1[i].y;
+	                var z = jsonline1[i].z;
+	                geometry.vertices.push(new THREE.Vector3(x,y,z));			         
+	            }
+	            var line = new THREE.Line(geometry, material);
+	            scene.add(line);
+			}
+		    
+
+		    function normalizeAndAddGeometries(jsons,materials){
+		    	normalizeVars(jsons);
+	        	createAndAddGeometries(jsons,materials);
+		    }
+
+			function createAndAddGeometries(jsons,materials){
+				jsons.forEach(function(json,index){
+					createAndAddGeometry(json,materials[index]);
+				});
+			}
+		    
+		    function createAndAddGeometry(json,material){
+		    	var geometry = new THREE.Geometry();
+	            for(var i = 0; i<json.length ; i++){
+	                var x = json[i].x;
+	                var y = json[i].y;
+	                var z = json[i].z;
+	                geometry.vertices.push(new THREE.Vector3(x,y,z));			         
+	            }
+	            var n = Math.sqrt( json.length);
+	            for(var i = 0; i < n-1;i++){
+	                for(var j = 0; j <n-1;j++){
+	                    var index = n*i +j;
+	                    geometry.faces.push(new THREE.Face3(index,index+1,n+index));
+	                    geometry.faces.push(new THREE.Face3(index+1,index+n+1,index+n));
+	                }
+	            }	
+	            geometry.mergeVertices()
+		        geometry.computeFaceNormals();
+	            geometry.computeVertexNormals();	            
+		        var mesh = new THREE.Mesh(geometry, material);
+
+		        MovingCube.add(mesh);
+		        scene.add(mesh);		
+	            
+		    }
+	
+	
+	
+			function sceneCameraRenderer(){
+			     // SCENE
+			    scene = new THREE.Scene();
+			    // CAMERA
+			    var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+			    var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+			    camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+			    
+			    camera.position.set(3000,0,1000);
+			    camera.up = new THREE.Vector3( 0, 0, 1 );
+			    camera.lookAt(scene.position);  
+	
+			    scene.add(camera);
+			    // RENDERER
+			    if ( Detector.webgl )
+			        renderer = new THREE.WebGLRenderer( {antialias:true} );
+			    else
+			        renderer = new THREE.CanvasRenderer(); 
+			    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+			    container = document.getElementById( 'ThreeJS' );
+			    container.appendChild( renderer.domElement );
+			}
+			function eventsControlsStats(){
+			    // EVENTS
+			    THREEx.WindowResize(renderer, camera);
+			    THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+			    // CONTROLS
+			    controls = new THREE.TrackballControls(camera,renderer.domElement);
+			    //controls = new THREE.OrbitControls( camera, renderer.domElement );
+			    // STATS
+			    stats = new Stats();
+			    stats.domElement.style.position = 'absolute';
+			    stats.domElement.style.bottom = '0px';
+			    stats.domElement.style.zIndex = 100;
+			    container.appendChild( stats.domElement );
+			}
+			function animate(){
+			    requestAnimationFrame( animate );
+			    render();       
+			    update();
+			}
+	
+			function update()
+			{
+			    var delta = clock.getDelta(); // seconds.
+			    var moveDistance = 200 * delta; // 200 pixels per second
+			    var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
+			    
+			    // local coordinates
+	
+			    // local transformations
+	
+			    // move forwards/backwards/left/right
+			    if ( keyboard.pressed("W") )
+			        MovingCube.translateZ( -moveDistance );
+			    if ( keyboard.pressed("S") )
+			        MovingCube.translateZ(  moveDistance );
+			    if ( keyboard.pressed("Q") )
+			        MovingCube.translateX( -moveDistance );
+			    if ( keyboard.pressed("E") )
+			        MovingCube.translateX(  moveDistance ); 
+	
+			    // rotate left/right/up/down
+			    var rotation_matrix = new THREE.Matrix4().identity();
+			    if ( keyboard.pressed("A") )
+			        MovingCube.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+			    if ( keyboard.pressed("D") )
+			        MovingCube.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+			    if ( keyboard.pressed("R") )
+			        MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
+			    if ( keyboard.pressed("F") )
+			        MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
+			    
+			    if ( keyboard.pressed("Z") )
+			    {
+			        MovingCube.position.set(0,25.1,0);
+			        MovingCube.rotation.set(0,0,0);
+			    }
+			        
+			    // global coordinates
+			    if ( keyboard.pressed("left") )
+			        MovingCube.position.x -= moveDistance;
+			    if ( keyboard.pressed("right") )
+			        MovingCube.position.x += moveDistance;
+			    if ( keyboard.pressed("up") )
+			        MovingCube.position.z -= moveDistance;
+			    if ( keyboard.pressed("down") )
+			        MovingCube.position.z += moveDistance;
+			        
+			    controls.update();
+			    stats.update();
+			}
+	
+			function render() 
+			{
+			    renderer.render( scene, camera );
+			}
+	
+	
+			function lightFloorSkybox(){
+				//scene.add( new THREE.AmbientLight( 0xffffff ) );
+			    // LIGHT
+			    var light = new THREE.PointLight(0xffffff);
+			    light.position.set(0,0,2500);
+			    light.castShadow =true;
+	
+			    var light2 = new THREE.PointLight(0xffffff);
+			    light2.position.set(2500,2500,2500);
+			    light2.castShadow =true;
+			    
+
+			    var light3 = new THREE.PointLight(0xffffff);
+			    light3.position.set(-300,-300,100);
+			    light3.castShadow =true;
+			    scene.add(light3);
+			    
+		
+
+			    /* var sprite = new THREE.Sprite( new THREE.SpriteCanvasMaterial( { color: 0xff0040 } ) );
+			    light.add( sprite ); */
+				scene.add(light2);
+			    scene.add(light);
+			    
+			    // FLOOR
+			    
+			    var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x555555, wireframe: true, side:THREE.DoubleSide } ); 
+			    var floorGeometry = new THREE.PlaneGeometry(1500, 1500, 10, 10);
+			    var floor =new THREE.Mesh(floorGeometry, wireframeMaterial);
+			    //floor.position.z = 1000;
+			    floor.position.x=500;
+			    floor.position.y=500;
+			    //floor.rotation.x = Math.PI / 2;
+			    scene.add(floor);
+			    // SKYBOX/FOG
+			    var skyBoxGeometry = new THREE.BoxGeometry( 10000, 10000, 10000 );
+			    var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0xdddddd, side: THREE.BackSide } );
+			    var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+			     scene.add(skyBox);
+			    //scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+			}
+			function slope(min,max){
+            	return 1000/(max-min);
+            }
+
+		    function normalizeVars(jsons){
+		    	var minX = jsons[0][0].x;
+		    	var maxX = jsons[0][0].x;
+
+		    	var minY = jsons[0][0].y;
+		    	var maxY = jsons[0][0].y;
+
+				var minZ = jsons[0][0].z;
+		    	var maxZ = jsons[0][0].z;
+
+		    	jsons.forEach(function(json,index){
+		    		for(var i =0; i< json.length;i++){
+		    			var position = json[i];
+		    			if(position.x<minX){
+		    				minX=position.x;
+		    			}if(position.x>maxX){
+		    				maxX=position.x;
+		    			}if(position.y<minY){
+		    				minY=position.y;
+		    			}if(position.y>maxY){
+		    				maxY=position.y;
+		    			}if(position.z<minZ){
+		    				minZ=position.z;
+		    			}if(position.z>maxZ){
+		    				maxZ=position.z;
+		    			}
+		    		}
+		    	});
+		    	var m = slope(minX,maxX);
+		    	var ym= slope(minY,maxY);
+		    	var zm=slope(minZ,maxZ);
+		    	jsons.forEach(function(json,index){
+		    		for(var i =0;i<json.length;i++){
+		    			var position = json[i];		    			
+		    			var newX = (position.x-minX)*m;
+		    			var newY = (position.y-minY)*ym;
+		    			var newZ =(position.z-minZ)*zm;
+		    			position.x=newX;
+		    			position.y=newY;
+		    			position.z=newZ;
+		    		}
+		    	});
+		    }
+	
+			var debugaxis = function(axisLength){
+			    //Shorten the vertex function
+			    function v(x,y,z){ 
+			            return new  THREE.Vector3(x,y,z); 
+			    }
+			    
+			    //Create axis (point1, point2, colour)
+			    function createAxis(p1, p2, color){
+			            var line, lineGeometry = new THREE.Geometry(),
+			            lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 2});
+			            lineGeometry.vertices.push(p1, p2);
+			            line = new THREE.Line(lineGeometry, lineMat);
+			            scene.add(line);
+			    }
+
+
+
+			    addText(
+				    	{x:axisLength/4,y:-100,z:0},
+				    	{x:Math.PI / 2,y:0,z:0},
+				    	'#{plotBean.xAxisLabel}');
+
+			    addText(
+			    	{y:400+axisLength/4,x:-100,z:0},
+			    	{x:Math.PI / 2,y:-Math.PI/2,z:0},
+			    	'#{plotBean.yAxisLabel}');
+			    addText(
+			    	{x:-50,y:-50,z:axisLength/4},
+			    	{x:Math.PI / 2,y:Math.PI/4,z:Math.PI/2},
+			    	'#{plotBean.zAxisLabel}');
+			    
+			    createAxis(v(0, 0, 0), v(axisLength, 0, 0), 0xFF0000);
+			    createAxis(v(0, 0, 0), v(0, axisLength, 0), 0x00FF00);
+			    createAxis(v(0, 0, 0), v(0, 0, axisLength), 0x0000FF);
+			};
+
+			function addText(position,rotation,theText){
+				
+				var text3d = new THREE.TextGeometry( theText, {
+					size: 90,
+					height: 20,
+					curveSegments: 3,
+					font: "ubuntu"
+
+				});
+
+				text3d.computeBoundingBox();
+				var centerOffset = -0.5 * ( text3d.boundingBox.max.x - text3d.boundingBox.min.x );
+
+				//var textMaterial = new THREE.MeshBasicMaterial( { color: 0x8B4500, overdraw: 0.5 } );
+				var textMaterial =new THREE.MeshPhongMaterial( { 
+		            color: 0x8B4500, 
+		            ambient: 0x2200ee, // should generally match color
+		            specular: 0x050505,
+		            side: THREE.DoubleSide,
+		            shininess: 100
+		        } ) ;
+
+				
+				text = new THREE.Mesh( text3d, textMaterial );
+
+				//text.position.x = centerOffset;
+				text.position.x = position.x;
+				text.position.y = position.y ;
+				text.position.z = position.z;
+
+				text.rotation.x = rotation.x;
+				text.rotation.y = rotation.y;
+				text.rotation.z = rotation.z;
+				scene.add( text );
+			}
+	
+			//To use enter the axis length
+			debugaxis(1000)
+
+
+			//]]>
+		    </script>
+						 
+		</ui:insert>
+	</h:body> 
+</html>

@@ -9,8 +9,10 @@
 		<ui:define name="content">
 		<h2><h:outputText value="Temperature-Entalpía-Presión"/></h2>
 			<h:form target="plotFrame">
-				<emcomp:homogeneous/>
-				<h:commandButton action="#{enthalpyBean.enthalpyPlot()}" value="Graficar" />
+				<h:selectOneMenu value="#{phaseEnvelopeBean.selectedEnvelope}" converter="#{envelopeConverter}">
+					<f:selectItems value="#{phaseEnvelopeBean.envelopes}"/>
+				</h:selectOneMenu>
+				<h:commandButton action="#{phaseEnvelopeBean.drawEnthalpy()}" value="Graficar" />
 			</h:form>
 		</ui:define>
 	</ui:composition>

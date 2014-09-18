@@ -19,10 +19,15 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import json.Position;
 import models.Envelope;
 import models.MixtureEnvelope;
 import models.PointInfo;
 import models.SubstanceEnvelope;
+
+import org.junit.Test;
+
+import plot.LinesPlotsBean;
 import termo.component.Compound;
 import termo.matter.Heterogeneous;
 import termo.matter.HeterogeneousMixture;
@@ -31,6 +36,8 @@ import termo.matter.Homogeneous;
 import termo.matter.Mixture;
 import termo.matter.Substance;
 import termo.matter.builder.HeterogeneousMixtureBuilder;
+
+import com.google.gson.Gson;
 
 @Named("phaseEnvelopeBean")
 @SessionScoped
@@ -88,8 +95,58 @@ public class PhaseEnvelopeBean implements Serializable {
 	}
 	
 	@Inject HomogeneousBean homogeneousBean;
+	@Inject LinesPlotsBean linesPlotsBean;
 	
 	public void draw(){
+		
+	}
+	
+	public String drawEnthalpy(){
+		linesPlotsBean.setInfo("Temperatura-Entalpía-Presión");
+		if(selectedEnvelope.getLiquidLine().size() ==0){
+			linesPlotsBean.setInfo("Primero debe generar el envolvente de fases "
+					+ "en la sección 'Envolvente de fases'");			
+		}
+		PointInfo[] points = new PointInfo[selectedEnvelope.getLiquidLine().size()];
+		
+		PointInfo[] vaporPoints = new PointInfo[selectedEnvelope.getVaporLine().size()];
+		
+		
+		String liquidjson = new Gson().toJson( selectedEnvelope.getLiquidLine().toArray(points)).toString();
+		String vaporjson = new Gson().toJson(selectedEnvelope.getVaporLine().toArray(vaporPoints));
+		
+		linesPlotsBean.setLiquidAreaTemperatureLines(liquidAreaTemperatureLinesJson());
+		linesPlotsBean.setVaporAreaTemperatureLines(vaporAreaTemperatureLinesJson());
+		linesPlotsBean.setLiquidLineJson(liquidjson);
+		linesPlotsBean.setVaporLineJson(vaporjson);
+		
+		return "webGLLinePlot";
+	}
+	
+	public String liquidAreaTemperatureLinesJson(){
+		PointInfo[][] liquidAreaTemperatureLines = 
+				new PointInfo[selectedEnvelope.getLiquidAreaTemperatureLines().size()][];
+		return new Gson().toJson(selectedEnvelope.getLiquidAreaTemperatureLines().toArray(liquidAreaTemperatureLines));
+		
+	}
+	
+	public String vaporAreaTemperatureLinesJson(){
+		PointInfo[][] vaporAreaTemperatureLines = 
+				new PointInfo[selectedEnvelope.getVaporAreaTemperatureLines().size()][];
+		return new Gson().toJson(selectedEnvelope.getVaporAreaTemperatureLines().toArray(vaporAreaTemperatureLines));
+		
+	}
+	@Test
+	public void test(){
+		String position = new Gson().toJson(new Position());
+		String pointInfo = new Gson().toJson(new PointInfo());
+		PointInfo[] list = new PointInfo[1];
+		list[0]=new PointInfo();
+		String listPointInfo = new Gson().toJson(list);
+		
+		System.out.println(position);
+		System.out.println(pointInfo);
+		System.out.println(listPointInfo);
 		
 	}
 	
