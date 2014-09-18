@@ -20,10 +20,25 @@
 		<h:outputScript name="js/THREEx.FullScreen.js"  />
 		<h:outputScript name="js/THREEx.WindowResize.js"  />
 		<h:outputScript name="fonts/ubuntu_light.typeface.js"/>
+		<h:outputStylesheet name="css/controls.css"/>
 		
 	</h:head> 
 	<h:body> 
 		<ui:insert name="content">
+			<div id="labels" class="menu">
+				Propiedad<br/><br/>
+				<div class="lbl btn" id="btn_add">Entalpía</div>
+				<div class="lbl btn" id="btn_sub">Entropía</div>
+				<div class="lbl btn" id="btn_rsub">E. Gibbs</div>
+	<!-- 
+				Premultiply alpha<br/><br/>
+				<div class="lbl btn" id="btn_pre">On</div>
+				<div class="lbl btn" id="btn_nopre">Off</div>
+	
+				Labels<br/><br/>
+				<div class="lbl" id="lbl_src">Source</div>
+				<div class="lbl" id="lbl_dst">Destination</div> -->
+			</div>
 			 <div id="ThreeJS" style="position: absolute; left:0px; top:0px" ></div>
 			 <div id="info"> #{linesPlotsBean.info}</div>
 		    <script>
@@ -33,6 +48,15 @@
 		    var clock = new THREE.Clock();
 		    // custom global variables
 		    var MovingCube;
+		    var vaporAreaTemperatureLines=#{linesPlotsBean.vaporAreaTemperatureLines};
+	        var liquidAreaLines=#{linesPlotsBean.liquidAreaTemperatureLines};
+		    var liquidLinejson= #{linesPlotsBean.liquidLineJson};
+		    var vaporLinejson = #{linesPlotsBean.vaporLineJson};
+
+		    var plotType='enthalpy';
+
+		    var linesObject=[];
+		    
 		    init();
 		    animate();
 		
@@ -41,15 +65,19 @@
 		        sceneCameraRenderer();
 		        eventsControlsStats();
 		        lightFloorSkybox();
-
-				var vaporAreaTemperatureLines=#{linesPlotsBean.vaporAreaTemperatureLines};
-		        var liquidAreaLines=#{linesPlotsBean.liquidAreaTemperatureLines};
-			    var liquidLinejson= #{linesPlotsBean.liquidLineJson};
-			    var vaporLinejson = #{linesPlotsBean.vaporLineJson};
-
+				draw();
 			    
+			  	addEqHandler( "btn_add", 'enthalpy' );
+				addEqHandler( "btn_sub", 'entropy' );
+				addEqHandler( "btn_rsub", 'gibbs' );
+					  
+		    }
 
-			    var material = new THREE.LineBasicMaterial({
+		    function draw(){
+		    	linesObject.forEach(function(entry){
+					scene.remove(entry);
+					});
+		    	var material = new THREE.LineBasicMaterial({
 	                color: 0x0000ff
 	            });
 			    var redmaterial = new THREE.LineBasicMaterial({
@@ -62,10 +90,8 @@
 				var liquidLines=[jsonline];
 				liquidAreaLines.forEach(function(entry){
 						var line = enthalpyLine(entry);
-						//console.log(line[0].x);
 						jsonsLines.push(line);
 						liquidLines.push(line);
-						//jsonsLines.push(enthalpyLine);
 						
 					});
 
@@ -84,23 +110,48 @@
 		          });
 	           vaporLines.forEach(function(entry){
 	        	   createAndAddLineGeometry(entry ,redmaterial);
-		           });
-
-				
-	         // createAndAddLineGeometry(jsonline,material);
-	          //createAndAddLineGeometry(vaporJsonLine,redmaterial);
-		         			  
+		           });	         	
+	          
 		    }
+
+		   function addEqHandler( id, eq ) {
+
+				var el = document.getElementById( id );
+
+				el.addEventListener( 'click', function () {
+
+					plotType = eq;
+					draw();
+					
+					document.getElementById( "btn_add" ).style.backgroundColor = "transparent";
+					document.getElementById( "btn_sub" ).style.backgroundColor = "transparent";
+					document.getElementById( "btn_rsub" ).style.backgroundColor = "transparent";
+
+					el.style.backgroundColor = "darkorange";
+
+				});
+
+			}
 
 
 
 		    function enthalpyLine(jsonArrayPointInfo){
 			    var jsonline=[];
 	           for (var i = 0; i< jsonArrayPointInfo.length; i++) {
+	        	   var yp =0;
+					if(plotType === 'entropy'){
+						yp=jsonArrayPointInfo[i].entropy;
+					}else if(plotType === 'gibbs'){
+						yp=jsonArrayPointInfo[i].gibbs;
+					}else{
+						yp = jsonArrayPointInfo[i].enthalpy;
+					}
+						
+		            
 		              var position ={
 		                        z :jsonArrayPointInfo[i].temperature,
 		                        x: jsonArrayPointInfo[i].pressure,
-		                        y : jsonArrayPointInfo[i].enthalpy
+		                        y : yp
 		                      };
 
 		              jsonline[i] = position;
@@ -133,6 +184,8 @@
 	                geometry.vertices.push(new THREE.Vector3(x,y,z));			         
 	            }
 	            var line = new THREE.Line(geometry, material);
+	            linesObject.push(line);
+	            console.log('lineadded');
 	            scene.add(line);
 			}
 		    
