@@ -17,9 +17,27 @@ public class LinesPlotsBean implements Serializable {
 	String liquidAreaTemperatureLines;
 	String vaporAreaTemperatureLines;
 	
+	String vaporAreaPressureLines;
+	String liquidAreaPressureLines;
 	
 	
 	
+
+	public String getVaporAreaPressureLines() {
+		return vaporAreaPressureLines;
+	}
+
+	public void setVaporAreaPressureLines(String vaporAreaPressureLines) {
+		this.vaporAreaPressureLines = vaporAreaPressureLines;
+	}
+
+	public String getLiquidAreaPressureLines() {
+		return liquidAreaPressureLines;
+	}
+
+	public void setLiquidAreaPressureLines(String liquidAreaPressureLines) {
+		this.liquidAreaPressureLines = liquidAreaPressureLines;
+	}
 
 	public String getVaporAreaTemperatureLines() {
 		return vaporAreaTemperatureLines;

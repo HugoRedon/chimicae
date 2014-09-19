@@ -30,14 +30,14 @@
 				<div class="lbl btn" id="btn_add">Entalpía</div>
 				<div class="lbl btn" id="btn_sub">Entropía</div>
 				<div class="lbl btn" id="btn_rsub">E. Gibbs</div>
+
+				Líneas<br/><br/>
+				<div class="lbl btn" id="btn_pressure">Presión</div>
+				<div class="lbl btn" id="btn_tempLines">Temperatura</div>
 	<!-- 
-				Premultiply alpha<br/><br/>
-				<div class="lbl btn" id="btn_pre">On</div>
-				<div class="lbl btn" id="btn_nopre">Off</div>
-	
 				Labels<br/><br/>
 				<div class="lbl" id="lbl_src">Source</div>
-				<div class="lbl" id="lbl_dst">Destination</div> -->
+				<div class="lbl" id="lbl_dst">Destination</div>  -->
 			</div>
 			 <div id="ThreeJS" style="position: absolute; left:0px; top:0px" ></div>
 			 <div id="info"> #{linesPlotsBean.info}</div>
@@ -52,8 +52,13 @@
 	        var liquidAreaLines=#{linesPlotsBean.liquidAreaTemperatureLines};
 		    var liquidLinejson= #{linesPlotsBean.liquidLineJson};
 		    var vaporLinejson = #{linesPlotsBean.vaporLineJson};
+		    var vaporAreaPressureLines =#{linesPlotsBean.vaporAreaPressureLines};
+		    var liquidAreaPressureLines = #{linesPlotsBean.liquidAreaPressureLines};
 
 		    var plotType='enthalpy';
+
+		    var temperatureLines={on:true};
+		    var pressureLines ={on: true};
 
 		    var linesObject=[];
 		    
@@ -70,6 +75,9 @@
 			  	addEqHandler( "btn_add", 'enthalpy' );
 				addEqHandler( "btn_sub", 'entropy' );
 				addEqHandler( "btn_rsub", 'gibbs' );
+
+				addLinesHandler("btn_tempLines",temperatureLines);
+				addLinesHandler("btn_pressure",pressureLines);
 					  
 		    }
 
@@ -88,20 +96,45 @@
 
 	           var jsonsLines =[jsonline,vaporJsonLine]; 
 				var liquidLines=[jsonline];
-				liquidAreaLines.forEach(function(entry){
-						var line = enthalpyLine(entry);
-						jsonsLines.push(line);
-						liquidLines.push(line);
-						
-					});
-
 				var vaporLines=[vaporJsonLine];
-				vaporAreaTemperatureLines.forEach(function(entry){
-						var line = enthalpyLine(entry);
-						jsonsLines.push(line);
-						vaporLines.push(line);
-					});
 
+				
+					liquidAreaLines.forEach(function(entry){
+							var line = enthalpyLine(entry);
+							jsonsLines.push(line);
+							if(temperatureLines.on){
+								liquidLines.push(line);
+							}
+							
+						});
+	
+					
+					vaporAreaTemperatureLines.forEach(function(entry){
+							var line = enthalpyLine(entry);
+							jsonsLines.push(line);
+							if(temperatureLines.on){
+								vaporLines.push(line);
+							}
+						});
+				
+
+				
+					vaporAreaPressureLines.forEach(function(entry){
+							var line=enthalpyLine(entry);
+							jsonsLines.push(line);
+							if(pressureLines.on){
+								liquidLines.push(line);
+							}
+						});
+	
+					liquidAreaPressureLines.forEach(function(entry){
+							var line =enthalpyLine(entry);
+							jsonsLines.push(line);
+							if(pressureLines.on){
+								vaporLines.push(line);
+							}
+						});
+				
 				
 	           normalizeVars(jsonsLines);
 
@@ -133,6 +166,28 @@
 
 			}
 
+
+		   function addLinesHandler( id, lines) {
+
+				var el = document.getElementById( id );
+
+				el.addEventListener( 'click', function () {
+
+					lines.on = !lines.on;
+
+					console.log(lines.on);
+					console.log(temperatureLines.on);
+					draw();
+					
+					if(lines.on){
+						el.style.backgroundColor = "darkorange";
+					}else{
+						el.style.backgroundColor = "transparent";
+					}
+
+				});
+
+			}
 
 
 		    function enthalpyLine(jsonArrayPointInfo){

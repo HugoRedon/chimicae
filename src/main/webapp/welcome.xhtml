@@ -30,10 +30,6 @@
 			
 			<ul>
 				<li>
-					<h:commandLink action="phaseEnvelope" 
-					value="Envolvente de fases"  target="main"/>
-				</li>
-				<li>
 					<h:commandLink action="#{plotBean.setControls('pressure')}" value="Presión-Volumen-Temperatura" target="main" />
 				 </li>
 				<li>
@@ -42,11 +38,17 @@
 				<li>
 					<h:commandLink  action="#{plotBean.setControls('fugacity')}" value="Fugacidad-Presión-Temperatura" target="main" />
 				 </li>
+				 
+				 <li>
+					<h:commandLink action="phaseEnvelope" 
+					value="Envolvente de fases"  target="main"/>
+				</li>
+				 
 				<li>
-					<h:commandLink action="#{plotBean.setControls('enthalpy')}" value="Temperatura-Entalpía-Presión" target="main" />
+					<h:commandLink action="#{plotBean.setControls('enthalpy')}" value="Temperatura-?-Presión" target="main" />
 					
 				 </li>
-				<li>
+				<!-- <li>
 					<h:commandLink  action="#{plotBean.setControls('entropy')}" value="Temperatura-Entropía-Presión" target="main" />					
 				 </li>
 				<li>
@@ -55,7 +57,7 @@
 				<li>
 					<h:commandLink  action="#{plotBean.setControls('volume')}" value="Temperatura-Volumen-Presión" target="main" />
 				 </li>
-				<!-- <li><h3>
+				<li><h3>
 					<h:commandLink action="#{plotBean.setControls('saturationTemperature')}" value="Temperatura de saturación" target="main" />					
 				</h3> </li>
 				<li><h3>

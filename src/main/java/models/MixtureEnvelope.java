@@ -135,17 +135,9 @@ class MixtureEnvelope extends Envelope{
 			double t = pi.getTemperature();
 			double p = pi.getPressure();
 			heterogeneousMixture.setPressure(p);
-			double tempstep = (maxTemperature*1.3 -t)/n.doubleValue();
-			PointInfo[] vaporLine =new PointInfo[n];
 			
-//			for(Integer i =0;i<n;i++){
-//				double temp = t + i.doubleValue()*tempstep;
-//				heterogeneousSubstance.setTemperature(temp);
-//				PointInfo vapP = fillPointInfo(heterogeneousSubstance.getVapor());
-//				vaporLine[i]=vapP;
-//			}
-//			vaporAreaTemperatureLines.add(vaporLine);
-			tempstep = (t-minTemperature)/n.doubleValue();
+		
+			double tempstep = (t-minTemperature)/n.doubleValue();
 			PointInfo[] liquidLine = new PointInfo[n];
 			for(Integer i=0;i<n;i++){
 				double temp = t -i.doubleValue()*tempstep;
@@ -155,6 +147,17 @@ class MixtureEnvelope extends Envelope{
 						
 			}
 			liquidAreaTemperatureLines.add(liquidLine);
+			
+			heterogeneousMixture.setTemperature(t);
+			double pressurestep = (maxPressure-p)/n.doubleValue();
+			PointInfo[] liquidPressureLine = new PointInfo[n];
+			for(Integer i = 0; i<n; i++){
+				double press = p +i.doubleValue()*pressurestep;
+				heterogeneousMixture.setPressure(press);
+				PointInfo liqP = fillPointInfo(heterogeneousMixture.getLiquid());
+				liquidPressureLine[i]=liqP;
+			}
+			liquidAreaPressureLines.add(liquidPressureLine);
 		}
 		
 		
@@ -241,7 +244,7 @@ class MixtureEnvelope extends Envelope{
 			double t = pi.getTemperature();
 			double p = pi.getPressure();
 			heterogeneousMixture.setPressure(p);
-			double tempstep = (maxTemperature*1.3 -t)/n.doubleValue();
+			double tempstep = (maxTemperature -t)/n.doubleValue();
 			PointInfo[] vaporLine =new PointInfo[n];
 			
 			for(Integer i =0;i<n;i++){
@@ -251,16 +254,18 @@ class MixtureEnvelope extends Envelope{
 				vaporLine[i]=vapP;
 			}
 			vaporAreaTemperatureLines.add(vaporLine);
-//			tempstep = (t-minTemperature)/n.doubleValue();
-//			PointInfo[] liquidLine = new PointInfo[n];
-//			for(Integer i=0;i<n;i++){
-//				double temp = t -i.doubleValue()*tempstep;
-//				heterogeneousMixture.setTemperature(temp);
-//				PointInfo liqP = fillPointInfo(heterogeneousMixture.getLiquid());
-//				liquidLine[i] = liqP;
-//						
-//			}
-//			liquidAreaTemperatureLines.add(liquidLine);
+
+			
+			heterogeneousMixture.setTemperature(t);
+			double pressurestep = (p-minPressure)/n.doubleValue();
+			PointInfo[] vaporPressureLine = new PointInfo[n];
+			for(Integer i = 0; i <n;i++){
+				double press = p -i.doubleValue()*pressurestep;
+				heterogeneousMixture.setPressure(press);
+				PointInfo vapP = fillPointInfo(heterogeneousMixture.getVapor());
+				vaporPressureLine[i]=vapP;
+			}
+			vaporAreaPressureLines.add(vaporPressureLine);
 		}
 		
 		

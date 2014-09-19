@@ -117,6 +117,11 @@ public class PhaseEnvelopeBean implements Serializable {
 		
 		linesPlotsBean.setLiquidAreaTemperatureLines(liquidAreaTemperatureLinesJson());
 		linesPlotsBean.setVaporAreaTemperatureLines(vaporAreaTemperatureLinesJson());
+		
+		linesPlotsBean.setVaporAreaPressureLines(vaporAreaPressureLinesJson());
+		linesPlotsBean.setLiquidAreaPressureLines(liquidAreaPressureLinesJson());
+		
+		
 		linesPlotsBean.setLiquidLineJson(liquidjson);
 		linesPlotsBean.setVaporLineJson(vaporjson);
 		
@@ -136,6 +141,20 @@ public class PhaseEnvelopeBean implements Serializable {
 		return new Gson().toJson(selectedEnvelope.getVaporAreaTemperatureLines().toArray(vaporAreaTemperatureLines));
 		
 	}
+	public String vaporAreaPressureLinesJson(){
+		PointInfo[][] vaporAreaPressureLines = 
+				new PointInfo[selectedEnvelope.getVaporAreaPressureLines().size()][];
+		return new Gson().toJson(selectedEnvelope.getVaporAreaPressureLines().toArray(vaporAreaPressureLines));
+		
+	}
+	public String liquidAreaPressureLinesJson(){
+		PointInfo[][] liquidAreaPressureLines = 
+				new PointInfo[selectedEnvelope.getLiquidAreaPressureLines().size()][];
+		return new Gson().toJson(selectedEnvelope.getLiquidAreaPressureLines().toArray(liquidAreaPressureLines));
+		
+	}
+	
+	
 	@Test
 	public void test(){
 		String position = new Gson().toJson(new Position());
