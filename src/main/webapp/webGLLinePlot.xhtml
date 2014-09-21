@@ -40,7 +40,7 @@
 				<div class="lbl" id="lbl_dst">Destination</div>  -->
 			</div>
 			 <div id="ThreeJS" style="position: absolute; left:0px; top:0px" ></div>
-			 <div id="info"> #{linesPlotsBean.info}</div>
+			 <div id="info"> Gráfico</div>
 		    <script>
 		  //<![CDATA[
 		    var container, scene, camera, renderer, controls, stats;
@@ -56,11 +56,17 @@
 		    var liquidAreaPressureLines = #{linesPlotsBean.liquidAreaPressureLines};
 
 		    var plotType='enthalpy';
+		    var xAxisLabel='Presión [Pa]';
+		    var yAxisLabel='Entalpía [J/kmol]';
+		    var zAxisLabel ='Temperatura [K]';
 
 		    var temperatureLines={on:true};
 		    var pressureLines ={on: true};
 
 		    var linesObject=[];
+			var textObjects=[];
+
+			var axisLength;
 		    
 		    init();
 		    animate();
@@ -70,21 +76,28 @@
 		        sceneCameraRenderer();
 		        eventsControlsStats();
 		        lightFloorSkybox();
+		        debugaxis(1200);
+		        
 				draw();
 			    
-			  	addEqHandler( "btn_add", 'enthalpy' );
-				addEqHandler( "btn_sub", 'entropy' );
-				addEqHandler( "btn_rsub", 'gibbs' );
+			  	addEqHandler( "btn_add", 'enthalpy','Entalpía [J/kmol]' );
+				addEqHandler( "btn_sub", 'entropy','Entropía [j/(kmol K)]' );
+				addEqHandler( "btn_rsub", 'gibbs' ,'E. Gibbs [j/kmol]');
 
 				addLinesHandler("btn_tempLines",temperatureLines);
 				addLinesHandler("btn_pressure",pressureLines);
-					  
+				  
 		    }
 
 		    function draw(){
 		    	linesObject.forEach(function(entry){
 					scene.remove(entry);
 					});
+
+				textObjects.forEach(function(entry){
+					scene.remove(entry);
+				});
+				
 		    	var material = new THREE.LineBasicMaterial({
 	                color: 0x0000ff
 	            });
@@ -144,16 +157,26 @@
 	           vaporLines.forEach(function(entry){
 	        	   createAndAddLineGeometry(entry ,redmaterial);
 		           });	         	
-	          
+	          drawAxisLabels();
 		    }
 
-		   function addEqHandler( id, eq ) {
+		   function addEqHandler( id, eq ,yLabel) {
 
 				var el = document.getElementById( id );
 
 				el.addEventListener( 'click', function () {
 
 					plotType = eq;
+					yAxisLabel = yLabel;	
+
+					var l = document.getElementById("info");
+					if(plotType === 'entropy'){
+						l.innerHTML = "Temperatura-Entropía-Presión";
+					}else if(plotType === 'gibbs'){
+						l.innerHTML = "Temperatura-Gibbs-Presión";
+					}else{
+						l.innerHTML = "Temperatura-Entalpía-Presión";
+					}				
 					draw();
 					
 					document.getElementById( "btn_add" ).style.backgroundColor = "transparent";
@@ -194,6 +217,7 @@
 			    var jsonline=[];
 	           for (var i = 0; i< jsonArrayPointInfo.length; i++) {
 	        	   var yp =0;
+	        	   
 					if(plotType === 'entropy'){
 						yp=jsonArrayPointInfo[i].entropy;
 					}else if(plotType === 'gibbs'){
@@ -472,41 +496,42 @@
 		    	});
 		    }
 	
-			var debugaxis = function(axisLength){
-			    //Shorten the vertex function
-			    function v(x,y,z){ 
-			            return new  THREE.Vector3(x,y,z); 
-			    }
-			    
-			    //Create axis (point1, point2, colour)
-			    function createAxis(p1, p2, color){
-			            var line, lineGeometry = new THREE.Geometry(),
-			            lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 2});
-			            lineGeometry.vertices.push(p1, p2);
-			            line = new THREE.Line(lineGeometry, lineMat);
-			            scene.add(line);
-			    }
-
-
-
-			    addText(
-				    	{x:axisLength/4,y:-100,z:0},
-				    	{x:Math.PI / 2,y:0,z:0},
-				    	'#{plotBean.xAxisLabel}');
-
-			    addText(
-			    	{y:400+axisLength/4,x:-100,z:0},
-			    	{x:Math.PI / 2,y:-Math.PI/2,z:0},
-			    	'#{plotBean.yAxisLabel}');
-			    addText(
-			    	{x:-50,y:-50,z:axisLength/4},
-			    	{x:Math.PI / 2,y:Math.PI/4,z:Math.PI/2},
-			    	'#{plotBean.zAxisLabel}');
-			    
-			    createAxis(v(0, 0, 0), v(axisLength, 0, 0), 0xFF0000);
+			function debugaxis(aLen){
+				axisLength = aLen;
+				 createAxis(v(0, 0, 0), v(axisLength, 0, 0), 0xFF0000);
 			    createAxis(v(0, 0, 0), v(0, axisLength, 0), 0x00FF00);
 			    createAxis(v(0, 0, 0), v(0, 0, axisLength), 0x0000FF);
 			};
+			function v(x,y,z){ 
+	            return new  THREE.Vector3(x,y,z); 
+	    	}
+
+			function createAxis(p1, p2, color){
+				console.log("createAxis");
+	            var line, lineGeometry = new THREE.Geometry(),
+	            lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 2});
+	            lineGeometry.vertices.push(p1, p2);
+	            line = new THREE.Line(lineGeometry, lineMat);
+	            scene.add(line);
+	            console.log("line added");
+	   		 }
+
+			function drawAxisLabels(){
+				 addText(
+					    	{x:axisLength/4,y:-100,z:0},
+					    	{x:Math.PI / 2,y:0,z:0},
+					    	xAxisLabel);
+
+				    addText(
+				    	{y:400+axisLength/4,x:-100,z:0},
+				    	{x:Math.PI / 2,y:-Math.PI/2,z:0},
+				    	yAxisLabel);
+				    addText(
+				    	{x:-50,y:-50,z:axisLength/4},
+				    	{x:Math.PI / 2,y:Math.PI/4,z:Math.PI/2},
+				    	zAxisLabel);
+				    
+			}
 
 			function addText(position,rotation,theText){
 				
@@ -541,13 +566,15 @@
 				text.rotation.x = rotation.x;
 				text.rotation.y = rotation.y;
 				text.rotation.z = rotation.z;
+
+				textObjects.push(text);
 				scene.add( text );
 			}
 	
 			//To use enter the axis length
-			debugaxis(1000)
+			
 
-
+	
 			//]]>
 		    </script>
 						 
