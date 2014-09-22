@@ -7,8 +7,9 @@
 
 	<ui:composition template="template.xhtml">
 		<ui:define name="content">
-		<h2><h:outputText value="Temperature-Entalpía-Presión"/></h2>
+		<h2><h:outputText value="Temperatura-?-Presión"/></h2>
 			<h:form target="plotFrame">
+				<h:outputText value="Sistema: "/>
 				<h:selectOneMenu value="#{phaseEnvelopeBean.selectedEnvelope}" converter="#{envelopeConverter}">
 					<f:selectItems value="#{phaseEnvelopeBean.envelopes}"/>
 				</h:selectOneMenu>

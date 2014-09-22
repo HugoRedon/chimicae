@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:composition template="template.xhtml">
+		<ui:define name="content">
+			<h1>Instrucciones</h1>
+			
+			<ul>
+				<li><h3>Selección de compuestos</h3>
+					<ul>
+						<li>Escribir en inglés el nombre del compuesto deseado en el cuadro de texto.</li>
+						<li>Dar click en el botón "Buscar".</li>
+						<li>De la lista de coincidencias seleccionar dando click en el boton "Agregar" del compuesto deseado.</li>
+					</ul>
+				</li>
+				<li><h3>Creación de Substancias o Mezclas</h3>
+					<ul>
+						<li>
+							<h4>Substancias</h4>
+							<ul>
+								<li>Seleccionar la ecuación de estado cúbica y la expresión de 
+								\( \alpha \). <sup class='ast'>*</sup> </li>
+								<li>Seleccionar el compuesto para la substancia de la lista de compuestos seleccionados previamente.</li>
+								<li>Seleccionar la fase líquido o vapor que se utilizará para generar alunas de las gráficas en las siguientes secciones.</li>
+								<li>Cuando se esté satisfecho con las opciones anteriores, dar click en el botón "aceptar" para crear la substancias y agregarla a las  opciones de las gráficas.</li>
+								<li>Al dar click en el botón "Crear substancia" se presentará un resumen de la substancia creada.</li>
+							</ul>
+						</li>
+						<li><h4>Mezclas</h4>
+							<ul>
+								<li>Seleccionar la ecuación de estado.</li>
+								<li>Seleccionar la fase líquido o vapor que se utilizará para generar algunas de las gráficas en las siguientes secciones.</li>
+								<li>Seleccionar la regla de mezclado.</li>
+								<li>Agregar a la mezcla un compuesto a la vez haciendo click en el botón "Agregar compuesto".</li>
+								<li>Satisfacer las opciones para cada compuesto agregado: 
+									<ul>
+										<li>Expresión de \(\alpha\) <sup class='ast'>*</sup></li>
+										<li>Fracción Molar<sup class='ast'>**</sup></li>
+									</ul>
+								</li>
+								<li>Si se tiene información sobre los parámetros binarios de la regla de mezclado
+								 seleccionada, se puede asignar los valores de los parámetros dando click en el 
+								 botón "Asignar valores de parámetros binarios".
+									 <ul>
+									 	<li>Asignar los valores de los parámetros.</li>
+									 	<li>Cuando se esté satisfecho con los valores de los parámetros binarios 
+									 	hacer click en el botón "Aceptar".</li>
+									 </ul>
+								</li>
+								<li>
+									Finalmente para crear la mezcla hacer click en el 
+									botón "Crear mezcla".
+								</li>
+								<li>Se presentará un resumen de las opciones elegidas para la mezcla.</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				
+				<li><h3>Gráficos</h3>
+					<ul>
+						<li><h4>Presión-Volumen-Temperatura</h4>
+							<ul>
+								<li>Seleccionar la substancia o mezcla con la cual se desea crear el gráfico.</li>
+								<li>Determinar el dominio para el cual se desea graficar la presión:
+									<ul>
+										<li>Eje de volumen molar en unidades de [m<sup>3</sup>/kmol] "metros cúbicos por kilomol".</li>
+										<li>Eje de temperatura en unidades de [K] "Kelvin".</li>
+									</ul>
+								</li>
+								<li>Finalmente hacer click en el botón "Graficar" para mostarar la gráfica tridimensional en la
+								sección inferior de la página.</li>
+							</ul>
+						</li>
+						<li><h4>Factor de compresibilidad(Z)-Presión-Temperatura</h4>
+							<ul>
+								<li>Seleccionar la substancia o mezcla con la cual se desea crear el gráfico.</li>
+								<li>Determinar el dominio para el cual se desea graficar la presión:
+									<ul>
+										<li>Eje de presión en unidades de [Pa] "Pascal".</li>
+										<li>Eje de temperatura en unidades de [K] "Kelvin".</li>
+									</ul>
+								</li>
+								<li>Finalmente hacer click en el botón "Graficar" para mostarar la gráfica tridimensional en la
+								sección inferior de la página.</li>
+							</ul>
+						</li>
+						<li><h4> Fugacidad-Presión-Temperatura</h4>
+							<ul>
+								<li>Seleccionar la substancia o mezcla con la cual se desea crear el gráfico.</li>
+								<li>Determinar el dominio para el cual se desea graficar la presión:
+									<ul>
+										<li>Eje de presión en unidades de [Pa] "Pascal".</li>
+										<li>Eje de temperatura en unidades de [K] "Kelvin".</li>
+									</ul>
+								</li>
+								<li>Finalmente hacer click en el botón "Graficar" para mostarar la gráfica tridimensional en la
+								sección inferior de la página.</li>
+							</ul>
+						</li>
+						<li><h4>A partir del envolvente de fases</h4>
+							<ul>
+								<li><h5>Envolvente de fases</h5>
+									<ul>
+										<li>Seleccionar la substancia o mezcla para la cual se desea generar 
+										el envolvente de fases.</li>
+										<li>Para una substancia el envolvente de fases se calcula obteniendo la 
+										presión de saturación desde \(0.5 * T_c\) hasta \(T_c\) donde \(T_c\) es la
+										temperatura crítica.
+										</li>
+										<li>Para una mezcla el envolvente de fases se calcula obteniendo la presión o temperatura
+										 (dependiendo de la pendiente de la gráfica) de rocío para la línea del vapor saturado y de burbuja
+										 para el líquido saturado. Las líneas de saturación del líquido y del vapor se 
+										 comienzan a dibujar a una baja presión y se detienen de manera independiente hasta que la 
+										 diferencia del volumen molar del líquido y del vapor sea menor a una tolerancia que se puede determinar
+										 en los controles de la gráfica, y se identifica con la etiquta "Tolerancia de la diferencia del volumen molar".  
+										  </li>
+										  <li>Una vez seleccionada la substancia o mezcla y determinado la tolerancia (en el caso de las mezclas)
+										  hacer click en el boton "Dibujar" para crear el envolvente de fases y mostrarlo en la gráfica de dos dimensiones.</li>
+								 	</ul>
+								</li>
+								<li><h5>Temperatura-?-Presión</h5>
+									<ul>
+										<li>Seleccionar la substancia o mezcla para la cual se desea realizar la gráfica </li>
+										<li>Para mostrar la gŕafica en el recuadro inferior hacer click en el botón "Graficar"</li>
+										<li>Al hacer click en el botón "Graficar" se muestra la gráfica y los controles 
+										que nos permiten modificar las propiedades que se muestran en los ejes:
+										<ul>
+											<li>Temperatura-entalpía-presión</li>
+											<li>Temperature-entropía-presión</li>
+											<li>Temperature-gibbs-presión</li>
+										</ul>
+										y ocultar la líneas de presión y temperatura constantes.										 										
+										 </li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>	
+				</li>
+				<li><h3>Estimación de Parámetros</h3>
+				<ul>
+					<li>Parámetros de la expresión de \(\alpha\) para el cálculo
+					de el parámetro \(a\) de la ecuación de estado cúbica.</li>
+					<li>Parámetros de la regla de mezclado.</li>
+				</ul>
+				</li>
+			</ul>
+			
+			<div id="footer">
+				<span class='ast'>*</span> La expresión de \(\alpha\) debe ser compatible con la
+				 ecuación cúbica como muestra en la tabla de la documentación.
+				 <h:outputLink class="pdfLink" value="http://hugoredon.github.io/Materia/thesis.pdf#nameddest=subsection.5.4.1">ver tabla</h:outputLink>
+				 <br/>
+				 <span class='ast'>**</span> La suma de las fracciones molares de todos los compuestos de la mezcla debe ser igual a 1.
+			</div>
+			<script>
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+            </script>
+		</ui:define>
+	</ui:composition>
+</html>

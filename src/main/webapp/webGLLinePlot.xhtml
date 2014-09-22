@@ -264,7 +264,7 @@
 	            }
 	            var line = new THREE.Line(geometry, material);
 	            linesObject.push(line);
-	            console.log('lineadded');
+	            //console.log('lineadded');
 	            scene.add(line);
 			}
 		    
@@ -316,11 +316,15 @@
 			    var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
 			    camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 			    
-			    camera.position.set(3000,0,1000);
+			    camera.position.set(-2000,-2000,1000);
 			    camera.up = new THREE.Vector3( 0, 0, 1 );
-			    camera.lookAt(scene.position);  
-	
+			    
 			    scene.add(camera);
+
+			    
+			    camera.lookAt(scene.position);
+
+			    
 			    // RENDERER
 			    if ( Detector.webgl )
 			        renderer = new THREE.WebGLRenderer( {antialias:true} );
@@ -340,7 +344,8 @@
 			    // STATS
 			    stats = new Stats();
 			    stats.domElement.style.position = 'absolute';
-			    stats.domElement.style.bottom = '0px';
+			    stats.domElement.style.top = '0px';
+			    stats.domElement.style.right='0px';
 			    stats.domElement.style.zIndex = 100;
 			    container.appendChild( stats.domElement );
 			}
@@ -507,13 +512,13 @@
 	    	}
 
 			function createAxis(p1, p2, color){
-				console.log("createAxis");
+				//console.log("createAxis");
 	            var line, lineGeometry = new THREE.Geometry(),
 	            lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 2});
 	            lineGeometry.vertices.push(p1, p2);
 	            line = new THREE.Line(lineGeometry, lineMat);
 	            scene.add(line);
-	            console.log("line added");
+	            //console.log("line added");
 	   		 }
 
 			function drawAxisLabels(){
@@ -523,12 +528,12 @@
 					    	xAxisLabel);
 
 				    addText(
-				    	{y:400+axisLength/4,x:-100,z:0},
+				    	{y:400+axisLength/1.8,x:-100,z:0},
 				    	{x:Math.PI / 2,y:-Math.PI/2,z:0},
 				    	yAxisLabel);
 				    addText(
 				    	{x:-50,y:-50,z:axisLength/4},
-				    	{x:Math.PI / 2,y:Math.PI/4,z:Math.PI/2},
+				    	{x:Math.PI / 2,y:-Math.PI/4,z:Math.PI/2},
 				    	zAxisLabel);
 				    
 			}

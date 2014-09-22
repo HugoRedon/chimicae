@@ -159,7 +159,7 @@
 			    var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
 			    camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 			    
-			    camera.position.set(3000,0,1000);
+			    camera.position.set(-1200,-1200,1000);
 			    camera.up = new THREE.Vector3( 0, 0, 1 );
 			    camera.lookAt(scene.position);  
 	
@@ -183,7 +183,8 @@
 			    // STATS
 			    stats = new Stats();
 			    stats.domElement.style.position = 'absolute';
-			    stats.domElement.style.bottom = '0px';
+			    stats.domElement.style.top = '0px';
+			    stats.domElement.style.right='0px';
 			    stats.domElement.style.zIndex = 100;
 			    container.appendChild( stats.domElement );
 			}
@@ -362,12 +363,12 @@
 				    	'#{plotBean.xAxisLabel}');
 
 			    addText(
-			    	{y:400+axisLength/4,x:-100,z:0},
+			    	{y:400+axisLength/1.2,x:-100,z:0},
 			    	{x:Math.PI / 2,y:-Math.PI/2,z:0},
 			    	'#{plotBean.yAxisLabel}');
 			    addText(
 			    	{x:-50,y:-50,z:axisLength/4},
-			    	{x:Math.PI / 2,y:Math.PI/4,z:Math.PI/2},
+			    	{x:Math.PI / 2,y:-Math.PI/4,z:Math.PI/2},
 			    	'#{plotBean.zAxisLabel}');
 			    
 			    createAxis(v(0, 0, 0), v(axisLength, 0, 0), 0xFF0000);

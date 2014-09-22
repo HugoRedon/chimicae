@@ -39,24 +39,28 @@
 						<f:facet name="header">
 							<h:outputText value="Fración molar" />
 						</f:facet>
-						<h:inputText value="#{row.fraction}"  />
+						<h:inputText value="#{row.fraction}" >
+							<f:ajax execute="this"/>
+						</h:inputText>
 					</h:column>
 					<h:column>
 						
 						<h:commandButton action="#{createMixture.removeRow(row)}" value="Eliminar"  />
 					</h:column>
 					<f:facet name="footer">
-						<h:commandButton action="#{createMixture.addRow}" value="Agregar" >
-							<f:ajax render="mixtureForm:mixtureTable"/>
+						<h:commandButton action="#{createMixture.addRow}" value="Agregar compuesto" >
+							<f:ajax render="mixtureForm:mixtureTable" onevent=" MathJax.Hub.Queue(['Typeset',MathJax.Hub]);"/>
 						</h:commandButton>
 					</f:facet>
 				</h:dataTable>
 			</f:ajax>
-			<h:commandButton action="#{setParameters.clean()}" value="Parámetros" />
-			
+				<br/>
+				<br/>
+			<h:commandButton action="#{setParameters.clean()}" value="Asignar valores de parámetros binarios" />
+				<br/>
 				<br/>
 			
-			<h:commandButton action="#{createMixture.create()}" value="Aceptar" />
+			<h:commandButton action="#{createMixture.create()}" value="Crear mezcla" />
 			<h:messages id="messages"/>
 		
 		</h:form>

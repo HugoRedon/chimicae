@@ -102,6 +102,7 @@ public class PressureBean implements Serializable {
 		
 		String verticesJson = new Gson().toJson(vertices);
 		plotBean.setJsonData(verticesJson);
+		plotBean.setPlotInfo("Presión-Volumen-Temperatura");
 		plotBean.setSecondPlot(false);
 		plotBean.setThirdPlot(false);
 		plotBean.setLine(false);

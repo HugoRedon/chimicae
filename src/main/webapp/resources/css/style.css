@@ -25,3 +25,19 @@ a{
 	text-align: center;
 	font-weight: bold;
 }
+#footer {
+	background-color:lightgray;
+    color:blue;
+    display: table-row;
+    height: 0;
+    width=100%;
+}
+.ast{
+	color:blue;
+	margin-right:10px;
+}
+
+
+.pdfLink{
+	color:red;
+}

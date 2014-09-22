@@ -13,14 +13,14 @@
 		
 			<h:panelGroup>
 				<h:panelGrid columns="3">
-					<h:outputText value="Buscar"/>
+					<h:outputText value="Nombre del compuesto (inglés)"/>
 					<h:inputText value="#{availableCompounds.compoundName}" />
 					<h:commandButton action="#{availableCompounds.lookForCompounds}" value="Buscar" />
 				</h:panelGrid>
 				<h:dataTable value="#{availableCompounds.compoundsFound}" var="compound">
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="Compuesto" />
+							<h:outputText value="Coincidencias" />
 						</f:facet>
 						<h:outputText value="#{compound.name}"/>
 					</h:column>
@@ -36,7 +36,7 @@
 		
 		
 		<h:panelGroup  styleClass="aligntop" id="compoundsPanel">	
-				
+				<h3><h:outputText value="Compuestos seleccionados" /></h3>
 			<h:dataTable value="#{availableCompounds.compounds}" var="compound" border="1">
 			<h:column>
 				<f:facet name="header">

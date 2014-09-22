@@ -11,14 +11,15 @@
 		<ui:define name="content">
 		<h:form>
 			<f:ajax render="controls">
-			<h:selectOneMenu value="#{phaseEnvelopeBean.selectedEnvelope}" converter="#{envelopeConverter}">
-				<f:selectItems value="#{phaseEnvelopeBean.envelopes}"/>
-			</h:selectOneMenu>
+				<h:outputText value="Sistema: "/>
+				<h:selectOneMenu value="#{phaseEnvelopeBean.selectedEnvelope}" converter="#{envelopeConverter}">
+					<f:selectItems value="#{phaseEnvelopeBean.envelopes}"/>
+				</h:selectOneMenu>
 			</f:ajax>
 			<h:panelGroup id="controls">
 			<c:if test="#{phaseEnvelopeBean.isMixture()}" >
 			<h:panelGrid columns="2">
-				<h:outputText value="criterio"/>
+				<h:outputText value="Tolerancia de la diferencia del volumen molar [m³/kmol]: "/>
 				<h:inputText value="#{phaseEnvelopeBean.asMixtureEnvelope().volumeDifferenceTolerance}"/>
 			</h:panelGrid>
 			</c:if>
