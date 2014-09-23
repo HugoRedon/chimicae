@@ -1,5 +1,6 @@
 package cp;
 
+import termo.Constants;
 import termo.cp.CpEquation;
 
 public class Eqn16IGHeatCapacity implements CpEquation {
@@ -29,11 +30,24 @@ public class Eqn16IGHeatCapacity implements CpEquation {
 		double result=0;
 		double tempStep = (temperature-referenceTemperature)/n.doubleValue();
 		for(Integer i =0;i< n; i++){
-			double ti = referenceTemperature + i.doubleValue();
-			double tid = referenceTemperature + i.doubleValue()* tempStep;
+			double ti = referenceTemperature + i.doubleValue()*tempStep;
+			double tid = referenceTemperature + (i.doubleValue()+1)* tempStep;
 			double cpi = cp(ti);
 			double cpid = cp(tid);
 			result +=tempStep*(cpid + cpi)/2;
+		}
+		return result;
+	}
+	public double cpOverTIntegral(double referenceTemperature,double temperature){
+		Integer n =50;
+		double result = 0;
+		double tempStep = (temperature-referenceTemperature)/n.doubleValue();
+		for(Integer i =0;i<n;i++){
+			double ti = referenceTemperature + i.doubleValue()*tempStep;
+			double tid = referenceTemperature + (i.doubleValue()+1)* tempStep;
+			double cpi = cp(ti)/ti;
+			double cpid = cp(tid)/tid;
+			result += tempStep*(cpid+cpi)/2;
 		}
 		return result;
 	}
@@ -41,10 +55,16 @@ public class Eqn16IGHeatCapacity implements CpEquation {
 
 	@Override
 	public double idealGasEntropy(double temperature,
-			double referenceTemeprature, double pressure,
+			double referenceTemperature, double pressure,
 			double referencePressure, double entropyReference) {
-		// TODO Auto-generated method stub
-		return 0;
+		double result =0;
+		
+		double cpOverTIntegral = cpOverTIntegral(referenceTemperature, temperature);
+		
+		result = entropyReference+ cpOverTIntegral - Constants.R * Math.log(pressure/referencePressure);
+		
+		
+		return result;
 	}
 
 	@Override
