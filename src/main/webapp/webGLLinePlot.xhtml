@@ -15,8 +15,8 @@
 		<h:outputScript name="js/three.min.js"  />
 		<h:outputScript name="js/Detector.js"  />
 		<h:outputScript name="js/Stats.js"  />
-		<!-- <h:outputScript name="js/controls/TrackballControls.js"  /> -->
-		<h:outputScript name="js/controls/OrbitControls.js"  />
+		 <!-- <h:outputScript name="js/controls/TrackballControls.js"  /> --> 
+		<h:outputScript name="js/controls/OrbitControls.js"  /> 
 		<h:outputScript name="js/THREEx.KeyboardState.js"  />
 		<h:outputScript name="js/THREEx.FullScreen.js"  />
 		<h:outputScript name="js/THREEx.WindowResize.js"  />
@@ -68,6 +68,11 @@
 			var textObjects=[];
 
 			var axisLength;
+
+			var mouse={x:0,y:0};
+			var INTERSECTED, projector;
+			var points = new THREE.Geometry();
+			var parts;
 		    
 		    init();
 		    animate();
@@ -78,8 +83,13 @@
 		        eventsControlsStats();
 		        lightFloorSkybox();
 		        debugaxis(1200);
-		        
+		     // initialize object to perform world/screen calculations
+		    	projector = new THREE.Projector();
+		    	
 				draw();
+
+				// when the mouse moves, call the given function
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 			    
 			  	addEqHandler( "btn_add", 'enthalpy','Entalpía [J/kmol]' );
 				addEqHandler( "btn_sub", 'entropy','Entropía [j/(kmol K)]' );
@@ -91,6 +101,9 @@
 		    }
 
 		    function draw(){
+		    	scene.remove(parts);
+		    	points = new THREE.Geometry(); 
+			    //points.vertices =[];
 		    	linesObject.forEach(function(entry){
 					scene.remove(entry);
 					});
@@ -153,14 +166,26 @@
 	           normalizeVars(jsonsLines);
 
 	           liquidLines.forEach(function(entry){
-					createAndAddLineGeometry(entry ,material);
+					createAndAddLineGeometry(entry ,0x0000ff);
 		          });
 	           vaporLines.forEach(function(entry){
-	        	   createAndAddLineGeometry(entry ,redmaterial);
+	        	   createAndAddLineGeometry(entry ,0xff0000);
 		           });	         	
 	          drawAxisLabels();
+
+	          drawPoints();
 		    }
 
+			function drawPoints(){
+				
+				
+				var color = new THREE.Color( 0x00aa00 );
+				var mat = new THREE.PointCloudMaterial( { size: 5,color:color } );
+				
+				 parts = new THREE.PointCloud( points, mat );
+				scene.add(parts);
+			}
+		    
 		   function addEqHandler( id, eq ,yLabel) {
 
 				var el = document.getElementById( id );
@@ -237,6 +262,8 @@
 
 		              jsonline[i] = position;
 		           };
+		           
+		           jsonline.userData=jsonArrayPointInfo;
 		           return jsonline;
 		    }
 			/* function forLines(){
@@ -255,16 +282,32 @@
 			    createAndAddLineGeometry(jsonline2,material2);
 			    
 			} */
-
-			function createAndAddLineGeometry(jsonline1,material){
+		 
+			function createAndAddLineGeometry(jsonline1,hexColor){
 				var geometry = new THREE.Geometry();
+				var particles=[];
 	            for(var i = 0; i<jsonline1.length ; i++){
 	                var x = jsonline1[i].x;
 	                var y = jsonline1[i].y;
 	                var z = jsonline1[i].z;
-	                geometry.vertices.push(new THREE.Vector3(x,y,z));			         
+	                geometry.vertices.push(new THREE.Vector3(x,y,z));
+	            
+
+	                var vector = new THREE.Vector3(x,y,z);	                 	                  				
+					var vectorData =jsonline1.userData[i];
+					vector.userData = vectorData;
+ 					points.vertices.push(vector);					
+					particles.push(vector); 
+	               			         
 	            }
+	            var material = new THREE.LineBasicMaterial({
+	                color: hexColor
+	            });
 	            var line = new THREE.Line(geometry, material);
+	            line.name='name';
+	            line.userData = particles;
+
+	            
 	            linesObject.push(line);
 	            //console.log('lineadded');
 	            scene.add(line);
@@ -344,9 +387,8 @@
 			    //controls = new THREE.TrackballControls(camera,renderer.domElement);
 			    //controls = new THREE.OrbitControls( camera, renderer.domElement );
 			    
-			    controls = new THREE.OrbitControls( camera ,renderer.domElement );
+			     controls = new THREE.OrbitControls( camera,renderer.domElement );
 				controls.damping = 0.2;
-				controls.addEventListener( 'change', renderer );
 			    // STATS
 			    stats = new Stats();
 			    stats.domElement.style.position = 'absolute';
@@ -357,60 +399,87 @@
 			}
 			function animate(){
 			    requestAnimationFrame( animate );
-			    render();       
-			    update();
-			}
-	
-			function update()
-			{
-			    var delta = clock.getDelta(); // seconds.
-			    var moveDistance = 200 * delta; // 200 pixels per second
-			    var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
-			    
-			    // local coordinates
-	
-			    // local transformations
-	
-			    // move forwards/backwards/left/right
-			    if ( keyboard.pressed("W") )
-			        MovingCube.translateZ( -moveDistance );
-			    if ( keyboard.pressed("S") )
-			        MovingCube.translateZ(  moveDistance );
-			    if ( keyboard.pressed("Q") )
-			        MovingCube.translateX( -moveDistance );
-			    if ( keyboard.pressed("E") )
-			        MovingCube.translateX(  moveDistance ); 
-	
-			    // rotate left/right/up/down
-			    var rotation_matrix = new THREE.Matrix4().identity();
-			    if ( keyboard.pressed("A") )
-			        MovingCube.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
-			    if ( keyboard.pressed("D") )
-			        MovingCube.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
-			    if ( keyboard.pressed("R") )
-			        MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
-			    if ( keyboard.pressed("F") )
-			        MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
-			    
-			    if ( keyboard.pressed("Z") )
-			    {
-			        MovingCube.position.set(0,25.1,0);
-			        MovingCube.rotation.set(0,0,0);
-			    }
-			        
-			    // global coordinates
-			    if ( keyboard.pressed("left") )
-			        MovingCube.position.x -= moveDistance;
-			    if ( keyboard.pressed("right") )
-			        MovingCube.position.x += moveDistance;
-			    if ( keyboard.pressed("up") )
-			        MovingCube.position.z -= moveDistance;
-			    if ( keyboard.pressed("down") )
-			        MovingCube.position.z += moveDistance;
-			        
+			    render();  
+			    update();     
 			    controls.update();
 			    stats.update();
 			}
+
+			function update()
+			{
+				
+				// create a Ray with origin at the mouse position
+				//   and direction into the scene (camera direction)
+				var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
+				projector.unprojectVector( vector, camera );
+				var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+
+				// create an array containing all objects in the scene with which the ray intersects
+				var intersects = ray.intersectObjects( linesObject );
+
+				// INTERSECTED = the object in the scene currently closest to the camera 
+				//		and intersected by the Ray projected from the mouse position 	
+				
+				// if there is one (or more) intersections
+				if ( intersects.length > 0 )
+				{
+					// if the closest object intersected is not the currently stored intersection object
+					if ( intersects[ 0 ].object != INTERSECTED ) 
+					{
+					    // restore previous intersection object (if it exists) to its original color
+						if ( INTERSECTED ) 
+							INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+						// store reference to closest object as current intersection object
+						INTERSECTED = intersects[ 0 ].object;
+						// store color of closest object (for later restoration)
+						INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+						// set a new color for closest object
+						INTERSECTED.material.color.setHex( 0xffff00 );
+
+						
+						// update text, if it has a "name" field.
+						if ( intersects[ 0 ].object.name )
+						{
+							console.log(intersects[ 0 ].object);
+							
+						    //context1.clearRect(0,0,640,480);
+							//var message = intersects[ 0 ].object.name;
+						//	var metrics = context1.measureText(message);
+							//var width = metrics.width;
+							/* context1.fillStyle = "rgba(0,0,0,0.95)"; // black border
+							context1.fillRect( 0,0, width+8,20+8);
+							context1.fillStyle = "rgba(255,255,255,0.95)"; // white filler
+							context1.fillRect( 2,2, width+4,20+4 );
+							context1.fillStyle = "rgba(0,0,0,1)"; // text color
+							context1.fillText( message, 4,20 );
+							texture1.needsUpdate = true; */
+							
+						}
+						else
+						{
+							//context1.clearRect(0,0,300,300);
+							//texture1.needsUpdate = true;
+						}
+					}
+				} 
+				else // there are no intersections
+				{
+					// restore previous intersection object (if it exists) to its original color
+					if ( INTERSECTED ) 
+						INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+					// remove previous intersection object reference
+					//     by setting current intersection object to "nothing"
+					INTERSECTED = null;
+					//context1.clearRect(0,0,300,300);
+					//texture1.needsUpdate = true;
+				}
+
+				
+				controls.update();
+				stats.update();
+			}
+	
+		
 	
 			function render() 
 			{
@@ -582,7 +651,19 @@
 				scene.add( text );
 			}
 	
-			//To use enter the axis length
+			 function onDocumentMouseMove( event ){
+				// the following line would stop any other event handler from firing
+				// (such as the mouse's TrackballControls)
+				// event.preventDefault();
+
+				// update sprite position
+				//sprite1.position.set( event.clientX, event.clientY - 20, 0 );
+				
+				// update the mouse variable
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+				//entconsole.log("onDocumentMouseMove, mouseposition("+mouse.x+","+mouse.y+")");
+			} 
 			
 
 	
