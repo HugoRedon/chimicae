@@ -22,6 +22,11 @@ public class SubstanceEnvelope extends Envelope{
 
 	@Override
 	public void calculateEnvelope() {
+		System.out.println("calculateenvelope");
+		vaporAreaTemperatureLines.clear();
+		liquidAreaTemperatureLines.clear();
+		vaporAreaPressureLines.clear();
+		liquidAreaPressureLines.clear();
 		liquidLine.clear();
 		vaporLine.clear();
 		double ct = heterogeneousSubstance.getComponent()

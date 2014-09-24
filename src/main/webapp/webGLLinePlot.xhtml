@@ -48,7 +48,7 @@
 		    var keyboard = new THREEx.KeyboardState();
 		    var clock = new THREE.Clock();
 		    // custom global variables
-		    var MovingCube;
+		    var MovingCube=[];
 		    var vaporAreaTemperatureLines=#{linesPlotsBean.vaporAreaTemperatureLines};
 	        var liquidAreaLines=#{linesPlotsBean.liquidAreaTemperatureLines};
 		    var liquidLinejson= #{linesPlotsBean.liquidLineJson};
@@ -73,12 +73,22 @@
 			var INTERSECTED, projector;
 			var points = new THREE.Geometry();
 			var parts;
+
+			var sphereMaterial = new THREE.MeshBasicMaterial(
+					 { color: 0xff0000, shading: THREE.FlatShading } );
+			var sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
+			 var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );			
+			var INTERSECTEDSPHERE;
+			var spheres=[];
+
+			var liquidSurface=[];
+			
 		    
 		    init();
 		    animate();
 		
 		   function init(){
-			   	MovingCube = new THREE.Object3D();
+			   //	MovingCube = new THREE.Object3D();
 		        sceneCameraRenderer();
 		        eventsControlsStats();
 		        lightFloorSkybox();
@@ -87,6 +97,7 @@
 		    	projector = new THREE.Projector();
 		    	
 				draw();
+				scene.add(sphere);
 
 				// when the mouse moves, call the given function
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
@@ -106,7 +117,14 @@
 			    //points.vertices =[];
 		    	linesObject.forEach(function(entry){
 					scene.remove(entry);
-					});
+				});
+
+				/* console.log("children.length"+MovingCube.length); */
+				MovingCube.forEach(function(obj){
+					scene.remove(obj);	
+				});
+				liquidSurface=[];
+				
 
 				textObjects.forEach(function(entry){
 					scene.remove(entry);
@@ -134,7 +152,15 @@
 							}
 							
 						});
-	
+
+					var textMaterial =new THREE.MeshPhongMaterial( { 
+			            color: 0x8B4500, 
+			            ambient: 0x2200ee, // should generally match color
+			            specular: 0x050505,
+			            side: THREE.DoubleSide,
+			            shininess: 100
+			        } ) ;
+					
 					
 					vaporAreaTemperatureLines.forEach(function(entry){
 							var line = enthalpyLine(entry);
@@ -142,6 +168,7 @@
 							if(temperatureLines.on){
 								vaporLines.push(line);
 							}
+							
 						});
 				
 
@@ -152,6 +179,7 @@
 							if(pressureLines.on){
 								liquidLines.push(line);
 							}
+							
 						});
 	
 					liquidAreaPressureLines.forEach(function(entry){
@@ -160,17 +188,20 @@
 							if(pressureLines.on){
 								vaporLines.push(line);
 							}
+							liquidSurface.push(line);
 						});
 				
 				
 	           normalizeVars(jsonsLines);
 
 	           liquidLines.forEach(function(entry){
-					createAndAddLineGeometry(entry ,0x0000ff);
+					createAndAddLineGeometry(entry ,0x000000);
 		          });
 	           vaporLines.forEach(function(entry){
-	        	   createAndAddLineGeometry(entry ,0xff0000);
-		           });	         	
+	        	   createAndAddLineGeometry(entry ,0x000000);
+		           });	        
+
+	           createAndAddGeometry(liquidSurface, textMaterial); 	
 	          drawAxisLabels();
 
 	          drawPoints();
@@ -224,8 +255,8 @@
 
 					lines.on = !lines.on;
 
-					console.log(lines.on);
-					console.log(temperatureLines.on);
+					/* console.log(lines.on);
+					console.log(temperatureLines.on); */
 					draw();
 					
 					if(lines.on){
@@ -326,17 +357,35 @@
 			}
 		    
 		    function createAndAddGeometry(json,material){
-		    	var geometry = new THREE.Geometry();
-	            for(var i = 0; i<json.length ; i++){
-	                var x = json[i].x;
-	                var y = json[i].y;
-	                var z = json[i].z;
-	                geometry.vertices.push(new THREE.Vector3(x,y,z));			         
-	            }
-	            var n = Math.sqrt( json.length);
-	            for(var i = 0; i < n-1;i++){
-	                for(var j = 0; j <n-1;j++){
+		    	var geometry = new THREE.Geometry();		    	
+
+		        var nL = json.length;
+	            var n = json[0].length;
+
+	           /*  console.log('nL: '+nL);
+	            console.log('   n: '+n); */
+	            var index = 0;
+				for(var i = 0; i < nL;i++){
+					for (var j = 0; j<n ;j++ ){
+					 	var x = json[i][j].x;
+		                var y = json[i][j].y;
+		                var z = json[i][j].z;
+		                //console.log('line[i] '+ line[i].x);
+		                //console.log(index);
+		                geometry.vertices[index++] = new THREE.Vector3(x,y,z);
+		                //geometry.vertices.push(new THREE.Vector3(x,y,z));
+					}
+				}
+
+			    
+	        
+	            //var n = Math.sqrt( json.length);	           
+	            for(var i = 0; i < nL-1;i++){
+	                for(var j = 0; j < (n-1);j++){
 	                    var index = n*i +j;
+	                   /*  console.log('i'+i);
+	                    console.log('j'+j);*/
+	                    //console.log(index); 
 	                    geometry.faces.push(new THREE.Face3(index,index+1,n+index));
 	                    geometry.faces.push(new THREE.Face3(index+1,index+n+1,index+n));
 	                }
@@ -345,8 +394,11 @@
 		        geometry.computeFaceNormals();
 	            geometry.computeVertexNormals();	            
 		        var mesh = new THREE.Mesh(geometry, material);
+		       /*  console.log(geometry.vertices.length);
+				console.log("created surface"); */
 
-		        MovingCube.add(mesh);
+				
+		        MovingCube.push(mesh);
 		        scene.add(mesh);		
 	            
 		    }
@@ -405,30 +457,84 @@
 			    stats.update();
 			}
 
+			
 			function update()
 			{
-				
-				// create a Ray with origin at the mouse position
-				//   and direction into the scene (camera direction)
+
+				linesIntersection();
+				sphereIntersection();					
+				controls.update();
+				stats.update();
+			}
+			function sphereIntersection(){
 				var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
 				projector.unprojectVector( vector, camera );
 				var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
-
-				// create an array containing all objects in the scene with which the ray intersects
-				var intersects = ray.intersectObjects( linesObject );
-
-				// INTERSECTED = the object in the scene currently closest to the camera 
-				//		and intersected by the Ray projected from the mouse position 	
+				var sphereIntersects = ray.intersectObjects(MovingCube);
 				
-				// if there is one (or more) intersections
-				if ( intersects.length > 0 )
-				{
+
+				if ( sphereIntersects.length > 0 ){
+					var p =sphereIntersects[0].point;
+					
+					var cp = points.vertices[0];
+					//console.log('x,y,z ('+cp.x +','+cp.y+','+cp.z+')');
+					
+					 var minDistance = distance(p,cp);
+					 
+					for (var i = 0;i < points.vertices.length;i++){
+						var d = distance(p, points.vertices[i]);
+						if(d <minDistance){
+							cp = points.vertices[i];
+							minDistance =d;
+						}
+					}  
+					sphere.position.set(cp.x,cp.y,cp.z);															
+							
+
+					
+					//console.log('Point'+cp);
+					console.log('x,y,z ('+cp.x +','+cp.y+','+cp.z+')');
+				 	if ( sphereIntersects[ 0 ].object != INTERSECTEDSPHERE ) {
+					     //restore previous intersection object (if it exists) to its original color
+						if ( INTERSECTEDSPHERE ) {
+							INTERSECTEDSPHERE.material.color.setHex( INTERSECTEDSPHERE.currentHex );
+						}
+						// store reference to closest object as current intersection object
+						INTERSECTEDSPHERE = sphereIntersects[ 0 ].object;
+						// store color of closest object (for later restoration)
+						INTERSECTEDSPHERE.currentHex = INTERSECTEDSPHERE.material.color.getHex();
+						// set a new color for closest object
+						INTERSECTEDSPHERE.material.color.setHex( 0xffff00 );
+
+						if(sphereIntersects[0].point){
+							console.log('Point'+sphereIntersects[0].point);
+						} 
+					} 
+				}
+			}
+
+
+			function distance( v1, v2){
+			    var dx = v1.x - v2.x;
+			    var dy = v1.y - v2.y;
+			    var dz = v1.z - v2.z;
+
+			    return Math.sqrt(dx*dx+dy*dy+dz*dz);
+			}
+
+			function linesIntersection(){
+				var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
+				projector.unprojectVector( vector, camera );
+				var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+				var intersects = ray.intersectObjects( linesObject );
+				
+				if ( intersects.length > 0 ){
 					// if the closest object intersected is not the currently stored intersection object
-					if ( intersects[ 0 ].object != INTERSECTED ) 
-					{
+					if ( intersects[ 0 ].object != INTERSECTED ) {
 					    // restore previous intersection object (if it exists) to its original color
-						if ( INTERSECTED ) 
+						if ( INTERSECTED ) {
 							INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+						}
 						// store reference to closest object as current intersection object
 						INTERSECTED = intersects[ 0 ].object;
 						// store color of closest object (for later restoration)
@@ -438,9 +544,25 @@
 
 						
 						// update text, if it has a "name" field.
-						if ( intersects[ 0 ].object.name )
-						{
-							console.log(intersects[ 0 ].object);
+						if ( INTERSECTED.name ){
+							spheres.forEach(function(entry){
+								scene.remove(entry);
+							});							
+							 
+							 														
+							INTERSECTED.userData.forEach(function(entry){
+								/*  var sphereMaterial = new THREE.MeshBasicMaterial(
+										 { color: 0xff0000, shading: THREE.FlatShading } );
+							//var sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );	 
+								var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+								
+								sphere.position.set(entry.x,entry.y,entry.z);															
+								scene.add(sphere);
+								spheres.push(sphere); 	 */
+							});
+							//var p = INTERSECTED.point;
+							//console.log(p);
+							//sphere.position.copy(p);
 							
 						    //context1.clearRect(0,0,640,480);
 							//var message = intersects[ 0 ].object.name;
@@ -465,21 +587,30 @@
 				else // there are no intersections
 				{
 					// restore previous intersection object (if it exists) to its original color
-					if ( INTERSECTED ) 
-						INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+					if ( INTERSECTED ) {
+						//INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+					}
 					// remove previous intersection object reference
 					//     by setting current intersection object to "nothing"
-					INTERSECTED = null;
+					//INTERSECTED = null;
 					//context1.clearRect(0,0,300,300);
 					//texture1.needsUpdate = true;
 				}
-
 				
-				controls.update();
-				stats.update();
 			}
-	
-		
+
+
+			function mouseProyection(){
+				var vector = new THREE.Vector3(
+					    ( mouse.x / window.innerWidth ) * 2 - 1,
+					    - ( mouse.y / window.innerHeight ) * 2 + 1,
+					    0.5 );
+				projector.unprojectVector( vector, camera );
+				var dir = vector.sub( camera.position ).normalize();
+				var distance = - camera.position.z / dir.z;
+				var pos = camera.position.clone().add( dir.multiplyScalar( distance ) );
+				return pos;
+			}
 	
 			function render() 
 			{
@@ -662,6 +793,12 @@
 				// update the mouse variable
 				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+				/* var entry = mouseProyection();
+				sphere.position.set(entry.x,entry.y,entry.z); */															
+				//scene.add(sphere);
+
+
+				
 				//entconsole.log("onDocumentMouseMove, mouseposition("+mouse.x+","+mouse.y+")");
 			} 
 			
