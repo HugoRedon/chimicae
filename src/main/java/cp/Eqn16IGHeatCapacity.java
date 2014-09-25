@@ -26,9 +26,15 @@ public class Eqn16IGHeatCapacity implements CpEquation {
 	}
 	
 	public double cpIntegral(double referenceTemperature,double temperature){
-		Integer n = 50;
+		double minimumTempStep = 5;
+		Double minN = (temperature-referenceTemperature)/minimumTempStep;
+		Integer minNInt = ((Double)Math.ceil(minN)).intValue();
+			
+		
+		Integer n = (minNInt > 50)?minNInt:50;
 		double result=0;
 		double tempStep = (temperature-referenceTemperature)/n.doubleValue();
+		
 		for(Integer i =0;i< n; i++){
 			double ti = referenceTemperature + i.doubleValue()*tempStep;
 			double tid = referenceTemperature + (i.doubleValue()+1)* tempStep;
@@ -39,7 +45,12 @@ public class Eqn16IGHeatCapacity implements CpEquation {
 		return result;
 	}
 	public double cpOverTIntegral(double referenceTemperature,double temperature){
-		Integer n =50;
+		double minimumTempStep = 5;
+		Double minN = (temperature-referenceTemperature)/minimumTempStep;
+		Integer minNInt = ((Double)Math.ceil(minN)).intValue();
+			
+		
+		Integer n = (minNInt > 50)?minNInt:50;
 		double result = 0;
 		double tempStep = (temperature-referenceTemperature)/n.doubleValue();
 		for(Integer i =0;i<n;i++){
