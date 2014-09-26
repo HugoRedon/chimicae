@@ -88,7 +88,7 @@ public class PhaseEnvelopeBean implements Serializable {
 				env = new MixtureEnvelope(heterogeneous.toString(),
 						(HeterogeneousMixture)heterogeneous);
 			}
-			
+			dataTable(env);
 			envelopes.add(env);
 		}
 		selectedEnvelope = envelopes.get(0);
@@ -180,7 +180,7 @@ public class PhaseEnvelopeBean implements Serializable {
 		return null;
 	}
 	
-	public GoogleGraphInfo dataTable(){
+	public GoogleGraphInfo dataTable(Envelope envelope){
 		
 		GoogleGraphInfo graphInfo = new GoogleGraphInfo();
 		GoogleDataTable data = new GoogleDataTable();
@@ -189,7 +189,7 @@ public class PhaseEnvelopeBean implements Serializable {
 				new GoogleColumn("press", "Presión burbuja[Pa]", GoogleColumnType.number),
 				new GoogleColumn("press", "Presión rocío[Pa]", GoogleColumnType.number));
 								
-		Collection<GoogleRow> rows = getRows(data);
+		Collection<GoogleRow> rows = getRows(data,envelope);
 		data.addRows(rows);
 		
 		graphInfo.setData(data);
@@ -202,18 +202,18 @@ public class PhaseEnvelopeBean implements Serializable {
 
 
 	
-	public Collection<GoogleRow> getRows(GoogleDataTable data){
+	public Collection<GoogleRow> getRows(GoogleDataTable data,Envelope envelope){
 		Collection<GoogleRow> rows = new ArrayList<>();			
-		if(selectedEnvelope instanceof SubstanceEnvelope){			
-			rows = getRows((SubstanceEnvelope)selectedEnvelope,1,1); 			
-		}else if(selectedEnvelope instanceof MixtureEnvelope){
-			rows = getRows((MixtureEnvelope)selectedEnvelope);
+		if(envelope instanceof SubstanceEnvelope){			
+			rows = getRows((SubstanceEnvelope)envelope,1,1); 			
+		}else if(envelope instanceof MixtureEnvelope){
+			rows = getRows((MixtureEnvelope)envelope);
 			//rows.addAll(getRowsDew((Mixture)homogeneous));
 			
-			int nc = ((MixtureEnvelope) selectedEnvelope)
+			int nc = ((MixtureEnvelope) envelope)
 					.getHeterogeneousMixture().getComponents().size();
 			
-			Iterator<Substance> iterator  = ((MixtureEnvelope) selectedEnvelope)
+			Iterator<Substance> iterator  = ((MixtureEnvelope) envelope)
 					.getHeterogeneousMixture().getLiquid()
 					.getPureSubstances().iterator(); 
 			for(int i = 3; i <= nc + 2; i++){

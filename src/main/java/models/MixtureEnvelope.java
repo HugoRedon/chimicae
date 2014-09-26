@@ -48,6 +48,10 @@ class MixtureEnvelope extends Envelope{
 	public void calculateEnvelope() {
 		liquidLine.clear();
 		vaporLine.clear();
+		liquidAreaTemperatureLines.clear();
+		vaporAreaTemperatureLines.clear();
+		liquidAreaPressureLines.clear();
+		vaporAreaPressureLines.clear();
 		liquidLine();
 		vaporLine();
 
@@ -81,7 +85,7 @@ class MixtureEnvelope extends Envelope{
 		double volumeDifference = Math.abs(heterogeneousMixture.getVapor().calculateMolarVolume())
 				-Math.abs(heterogeneousMixture.getLiquid().calculateMolarVolume());
 		
-		System.out.println("iterations: " +bubbleIterations + "("+ bubbleTemperature + ","+pressure+")" + volumeDifference);
+		//System.out.println("iterations: " +bubbleIterations + "("+ bubbleTemperature + ","+pressure+")" + volumeDifference);
 		
 		
 		double temperatureStep = 10;
@@ -95,13 +99,13 @@ class MixtureEnvelope extends Envelope{
 				bubbleIterations = heterogeneousMixture.bubblePressure(pressure);
 				nextPressure = heterogeneousMixture.getPressure();
 				
-				System.out.println("bubblePressure, slope: "+slope);
+				//System.out.println("bubblePressure, slope: "+slope);
 			}else{//bubble or dew point temperature
 				nextPressure = pressure + pressureStep;
 				heterogeneousMixture.setPressure(nextPressure);
 				bubbleIterations = heterogeneousMixture.bubbleTemperature(bubbleTemperature);
 				nextTemperature = heterogeneousMixture.getTemperature();
-				System.out.println("bubbleTemperature, slope: "+slope);
+				//System.out.println("bubbleTemperature, slope: "+slope);
 			}
 			
 			liquidLine.add(fillPointInfo(heterogeneousMixture.getLiquid()));
@@ -190,7 +194,7 @@ class MixtureEnvelope extends Envelope{
 		double volumeDifference = Math.abs(heterogeneousMixture.getVapor().calculateMolarVolume())
 				-Math.abs(heterogeneousMixture.getLiquid().calculateMolarVolume());
 		
-		System.out.println("iterations: " +dewIterations + "("+ dewTemperature + ","+pressure+")" + volumeDifference);
+	//	System.out.println("iterations: " +dewIterations + "("+ dewTemperature + ","+pressure+")" + volumeDifference);
 		
 		
 		double temperatureStep = 10;
@@ -211,9 +215,9 @@ class MixtureEnvelope extends Envelope{
 				dewIterations = heterogeneousMixture.dewTemperature(dewTemperature);
 				nextTemperature = heterogeneousMixture.getTemperature();				
 			}
-			System.out.println("iterations"+dewIterations);
+		//	System.out.println("iterations"+dewIterations);
 			vaporLine.add(fillPointInfo(heterogeneousMixture.getVapor()));
-			System.out.println("iterations: " +dewIterations + "("+ nextTemperature + ","+nextPressure+")" + volumeDifference);
+		//	System.out.println("iterations: " +dewIterations + "("+ nextTemperature + ","+nextPressure+")" + volumeDifference);
 			slope = (Math.log(nextPressure)-Math.log(pressure) )
 					   /(Math.log(nextTemperature)-Math.log(dewTemperature));
 			volumeDifference = Math.abs(heterogeneousMixture.getLiquid().calculateMolarVolume())

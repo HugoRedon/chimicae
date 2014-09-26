@@ -27,3 +27,6 @@ body {
 #btn_pre { background: transparent }
 
 #btn_rsub, #btn_nopre { margin-bottom: 2em }
+
+/* #tooltip { width:180px;} */ 
+#tooltip{background: rgba(0,0,0,0.75);left:140px; width:200px;padding:6px;}

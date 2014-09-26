@@ -23,9 +23,12 @@
 		<h:outputScript name="fonts/ubuntu_light.typeface.js"/>
 		<h:outputStylesheet name="css/controls.css"/>
 		
+		
+		
 	</h:head> 
 	<h:body> 
 		<ui:insert name="content">
+			<!-- <div id="tooltip" class="menu">Tooltip</div> -->
 			<div id="labels" class="menu">
 				Propiedad<br/><br/>
 				<div class="lbl btn" id="btn_add">Entalpía</div>
@@ -40,6 +43,8 @@
 				<div class="lbl" id="lbl_src">Source</div>
 				<div class="lbl" id="lbl_dst">Destination</div>  -->
 			</div>
+			
+			
 			 <div id="ThreeJS" style="position: absolute; left:0px; top:0px" ></div>
 			 <div id="info"> Gráfico</div>
 		    <script>
@@ -57,8 +62,8 @@
 		    var liquidAreaPressureLines = #{linesPlotsBean.liquidAreaPressureLines};
 
 		    var plotType='enthalpy';
-		    var xAxisLabel='Presión [Pa]';
-		    var yAxisLabel='Entalpía [J/kmol]';
+		    var yAxisLabel='Presión [Pa]';
+		    var xAxisLabel='Entalpía [J/kmol]';
 		    var zAxisLabel ='Temperatura [K]';
 
 		    var temperatureLines={on:true};
@@ -82,13 +87,28 @@
 			var spheres=[];
 
 			var liquidSurface=[];
-			
+			var vaporSurface=[];
+
+
+			// crosshairSprite setup
+			var crosshairTexture = THREE.ImageUtils.loadTexture('images/jbosscorp_logo.png');
+			var crosshairMaterial = new THREE.SpriteMaterial( { map: crosshairTexture, depthTest: false } );
+			crosshairSprite = new THREE.Sprite(crosshairMaterial);
+			//scale the crosshairSprite down in size
+			crosshairSprite.scale.set(0.2, 0.2, 0.2);
+			//add crosshairSprite as a child of our camera object, so it will stay centered in camera's view
+			 var tooltip = Tooltip(false);
+
+
 		    
 		    init();
 		    animate();
 		
 		   function init(){
 			   //	MovingCube = new THREE.Object3D();
+			   
+			   //tooltip.show("xvasldkfasldk");
+			   //xAxisTitleLabel.setPos({x:50,y:50});
 		        sceneCameraRenderer();
 		        eventsControlsStats();
 		        lightFloorSkybox();
@@ -108,8 +128,22 @@
 
 				addLinesHandler("btn_tempLines",temperatureLines);
 				addLinesHandler("btn_pressure",pressureLines);
-				  
+
+				//addMaxMinHandler("btn_max_min");
+				//camera.add(crosshairSprite);
+				//position sprites by percent X:(100 is all the way to the right, 0 is left, 50 is centered)
+//				                            Y:(100 is all the way to the top, 0 is bottom, 50 is centered)
+				var crosshairPercentX = 50;
+				var crosshairPercentY = 50;
+				var crosshairPositionX = (crosshairPercentX / 100) * 2 - 1;
+				var crosshairPositionY = (crosshairPercentY / 100) * 2 - 1;
+				crosshairSprite.position.x = crosshairPositionX * camera.aspect;
+				crosshairSprite.position.y = crosshairPositionY;
+				crosshairSprite.position.z = -1.5;
+
 		    }
+
+		
 
 		    function draw(){
 		    	scene.remove(parts);
@@ -124,6 +158,7 @@
 					scene.remove(obj);	
 				});
 				liquidSurface=[];
+				vaporSurface=[];
 				
 
 				textObjects.forEach(function(entry){
@@ -154,8 +189,8 @@
 						});
 
 					var textMaterial =new THREE.MeshPhongMaterial( { 
-			            color: 0x8B4500, 
-			            ambient: 0x2200ee, // should generally match color
+			            color: 0x000044, 
+			            ambient: 0x000044, // should generally match color
 			            specular: 0x050505,
 			            side: THREE.DoubleSide,
 			            shininess: 100
@@ -179,7 +214,7 @@
 							if(pressureLines.on){
 								liquidLines.push(line);
 							}
-							
+							vaporSurface.push(line);
 						});
 	
 					liquidAreaPressureLines.forEach(function(entry){
@@ -201,7 +236,8 @@
 	        	   createAndAddLineGeometry(entry ,0x000000);
 		           });	        
 
-	           createAndAddGeometry(liquidSurface, textMaterial); 	
+	           createAndAddGeometry(liquidSurface, textMaterial);
+	           createAndAddGeometry(vaporSurface, textMaterial); 	 	
 	          drawAxisLabels();
 
 	          drawPoints();
@@ -224,7 +260,7 @@
 				el.addEventListener( 'click', function () {
 
 					plotType = eq;
-					yAxisLabel = yLabel;	
+					xAxisLabel = yLabel;	
 
 					var l = document.getElementById("info");
 					if(plotType === 'entropy'){
@@ -268,6 +304,24 @@
 				});
 
 			}
+		   function addMaxMinHandler( id) {
+
+				var el = document.getElementById( id );
+
+				el.addEventListener( 'click', function () {
+					console.log("max");
+		    		//big();
+		    		el.style.backgroundColor = "darkorange";
+					/* if(lines.on){
+						el.style.backgroundColor = "darkorange";
+					}else{
+						el.style.backgroundColor = "transparent";
+					} */
+
+				});
+
+			}
+	
 
 
 		    function enthalpyLine(jsonArrayPointInfo){
@@ -286,11 +340,12 @@
 		            
 		              var position ={
 				              	
-		                        z :jsonArrayPointInfo[i].pressure,
+		                        z :jsonArrayPointInfo[i].temperature,
 		                        x: yp,
-		                        y : jsonArrayPointInfo[i].temperature
+		                        y : jsonArrayPointInfo[i].pressure,
+		                        userData: jsonArrayPointInfo[i]
 		                      };
-
+						
 		              jsonline[i] = position;
 		           };
 		           
@@ -342,6 +397,7 @@
 	            linesObject.push(line);
 	            //console.log('lineadded');
 	            scene.add(line);
+	            return line;
 			}
 		    
 
@@ -427,7 +483,7 @@
 			        renderer = new THREE.WebGLRenderer( {antialias:true} );
 			    else
 			        renderer = new THREE.CanvasRenderer(); 
-			    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+			    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);			    
 			    container = document.getElementById( 'ThreeJS' );
 			    container.appendChild( renderer.domElement );
 			}
@@ -488,15 +544,23 @@
 							minDistance =d;
 						}
 					}  
-					sphere.position.set(cp.x,cp.y,cp.z);															
-							
+					sphere.position.set(cp.x,cp.y,cp.z);
 
+					console.log(cp.userData.toString());
 					
+					tooltip.show("temperatura:"+cp.userData.temperature +
+							"<br/>presión:" + cp.userData.pressure);
+
+
+					/*  crosshairSprite.position.x =cp.x ;//*camera.aspect;
+						crosshairSprite.position.y = cp.y;		 */			
+
+					//console.log('userdata: ' + cp.userData);
 					//console.log('Point'+cp);
-					console.log('x,y,z ('+cp.x +','+cp.y+','+cp.z+')');
+					//console.log('x,y,z ('+cp.x +','+cp.y+','+cp.z+')');
 				 	if ( sphereIntersects[ 0 ].object != INTERSECTEDSPHERE ) {
 					     //restore previous intersection object (if it exists) to its original color
-						if ( INTERSECTEDSPHERE ) {
+						/* if ( INTERSECTEDSPHERE ) {
 							INTERSECTEDSPHERE.material.color.setHex( INTERSECTEDSPHERE.currentHex );
 						}
 						// store reference to closest object as current intersection object
@@ -508,8 +572,11 @@
 
 						if(sphereIntersects[0].point){
 							console.log('Point'+sphereIntersects[0].point);
-						} 
+						}  */
 					} 
+				}else{
+					tooltip.show("");
+					//tooltip.hide();
 				}
 			}
 
@@ -614,7 +681,10 @@
 	
 			function render() 
 			{
-			    renderer.render( scene, camera );
+
+				
+				renderer.render( scene, camera );
+				
 			}
 	
 	
@@ -634,6 +704,11 @@
 			    light3.position.set(-300,-300,100);
 			    light3.castShadow =true;
 			    scene.add(light3);
+
+			    var light4 = new THREE.PointLight(0xffffff);
+			    light4.position.set(500,-1000,500);
+			    light4.castShadow =true;
+			    scene.add(light4);
 			    
 		
 
@@ -700,9 +775,14 @@
 		    			var newX = (position.x-minX)*m;
 		    			var newY = (position.y-minY)*ym;
 		    			var newZ =(position.z-minZ)*zm;
+
+		    			
 		    			position.x=newX;
 		    			position.y=newY;
 		    			position.z=newZ;
+		    			var vector = new THREE.Vector3(newX,newY,newZ);
+		    			vector.userData =position.userData; 
+		    			points.vertices.push(vector);
 		    		}
 		    	});
 		    }
@@ -710,7 +790,7 @@
 			function debugaxis(aLen){
 				axisLength = aLen;
 				 createAxis(v(0, 0, 0), v(axisLength, 0, 0), 0xFF0000);
-			    createAxis(v(0, 0, 0), v(0, axisLength, 0), 0x00FF00);
+			    createAxis(v(axisLength, 0, 0), v(axisLength, axisLength, 0), 0x00FF00);
 			    createAxis(v(0, 0, 0), v(0, 0, axisLength), 0x0000FF);
 			};
 			function v(x,y,z){ 
@@ -729,16 +809,16 @@
 
 			function drawAxisLabels(){
 				 addText(
-					    	{x:axisLength/4,y:-100,z:0},
+					    	{x:axisLength/8,y:-100,z:0},
 					    	{x:Math.PI / 2,y:0,z:0},
 					    	xAxisLabel);
 
 				    addText(
-				    	{y:400+axisLength/1.8,x:-100,z:0},
-				    	{x:Math.PI / 2,y:-Math.PI/2,z:0},
+				    	{y:axisLength/8,x:1100,z:0},
+				    	{x:Math.PI / 2,y:Math.PI/2,z:0},
 				    	yAxisLabel);
 				    addText(
-				    	{x:-50,y:-50,z:axisLength/4},
+				    	{x:-50,y:-50,z:axisLength/6},
 				    	{x:Math.PI / 2,y:-Math.PI/4,z:Math.PI/2},
 				    	zAxisLabel);
 				    
@@ -788,7 +868,7 @@
 				// event.preventDefault();
 
 				// update sprite position
-				//sprite1.position.set( event.clientX, event.clientY - 20, 0 );
+				//crosshairSprite.position.set( event.clientX, event.clientY - 20, -1.5 );
 				
 				// update the mouse variable
 				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -797,12 +877,157 @@
 				sphere.position.set(entry.x,entry.y,entry.z); */															
 				//scene.add(sphere);
 
-
+				/* this.mesh.position.x = -(SCREEN_WIDTH / 2) + mouseX;
+				this.mesh.poyition.y = (SCREEN_WIDTH / 2) - mouseY; */
+				/* var el = document.getElementById("tooltip");
+				el.style.left= event.clientX; */
+				
+				/* console.log(event.clientX+ ","+event.clientY);
+				var crosshairPercentX = 50*mouse.x+50;
+				var crosshairPercentY = 50*mouse.y+50;
+				var crosshairPositionX = (crosshairPercentX / 100) * 2 - 1;
+				var crosshairPositionY = (crosshairPercentY / 100) * 2 - 1;
+				crosshairSprite.position.x = -(window.innerWidth/2)+event.clientX;
+				crosshairSprite.position.y = (window.innerHeight/2)-event.clientY; */
+				
 				
 				//entconsole.log("onDocumentMouseMove, mouseposition("+mouse.x+","+mouse.y+")");
 			} 
 			
-
+		 function Tooltip(useExplicitPositions){
+				    var top = 3;
+				    var left = 3;
+				    var maxw = 300;
+				    var speed = 100;
+				    var timer = 20;
+				    var endalpha = 95;
+				    var alpha = 0;
+				    var tt, t, c, b, h;
+				    var ie = document.all ? true : false;
+				    
+				    this.show = function(v, w){
+				        if (tt == null) {
+				            tt = document.createElement('div');
+				            tt.style.color = "#8B4500";
+				            
+				            tt.style.position = 'absolute';
+				            tt.style.display = 'block';
+				            
+				            t = document.createElement('div');
+				            
+				            t.style.display = 'block';
+				            t.style.height = '5px';
+				            t.style.marginleft = '5px';
+				            t.style.overflow = 'hidden';
+				            
+				            c = document.createElement('div');
+				            
+				            b = document.createElement('div');
+				            
+				            tt.appendChild(t);
+				            tt.appendChild(c);
+				            tt.appendChild(b);
+				            document.body.appendChild(tt);
+				            
+				            if (!ie) {
+				                tt.style.opacity = 0;
+				                tt.style.filter = 'alpha(opacity=0)';
+				            }
+				            else 
+				                tt.style.opacity = 1;
+				            
+				            
+				        }
+				        
+				        if (!useExplicitPositions) 
+				            document.onmousemove = this.pos;
+				        
+				        tt.style.display = 'block';
+				        c.innerHTML = '<span style="font-weight:bold; font-family: arial;">' + v + '</span>';
+				        tt.style.width = w ? w + 'px' : 'auto';
+				        
+				        if (!w && ie) {
+				            t.style.display = 'none';
+				            b.style.display = 'none';
+				            tt.style.width = tt.offsetWidth;
+				            t.style.display = 'block';
+				            b.style.display = 'block';
+				        }
+				        
+				        if (tt.offsetWidth > maxw) {
+				            tt.style.width = maxw + 'px';
+				        }
+				        
+				        h = parseInt(tt.offsetHeight) + top;
+				        
+				        if (!ie) {
+				            clearInterval(tt.timer);
+				            tt.timer = setInterval(function(){
+				                fade(1);
+				            }, timer);
+				        }
+				    };
+				    
+				    this.setPos = function(e){
+				        tt.style.top = e.y + 'px';
+				        tt.style.left = e.x + 'px';
+				    };
+				    
+				    this.pos = function(e){
+				        var u = ie ? event.clientY + document.documentElement.scrollTop : e.pageY;
+				        var l = ie ? event.clientX + document.documentElement.scrollLeft : e.pageX;
+				        tt.style.top = (u - h) + 'px';
+				        tt.style.left = (l + left) + 'px';
+				    };
+				    
+				    function fade(d){
+				        var a = alpha;
+				        
+				         if ((a != endalpha && d == 1) || (a != 0 && d == -1)) {
+				            var i = speed;
+				            
+				            if (endalpha - a < speed && d == 1) {
+				                i = endalpha - a;
+				            }
+				            else 
+				                if (alpha < speed && d == -1) {
+				                    i = a;
+				                }
+				            
+				            alpha = a + (i * d);
+				            tt.style.opacity = alpha * .01;
+				            tt.style.filter = 'alpha(opacity=' + alpha + ')';
+				        }
+				        else {
+				            clearInterval(tt.timer);
+				            
+				            if (d == -1) {
+				                tt.style.display = 'none';
+				            }
+				        } 
+				    }
+				    
+				    this.hide = function() {
+				        if (tt == null) 
+				            return;
+				        
+				        if (!ie) {
+				                
+				            clearInterval(tt.timer);
+				            
+				            tt.timer = setInterval(function() {
+				                
+				                fade(-1);
+				                
+				            }, timer);
+				            
+				        }
+				        else {
+				            tt.style.display = 'none';
+				        }
+				    };
+				   return this; 
+				};
 	
 			//]]>
 		    </script>
