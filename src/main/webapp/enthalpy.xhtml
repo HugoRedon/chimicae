@@ -14,6 +14,8 @@
 					<f:selectItems value="#{phaseEnvelopeBean.envelopes}"/>
 				</h:selectOneMenu>
 				<h:commandButton action="#{phaseEnvelopeBean.drawEnthalpy()}" value="Graficar" />
+				
+				<h:commandButton action="#{phaseEnvelopeBean.download()}"  value="Descargar en archivo de excel" />
 			</h:form>
 		</ui:define>
 	</ui:composition>

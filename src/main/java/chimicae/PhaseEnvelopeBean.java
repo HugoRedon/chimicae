@@ -8,6 +8,8 @@ import hugo.productions.google.GoogleGraphInfo;
 import hugo.productions.google.GoogleOptions;
 import hugo.productions.google.GoogleRow;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +18,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -25,6 +29,7 @@ import models.MixtureEnvelope;
 import models.PointInfo;
 import models.SubstanceEnvelope;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Test;
 
 import plot.LinesPlotsBean;
@@ -98,6 +103,37 @@ public class PhaseEnvelopeBean implements Serializable {
 	@Inject LinesPlotsBean linesPlotsBean;
 	
 	public void draw(){
+		
+	}
+	
+	public void download() throws IOException {
+	    FacesContext fc = FacesContext.getCurrentInstance();
+	    ExternalContext ec = fc.getExternalContext();
+
+	    ec.responseReset(); // Some JSF component library or some Filter might have set some headers in the buffer beforehand. We want to get rid of them, else it may collide.
+	    ec.setResponseContentType("text/csv"); // Check http://www.iana.org/assignments/media-types for all types. Use if necessary ExternalContext#getMimeType() for auto-detection based on filename.
+	    //ec.setResponseContentLength(contentLength); // Set it with the file size. This header is optional. It will work if it's omitted, but the download progress will be unknown.
+	    String fileName = "hola.xlsx";
+	    ec.setResponseHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\""); // The Save As popup magic is done here. You can give it any file name you want, this only won't work in MSIE, it will use current request URL as file name instead.
+
+	    OutputStream output = ec.getResponseOutputStream();
+	    
+	    writeToOutput(output);
+	    
+	    //output.write("hola".getBytes());
+	    
+	    // Now you can write the InputStream of the file to the above OutputStream the usual way.
+	    // ...
+	    output.close();
+	    fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail since it's already written with a file and closed.
+	}
+	
+	
+	
+	public void writeToOutput(OutputStream output) throws IOException{
+		HSSFWorkbook workbook = new excel.ExcelReport().createReport(selectedEnvelope);
+		workbook.write(output);
+		workbook.close();
 		
 	}
 	

@@ -36,8 +36,8 @@
 				<div class="lbl btn" id="btn_rsub">E. Gibbs</div>
 
 				Líneas<br/><br/>
-				<div class="lbl btn" id="btn_pressure">Presión</div>
-				<div class="lbl btn" id="btn_tempLines">Temperatura</div>
+				<div class="lbl btn" id="btn_pressure">Temperatura constante</div>
+				<div class="lbl btn" id="btn_tempLines">Presión constante</div>
 	<!-- 
 				Labels<br/><br/>
 				<div class="lbl" id="lbl_src">Source</div>
@@ -547,9 +547,20 @@
 					sphere.position.set(cp.x,cp.y,cp.z);
 
 					console.log(cp.userData.toString());
+
+					 var inf;
+					 
+					if(plotType === 'entropy'){
+						inf='Entropía:'+cp.userData.entropy;
+					}else if(plotType === 'gibbs'){
+						inf='E. Gibbs:' + cp.userData.gibbs;
+					}else{
+						inf='Entalpía:' + cp.userData.enthalpy;
+					}
 					
 					tooltip.show("temperatura:"+cp.userData.temperature +
-							"<br/>presión:" + cp.userData.pressure);
+							"<br/>presión:" + cp.userData.pressure+
+							"<br/>" +inf );
 
 
 					/*  crosshairSprite.position.x =cp.x ;//*camera.aspect;
