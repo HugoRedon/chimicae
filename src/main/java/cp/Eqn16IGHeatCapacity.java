@@ -12,6 +12,31 @@ public class Eqn16IGHeatCapacity implements CpEquation {
 	private Double D;
 	private Double E;
 	
+	public int numberOfParameters(){
+		return 5;
+	}
+	
+	public double getParameter(int index){
+		switch (index){
+			case 0:return A;			
+			case 1:return B; 
+			case 2:return C; 
+			case 3:return D; 
+			case 4:return E; 
+		}
+		return 0;
+	}
+	
+	public String getParameterName(int index){
+		switch (index){
+		case 0:return "A";			
+		case 1:return "B"; 
+		case 2:return "C"; 
+		case 3:return "D"; 
+		case 4:return "E"; 
+	}
+	return null;
+	}
 
 	@Override
 	public double cp(double T) {
