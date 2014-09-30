@@ -4,7 +4,8 @@
       xmlns:composite="http://java.sun.com/jsf/composite"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+ 		xmlns:c="http://java.sun.com/jsp/jstl/core">
 <head>
 <title>Not present in rendered output</title>
 </head>
@@ -15,15 +16,24 @@
 </composite:interface>
 <composite:implementation>
 	<table>
-	<tr><td>#{cc.attrs.name}</td></tr>
+	<tr>
+	<td>#{cc.attrs.name}</td>
+	<ui:repeat var="ci" value="#{cc.attrs.modelList.caf}">
+		<td>#{ci.compound.name}</td>
+	</ui:repeat>
+	</tr>
 	<ui:repeat var="ci" value="#{cc.attrs.modelList.caf}">
 		<tr>
+			<td>#{ci.compound.name}</td>
 			<ui:repeat var="cj" value="#{cc.attrs.modelList.caf}">
 			<td>
-				<h:outputText value="(#{ci.compound.name},#{cj.compound.name})"/>
-				<h:inputText value="#{cc.attrs.modelList.binaryFor(ci.compound,cj.compound).value}" />
+				<!-- <h:outputText value="(#{ci.compound.name},#{cj.compound.name})"/> -->
+				
+					<h:inputText rendered="#{not cc.attrs.modelList.isEmpty(ci.compound,cj.compound)}" 
+					disabled="#{cc.attrs.modelList.binaryFor(ci.compound,cj.compound).disabled}"
+					 value="#{cc.attrs.modelList.binaryFor(ci.compound,cj.compound).value}" />				
 			</td>
-			</ui:repeat>
+			</ui:repeat>	
 		</tr>
 	</ui:repeat>
 	</table>

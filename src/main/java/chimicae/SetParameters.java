@@ -1,6 +1,7 @@
 package chimicae;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -8,6 +9,7 @@ import javax.inject.Named;
 
 import termo.activityModel.ActivityModel;
 import termo.activityModel.NRTLActivityModel;
+import termo.binaryParameter.ActivityModelBinaryParameter;
 import termo.eos.mixingRule.ExcessGibbsMixingRule;
 import termo.eos.mixingRule.MixingRule;
 import termo.eos.mixingRule.VDWMixingRule;
@@ -21,10 +23,24 @@ public class SetParameters implements Serializable {
 
 	@Inject CreateMixture createMixture;
 	
+	
 	BinaryParameterModelList vanDerWaals ;
 	BinaryParameterModelList wongSandler_b;
 	BinaryParameterModelList activityModel_A ;
 	BinaryParameterModelList activityModel_B ;
+	BinaryParameterModelList nrtl_alpha;
+	
+
+
+	public void createModels(ActivityModelBinaryParameter params){
+		List<CompoundAlphaFraction> caf =  createMixture.getCompoundAlphaFractions();
+		vanDerWaals = new BinaryParameterModelList(params,caf);
+		wongSandler_b = new BinaryParameterModelList(params.getK(), caf);
+		activityModel_A = new BinaryParameterModelList(params.getA(),caf);
+		activityModel_B = new BinaryParameterModelList(params.getB(),caf);
+		nrtl_alpha = new BinaryParameterModelList(params.getAlpha(), caf);
+		
+	}
 	
 	public BinaryParameterModelList getActivityModel_B() {
 		return activityModel_B;
@@ -63,9 +79,17 @@ public class SetParameters implements Serializable {
 		wongSandler_b.save();
 		activityModel_A.save();
 		activityModel_B.save();
+		nrtl_alpha.save();
 		return "mixture";
 	}
 	
+	public String clean(){
+		
+		ActivityModelBinaryParameter params = createMixture.getK();
+		
+		createModels(params);
+		return "parameters";
+	}
 	
 	public String cancel(){
 		return "mixture";
@@ -92,6 +116,13 @@ public class SetParameters implements Serializable {
 
 	public void setActivityModel_A(BinaryParameterModelList activityModel_A) {
 		this.activityModel_A = activityModel_A;
+	}
+	public BinaryParameterModelList getNrtl_alpha() {
+		return nrtl_alpha;
+	}
+
+	public void setNrtl_alpha(BinaryParameterModelList nrtl_alpha) {
+		this.nrtl_alpha = nrtl_alpha;
 	}
 
 

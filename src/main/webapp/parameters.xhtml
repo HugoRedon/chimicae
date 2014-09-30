@@ -19,11 +19,17 @@
 				<emcomp:mixtureParameters modelList="#{setParameters.activityModel_A}" name="A"/>
 				<emcomp:mixtureParameters modelList="#{setParameters.activityModel_B}" name="B"/>
 				<c:if test="#{setParameters.isWongSandlerMixingRule()}">
-					<emcomp:mixtureParameters modelList ="#{setParameters.wongSandler_b}" name="b"/>	
-				</c:if>							
+					<emcomp:mixtureParameters modelList ="#{setParameters.wongSandler_b}" name="k"/>	
+				</c:if>	
+				<c:if test="#{setParameters.isNRTLActivityModel()}">
+					
+					
+					 <emcomp:mixtureParameters modelList="#{setParameters.nrtl_alpha}" name="alfa"/>
+				</c:if>						
 			</c:if>
 			
 			<h:commandButton action="#{setParameters.save()}" value="Aceptar"  />
+			<h:messages />
 			</h:form>
 		</ui:define>
 	</ui:composition>

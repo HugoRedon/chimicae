@@ -49,7 +49,7 @@
 					</h:column>
 					<f:facet name="footer">
 						<h:commandButton action="#{createMixture.addRow}" value="Agregar compuesto" >
-							<f:ajax render="mixtureForm:mixtureTable" onevent=" MathJax.Hub.Queue(['Typeset',MathJax.Hub]);"/>
+							<f:ajax render="mixtureForm:mixtureTable" onevent=" MathJax.Hub.Queue(['Typeset',MathJax.Hub])"/>
 						</h:commandButton>
 					</f:facet>
 				</h:dataTable>
