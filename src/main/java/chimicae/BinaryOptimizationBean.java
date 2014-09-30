@@ -197,7 +197,6 @@ public class BinaryOptimizationBean implements Serializable,PropertyChangeListen
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		// TODO Auto-generated method stub
 		update();
 	}
 

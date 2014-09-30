@@ -1,16 +1,18 @@
 package chimicae;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import termo.binaryParameter.ActivityModelBinaryParameter;
-import termo.component.Compound;
-import utils.BinaryParameterModel;
-import java.io.Serializable;
+import termo.activityModel.ActivityModel;
+import termo.activityModel.NRTLActivityModel;
+import termo.eos.mixingRule.ExcessGibbsMixingRule;
+import termo.eos.mixingRule.MixingRule;
+import termo.eos.mixingRule.VDWMixingRule;
+import termo.eos.mixingRule.WongSandlerMixingRule;
+import utils.BinaryParameterModelList;
 
 @Named("setParameters")
 @SessionScoped
@@ -19,53 +21,78 @@ public class SetParameters implements Serializable {
 
 	@Inject CreateMixture createMixture;
 	
-	List<BinaryParameterModel> vanDerWaals = new ArrayList<>();
+	BinaryParameterModelList vanDerWaals ;
+	BinaryParameterModelList wongSandler_b;
+	BinaryParameterModelList activityModel_A ;
+	BinaryParameterModelList activityModel_B ;
 	
-	public BinaryParameterModel binariesForVDW(Compound compoundi,Compound compoundj){
-		for(BinaryParameterModel bpm: vanDerWaals){
-			if(bpm.getCompoundi().equals(compoundi) &&bpm.getCompoundj().equals(compoundj)){
-				return bpm;
-			}
-		}
-		return null;
+	public BinaryParameterModelList getActivityModel_B() {
+		return activityModel_B;
+	}
+
+	public void setActivityModel_B(BinaryParameterModelList activityModel_B) {
+		this.activityModel_B = activityModel_B;
+	}
+
+	public boolean isVDWMixingRule(){
+		MixingRule mr = createMixture.getMixingRule();
+		return mr instanceof VDWMixingRule;
 	}
 	
-	public String clean(){
-		vanDerWaals.clear();
-		
-		ActivityModelBinaryParameter k = createMixture.getK();
-		for(CompoundAlphaFraction cafi:createMixture.getCompoundAlphaFractions()){
-			for(CompoundAlphaFraction cafj:createMixture.getCompoundAlphaFractions()){
-				Compound compoundi = cafi.getCompound();
-				Compound compoundj = cafj.getCompound();
-				
-				Double value = k.getValue(compoundi, compoundj);
-				BinaryParameterModel bpm = new BinaryParameterModel(compoundi, compoundj, value);
-				vanDerWaals.add(bpm);
-			}
-		}
-		
-		
-		return "parameters";//for h:link
+	public boolean isWongSandlerMixingRule(){
+		MixingRule mr = createMixture.getMixingRule();
+		return mr instanceof WongSandlerMixingRule;
 	}
 	
+	public boolean isExcessGibbsBasedMixingRule(){
+		MixingRule mr = createMixture.getMixingRule();
+		return mr instanceof ExcessGibbsMixingRule;
+	}
 	
-	
+	public boolean isNRTLActivityModel(){
+		MixingRule mr = createMixture.getMixingRule();
+		if(isExcessGibbsBasedMixingRule()){
+			ActivityModel am = ((ExcessGibbsMixingRule)mr).getActivityModel();
+			return am instanceof NRTLActivityModel; 
+		}
+		return false;			
+	}
 	
 	public String save(){
-		for(BinaryParameterModel p: vanDerWaals){
-			createMixture.getK().setValue(p.getCompoundi(), p.getCompoundj(), p.getValue());
-		}
+		vanDerWaals.save();
+		wongSandler_b.save();
+		activityModel_A.save();
+		activityModel_B.save();
 		return "mixture";
 	}
+	
+	
 	public String cancel(){
 		return "mixture";
 	}
-	
-
-
-	public SetParameters() {
-		// TODO Auto-generated constructor stub
+	public BinaryParameterModelList getVanDerWaals() {
+		return vanDerWaals;
 	}
+
+	public void setVanDerWaals(BinaryParameterModelList vanDerWaals) {
+		this.vanDerWaals = vanDerWaals;
+	}
+
+	public BinaryParameterModelList getWongSandler_b() {
+		return wongSandler_b;
+	}
+
+	public void setWongSandler_b(BinaryParameterModelList wongSandler_b) {
+		this.wongSandler_b = wongSandler_b;
+	}
+
+	public BinaryParameterModelList getActivityModel_A() {
+		return activityModel_A;
+	}
+
+	public void setActivityModel_A(BinaryParameterModelList activityModel_A) {
+		this.activityModel_A = activityModel_A;
+	}
+
 
 }

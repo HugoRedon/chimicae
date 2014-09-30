@@ -8,6 +8,8 @@ import hugo.productions.google.GoogleGraphInfo;
 import hugo.productions.google.GoogleOptions;
 import hugo.productions.google.GoogleRow;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -46,7 +48,7 @@ import com.google.gson.Gson;
 
 @Named("phaseEnvelopeBean")
 @SessionScoped
-public class PhaseEnvelopeBean implements Serializable {
+public class PhaseEnvelopeBean implements Serializable,PropertyChangeListener {
 
 	private static final long serialVersionUID = 6940496006074883582L;
 	public HeterogeneousMixture getHeterogeneous(Mixture mix){
@@ -82,7 +84,10 @@ public class PhaseEnvelopeBean implements Serializable {
 	}
 	@PostConstruct
 	public void phaseEnvelopeBean() {
-		
+		homogeneousBean.addPropertyChangelistener(this);
+		update();
+	}
+	public void update(){
 		for(Homogeneous homogeneous:homogeneousBean.getHomogeneousList()){
 			Heterogeneous heterogeneous =getHeterogeneous(homogeneous);
 			Envelope env;
@@ -214,6 +219,10 @@ public class PhaseEnvelopeBean implements Serializable {
 			return (MixtureEnvelope) selectedEnvelope;
 		}
 		return null;
+	}
+	
+	public GoogleGraphInfo dataTable(){
+		return dataTable(selectedEnvelope);
 	}
 	
 	public GoogleGraphInfo dataTable(Envelope envelope){
@@ -498,6 +507,11 @@ public class PhaseEnvelopeBean implements Serializable {
 			rows.add(new GoogleRow(numbers));
 		}
 		return rows;
+	}
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		update();
+		
 	}
 
 }
