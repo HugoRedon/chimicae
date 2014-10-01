@@ -19,19 +19,17 @@
 	<tr>
 	<td>#{cc.attrs.name}</td>
 	<ui:repeat var="ci" value="#{cc.attrs.modelList.caf}">
-		<td>#{ci.compound.name}</td>
+		<td>#{ci.name}</td>
 	</ui:repeat>
 	</tr>
 	<ui:repeat var="ci" value="#{cc.attrs.modelList.caf}">
 		<tr>
-			<td>#{ci.compound.name}</td>
+			<td>#{ci.name}</td>
 			<ui:repeat var="cj" value="#{cc.attrs.modelList.caf}">
-			<td>
-				<!-- <h:outputText value="(#{ci.compound.name},#{cj.compound.name})"/> -->
-				
-					<h:inputText rendered="#{not cc.attrs.modelList.isEmpty(ci.compound,cj.compound)}" 
-					disabled="#{cc.attrs.modelList.binaryFor(ci.compound,cj.compound).disabled}"
-					 value="#{cc.attrs.modelList.binaryFor(ci.compound,cj.compound).value}" />				
+			<td>							
+				<h:inputText rendered="#{not cc.attrs.modelList.isEmpty(ci,cj)}" 
+					disabled="#{cc.attrs.modelList.binaryFor(ci,cj).disabled}"
+					 value="#{cc.attrs.modelList.binaryFor(ci,cj).value}" />				
 			</td>
 			</ui:repeat>	
 		</tr>

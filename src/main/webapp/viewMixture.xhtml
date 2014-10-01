@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:emcomp="http://xmlns.jcp.org/jsf/composite/emcomp"
       xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:composition template="template.xhtml">
@@ -26,17 +27,9 @@
 				</ui:repeat>
 			</table>
 			
-			<table>
-				<ui:repeat var="ci" value="#{createMixture.getListCAsSet(createMixture.mixture.components)}">
-					<tr>
-					<ui:repeat var="cj" value="#{createMixture.getListCAsSet(createMixture.mixture.components)}">
-						<td>
-						<h:outputText value="#{createMixture.mixture.binaryParameters.getValue(ci,cj)}"/>
-						</td>
-					</ui:repeat>
-					</tr>
-				</ui:repeat>
-			</table>
+			<emcomp:viewMixtureParameters />
+			
+			
  			<h:link value="Ver todos los sistemas" outcome="systems"/>
 		</ui:define>
 	</ui:composition>

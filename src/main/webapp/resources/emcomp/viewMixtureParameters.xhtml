@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+<head>
+<title>Not present in rendered output</title>
+</head>
+<body>
+<composite:interface>	
+</composite:interface>
+<composite:implementation>
+	<table>
+
+		
+		
+		
+		<ui:repeat var="list" value="#{createMixture.getParameters()}">
+			<tr><td>#{list.name}</td>
+				<ui:repeat var="ci" value="#{list.caf}">
+					<td>#{ci.name}</td>
+				</ui:repeat>
+			</tr>
+			
+			<ui:repeat var="ci" value="#{list.caf}">
+				<tr>
+					<td>#{ci.name}</td>
+					<ui:repeat var="cj" value="#{list.caf}">
+						<td>
+							<h:outputText value="#{list.binaryFor(ci,cj).value}" />
+						</td>
+					</ui:repeat>
+				</tr>
+			</ui:repeat>
+		
+		</ui:repeat>
+		
+		
+		
+		
+	</table>
+
+</composite:implementation>
+</body>
+</html>
+	

@@ -1,6 +1,7 @@
 package chimicae;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
@@ -10,6 +11,7 @@ import javax.inject.Named;
 import termo.activityModel.ActivityModel;
 import termo.activityModel.NRTLActivityModel;
 import termo.binaryParameter.ActivityModelBinaryParameter;
+import termo.component.Compound;
 import termo.eos.mixingRule.ExcessGibbsMixingRule;
 import termo.eos.mixingRule.MixingRule;
 import termo.eos.mixingRule.VDWMixingRule;
@@ -31,9 +33,11 @@ public class SetParameters implements Serializable {
 	BinaryParameterModelList nrtl_alpha;
 	
 
-
+	
+	
 	public void createModels(ActivityModelBinaryParameter params){
-		List<CompoundAlphaFraction> caf =  createMixture.getCompoundAlphaFractions();
+		List<Compound> caf =  createMixture.getListOfCompounds();
+		
 		vanDerWaals = new BinaryParameterModelList(params,caf);
 		wongSandler_b = new BinaryParameterModelList(params.getK(), caf);
 		activityModel_A = new BinaryParameterModelList(params.getA(),caf);

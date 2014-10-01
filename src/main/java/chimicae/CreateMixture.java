@@ -10,16 +10,21 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import termo.activityModel.ActivityModel;
+import termo.activityModel.NRTLActivityModel;
 import termo.binaryParameter.ActivityModelBinaryParameter;
 import termo.component.Compound;
 import termo.eos.Cubic;
 import termo.eos.EquationsOfState;
+import termo.eos.mixingRule.ExcessGibbsMixingRule;
 import termo.eos.mixingRule.MixingRule;
 import termo.eos.mixingRule.VDWMixingRule;
+import termo.eos.mixingRule.WongSandlerMixingRule;
 import termo.matter.Mixture;
 import termo.matter.Substance;
 import termo.matter.builder.MixtureBuilder;
 import termo.phase.Phase;
+import utils.BinaryParameterModelList;
 
 @Named("createMixture")
 @SessionScoped
@@ -82,6 +87,53 @@ public class CreateMixture implements Serializable {
 		}
 	}
 	
+	public List<BinaryParameterModelList> getParameters(){
+		Mixture mix = mixture;
+		
+		List<BinaryParameterModelList> result = new ArrayList<>();
+		MixingRule mr = mix.getMixingRule();
+		List<Compound> compounds = getListOfCompounds();
+		if(mr instanceof VDWMixingRule){
+			BinaryParameterModelList bpml =
+					new BinaryParameterModelList(mix.getBinaryParameters(), compounds);
+			bpml.setName("k");
+			result.add(bpml);			
+		}else if(mr instanceof ExcessGibbsMixingRule){
+			ActivityModelBinaryParameter ambp =(ActivityModelBinaryParameter) mix.getBinaryParameters();
+			
+			BinaryParameterModelList bpmla=
+					new BinaryParameterModelList(ambp.getA(), compounds);
+			bpmla.setName("A");
+			BinaryParameterModelList bpmlb=
+					new BinaryParameterModelList(ambp.getB(), compounds);
+			bpmlb.setName("B");
+			result.add(bpmla);
+			result.add(bpmlb);
+			if(mr instanceof WongSandlerMixingRule){
+				BinaryParameterModelList bpmlk =
+						new BinaryParameterModelList(ambp.getK(), compounds);
+				bpmlk.setName("k");
+				result.add(bpmlk);
+			}
+			ActivityModel am = ((ExcessGibbsMixingRule) mr).getActivityModel();
+			if(am instanceof NRTLActivityModel){
+				BinaryParameterModelList nrtl = 
+						new BinaryParameterModelList(ambp.getAlpha(), compounds);
+				nrtl.setName("alfa");
+				result.add(nrtl);
+			}
+		}
+		
+		
+		return result;
+	}
+	public List<Compound> getListOfCompounds(){
+		List<Compound> result = new ArrayList<>();
+		for(CompoundAlphaFraction cafi:compoundAlphaFractions){
+			result.add(cafi.getCompound());
+		}
+		return result;
+	}
 	
 	
 	public List<Compound> selectedCompounds(){
@@ -110,7 +162,7 @@ public class CreateMixture implements Serializable {
 		return "viewMixture";
 	}
 	Mixture mixture;
-
+//duuuuhhhhhh
 	public List<Substance> getListAsSet(Set<Substance> set) {
 		  return new ArrayList<Substance>(set);
 	}

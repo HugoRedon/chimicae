@@ -1,31 +1,35 @@
 package utils;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import termo.binaryParameter.InteractionParameter;
 import termo.component.Compound;
-import chimicae.CompoundAlphaFraction;
 
-public class BinaryParameterModelList implements PropertyChangeListener{
+public class BinaryParameterModelList{
 	List<BinaryParameterModel> list = new ArrayList<>();
 	
 	InteractionParameter params ;
-	List<CompoundAlphaFraction> caf;
+	List<Compound> caf;
+	String name ;
 	
-	public BinaryParameterModelList(InteractionParameter params,List<CompoundAlphaFraction> caf){
+	public String getName() {
+		return name;
+	}
+	public void setName(String name){
+		this.name = name;
+	}
+	public BinaryParameterModelList(InteractionParameter params,List<Compound> caf){
 		this.caf = caf;
 		this.params = params;
 		
 		
-		for(CompoundAlphaFraction cafi:caf){
-			for(CompoundAlphaFraction cafj:caf){
-				double value= params.getValue(cafi.getCompound(), cafj.getCompound());
+		for(Compound cafi:caf){
+			for(Compound cafj:caf){
+				double value= params.getValue(cafi, cafj);
 				
-				Compound ci = cafi.getCompound();
-				Compound cj = cafj.getCompound();
+				Compound ci = cafi;
+				Compound cj = cafj;
 				BinaryParameterModel bpm =null;
 				
 				if(params.isSymmetric()){
@@ -42,6 +46,7 @@ public class BinaryParameterModelList implements PropertyChangeListener{
 			}
 		}
 	}
+	
 	public boolean isEmpty(Compound ci,Compound cj){
 		boolean result = binaryFor(ci, cj)==null; 
 		System.out.println(result);
@@ -57,11 +62,11 @@ public class BinaryParameterModelList implements PropertyChangeListener{
 		this.params = params;
 	}
 
-	public List<CompoundAlphaFraction> getCaf() {
+	public List<Compound> getCaf() {
 		return caf;
 	}
 
-	public void setCaf(List<CompoundAlphaFraction> caf) {
+	public void setCaf(List<Compound> caf) {
 		this.caf = caf;
 	}
 
@@ -105,14 +110,5 @@ public class BinaryParameterModelList implements PropertyChangeListener{
 		}		
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		BinaryParameterModel bpm = (BinaryParameterModel) evt.getSource();
-		Double newValue = (Double)evt.getNewValue();
-		//System.out.println("newValue"+newValue);
-	//	binaryFor(bpm.getCompoundj(), bpm.getCompoundi()).setValueWithoutFiringPropertyChange(newValue);
-		//System.out.println("ci"+bpm.getCompoundi());
-		//System.out.println("cj"+bpm.getCompoundj());
-		
-	}
+	
 }
