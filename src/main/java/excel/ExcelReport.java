@@ -21,6 +21,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.junit.Test;
 
 import termo.component.Compound;
@@ -31,31 +32,41 @@ import termo.matter.Substance;
 import cp.Eqn16IGHeatCapacity;
 
 public class ExcelReport {
-	private  HSSFWorkbook workbook;
+	protected  HSSFWorkbook workbook;
 	private  List<HSSFCell> titles =new ArrayList<>();
 	Envelope selectedEnvelope;
 	public  HSSFWorkbook createReport(Envelope selectedEnvelope){
 		this.selectedEnvelope=selectedEnvelope;
+		doWork();
+		return workbook;
+	}
+	
+	public void doSpecialWork(){
+		createPhaseEnvelopeSheet();
+	}
+	public void doWork(){
 		workbook = new HSSFWorkbook();
 		titles.clear();
-		createPhaseEnvelopeSheet();
+		doSpecialWork();
 		createSystemSheets();
 		
 		for (HSSFCell hssfCell : titles) {
 			HSSFSheet worksheet = hssfCell.getSheet();
 			worksheet.autoSizeColumn(hssfCell.getColumnIndex());
 		}
-		return workbook;
 	}
 	
 	public void createSystemSheets(){
-		if(selectedEnvelope instanceof SubstanceEnvelope){
-			SubstanceEnvelope ev=(SubstanceEnvelope)selectedEnvelope;
-			createSubstanceEnvelopeSheets(ev.getHeterogeneousSubstance().getLiquid());
-		}else {
-			MixtureEnvelope me =(MixtureEnvelope)selectedEnvelope;
-			createMixtureSheets(me.getHeterogeneousMixture().getLiquid());
+		if(selectedEnvelope !=null){
+			if(selectedEnvelope instanceof SubstanceEnvelope){
+				SubstanceEnvelope ev=(SubstanceEnvelope)selectedEnvelope;
+				createSubstanceEnvelopeSheets(ev.getHeterogeneousSubstance().getLiquid());
+			}else {
+				MixtureEnvelope me =(MixtureEnvelope)selectedEnvelope;
+				createMixtureSheets(me.getHeterogeneousMixture().getLiquid());
+			}
 		}
+		
 	}
 	
 	public void createMixtureSheets(Mixture mix){
@@ -338,6 +349,21 @@ public class ExcelReport {
 		titles.add(createCell(0,1,i++,"Entropía molar [J/ (kmol K)]",cellStyle));
 		titles.add(createCell(0,1,i++,"E. Gibbs molar [J/kmol]",cellStyle));
 		return i ;
+	}
+	
+	public HSSFCell createCell(String sheetName, int i , int j ,Object value, CellStyle cellStyle){
+		HSSFSheet hs =workbook.getSheet(sheetName); 
+		if(hs==null){
+//			WorkbookUtil wu = new WorkbookUtil();
+//			wu.validateSheetName(sheetName);
+			if(sheetName.toCharArray().length > 31){
+				System.out.println("posible error por extension del nombre de la hoja");
+			}
+			hs = workbook.createSheet(sheetName);
+			System.out.println(sheetName + "created");
+		}
+		int sheetIndex = workbook.getSheetIndex(hs);
+		return createCell(sheetIndex, i, j, value, cellStyle);
 	}
 	
 	public HSSFCell createCell(int sheet,int i, int j,Object value,CellStyle cellStyle){

@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:composition template="template.xhtml">
+		<ui:define name="content">
+			<h:form>
+				<h:panelGrid columns="2">
+					<h:outputText value="Sistema: "/>
+					<h:selectOneMenu value="#{saturationBean.selectedHeterogeneous}"
+				 		converter="#{heterogeneousConverter}" label="h">
+						<f:selectItems value="#{saturationBean.heterogeneousList}" />
+					</h:selectOneMenu>
+				
+					<h:outputText value="Temperatura [K]: " />
+					<h:inputText value="#{saturationBean.selectedHeterogeneous.temperature}" />
+					
+					<h:outputText value=""/>
+					<h:commandButton action="#{saturationBean.saturationPressure()}" value="saturación" />
+					
+					<h:outputText value="Presión: "/>
+					<h:outputText value="#{saturationBean.selectedHeterogeneous.pressure}"/>
+					
+					<h:outputText value="iteraciones"/>
+					<h:outputText value="#{saturationBean.iterations}"/>
+					
+					
+					<h:outputText value=""/>
+					<h:commandButton action="#{saturationBean.saturationPressureReport()}" value="crear reporte del cálculo" />
+					
+				</h:panelGrid>
+				<h:messages />
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</html>
