@@ -1,0 +1,12 @@
+figureNote: "Figure 3.4.1. VLE correlation of the methane and n -
+pentane binary system at 310, 377, and 444 K with
+the IPVDW mixing rule and the PRSV equation of
+state. The lines represent VLE results calculated with
+the binary interaction parameter k u = 0.0215. (Data
+are from the DECHEMA Chemistry Series, Gmehling
+and Onken 1977, Vol. 6, p. 445;"
+
+info: "figura extraida de libro sección 3.4 página 27, presión [bar]"
+
+fuente: "{title:"Modeling Vapor-Liquid Equilibria",authors:["Hasan Orbey","Stanley I. Sandler"]}
+

@@ -1,6 +1,7 @@
 package chimicae;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -202,7 +203,8 @@ public class EnthalpyBean implements Serializable {
 			if(pressure == 0){
 				((HeterogeneousMixture) heterogeneous).dewPressure();
 			}else{
-				int iterations =((HeterogeneousMixture) heterogeneous).dewPressure(pressure);	
+				Map<String,Double> liquidFractions = ((HeterogeneousMixture) heterogeneous).getLiquid().getFractions();
+				int iterations =((HeterogeneousMixture) heterogeneous).dewPressure(pressure,liquidFractions);	
 			}
 
 		}else if (heterogeneous instanceof HeterogeneousSubstance){

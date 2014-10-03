@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -346,7 +347,8 @@ public class PhaseEnvelopeBean implements Serializable,PropertyChangeListener {
 			if(slope < 2){//bubble or dew point pressures
 				nextTemperature = temperature + temperatureStep;
 				heterogeneousMixture.setTemperature(nextTemperature);
-				 iterations = heterogeneousMixture.dewPressure(pressure);
+				Map<String,Double> liquidFractions = heterogeneousMixture.getzFractions();
+				 iterations = heterogeneousMixture.dewPressure(pressure,liquidFractions);
 				nextPressure = heterogeneousMixture.getPressure();
 				
 				
@@ -390,14 +392,16 @@ public class PhaseEnvelopeBean implements Serializable,PropertyChangeListener {
 		if(pressureEstimate.equals(0)){
 			heterogeneousMixture.bubblePressure();
 		}else{
-			heterogeneousMixture.bubblePressure(pressureEstimate);
+			Map<String,Double> yEStimates = heterogeneousMixture.getVapor().getFractions();
+			heterogeneousMixture.bubblePressure(pressureEstimate,yEStimates);
 		}
 		double pressure = heterogeneousMixture.getPressure();
 		
 		double temperature_ = temperature +delta;
 		
 		heterogeneousMixture.setTemperature(temperature_);
-		heterogeneousMixture.bubblePressure(pressure);
+		Map<String,Double> yEStimates = heterogeneousMixture.getVapor().getFractions();
+		heterogeneousMixture.bubblePressure(pressure,yEStimates);
 		
 		double pressure_ = heterogeneousMixture.getPressure();
 		
@@ -420,14 +424,18 @@ public class PhaseEnvelopeBean implements Serializable,PropertyChangeListener {
 		if(pressureEstimate.equals(0)){
 			heterogeneousMixture.dewPressure();
 		}else{
-			heterogeneousMixture.dewPressure(pressureEstimate);
+			Map<String,Double> liquidFractions = heterogeneousMixture.getLiquid()
+					.getFractions();
+			heterogeneousMixture.dewPressure(pressureEstimate,liquidFractions);
 		}
 		double pressure = heterogeneousMixture.getPressure();
 		
 		double temperature_ = temperature +delta;
 		
 		heterogeneousMixture.setTemperature(temperature_);
-		heterogeneousMixture.dewPressure(pressure);
+		Map<String,Double> liquidFractions = heterogeneousMixture.getLiquid()
+				.getFractions();
+		heterogeneousMixture.dewPressure(pressure,liquidFractions);
 		
 		double pressure_ = heterogeneousMixture.getPressure();
 		

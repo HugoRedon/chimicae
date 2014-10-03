@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Map;
+
 import termo.component.Compound;
 import termo.matter.HeterogeneousMixture;
 
@@ -96,7 +98,8 @@ class MixtureEnvelope extends Envelope{
 			if(slope <2){  //bubble or dew point pressures
 				nextTemperature = bubbleTemperature + temperatureStep;
 				heterogeneousMixture.setTemperature(nextTemperature);
-				bubbleIterations = heterogeneousMixture.bubblePressure(pressure);
+				Map<String,Double> yEstimates = heterogeneousMixture.getVapor().getFractions();
+				bubbleIterations = heterogeneousMixture.bubblePressure(pressure,yEstimates);
 				nextPressure = heterogeneousMixture.getPressure();
 				
 				//System.out.println("bubblePressure, slope: "+slope);
@@ -205,7 +208,8 @@ class MixtureEnvelope extends Envelope{
 			if(slope < 2){//bubble or dew point pressures
 				nextTemperature = dewTemperature + temperatureStep;
 				heterogeneousMixture.setTemperature(nextTemperature);
-				dewIterations = heterogeneousMixture.dewPressure(pressure);
+				Map<String,Double> liquidFractions = heterogeneousMixture.getLiquid().getFractions();
+				dewIterations = heterogeneousMixture.dewPressure(pressure,liquidFractions);
 				nextPressure = heterogeneousMixture.getPressure();
 				
 				

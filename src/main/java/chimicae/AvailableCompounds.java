@@ -61,6 +61,10 @@ public class AvailableCompounds implements Serializable {
 		compounds.add(methanol);
 	}
 	
+	public Compound getCompoundByExactName(String name){
+		return reader.getCompoundByExactName(name);
+	}
+	
 	
 	
 	

@@ -33,7 +33,7 @@ import cp.Eqn16IGHeatCapacity;
 
 public class ExcelReport {
 	protected  HSSFWorkbook workbook;
-	private  List<HSSFCell> titles =new ArrayList<>();
+	protected  List<HSSFCell> titles =new ArrayList<>();	
 	Envelope selectedEnvelope;
 	public  HSSFWorkbook createReport(Envelope selectedEnvelope){
 		this.selectedEnvelope=selectedEnvelope;
@@ -60,7 +60,7 @@ public class ExcelReport {
 		if(selectedEnvelope !=null){
 			if(selectedEnvelope instanceof SubstanceEnvelope){
 				SubstanceEnvelope ev=(SubstanceEnvelope)selectedEnvelope;
-				createSubstanceEnvelopeSheets(ev.getHeterogeneousSubstance().getLiquid());
+				createSubstanceSheet(ev.getHeterogeneousSubstance().getLiquid());
 			}else {
 				MixtureEnvelope me =(MixtureEnvelope)selectedEnvelope;
 				createMixtureSheets(me.getHeterogeneousMixture().getLiquid());
@@ -126,7 +126,7 @@ public class ExcelReport {
 		
 				
 		for(Substance sub: mix.getPureSubstances()){
-			createSubstanceEnvelopeSheets(sub);
+			createSubstanceSheet(sub);
 			String name = sub.getComponent().getName();
 			double molarFraction = sub.getMolarFraction();
 			int row = count++;
@@ -136,7 +136,7 @@ public class ExcelReport {
 		return count;
 	}
 	
-	public void createSubstanceEnvelopeSheets(Substance substance){
+	public void createSubstanceSheet(Substance substance){
 		//HeterogeneousSubstance substance =substanceEnvelope.getHeterogeneousSubstance();
 		Compound compound = substance.getComponent();
 		Eqn16IGHeatCapacity cp =(Eqn16IGHeatCapacity) compound.getCp();

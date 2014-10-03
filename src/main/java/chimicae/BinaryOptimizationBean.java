@@ -68,20 +68,31 @@ public class BinaryOptimizationBean implements Serializable,PropertyChangeListen
 		}catch(Exception e){
 			System.out.println("Cant read binary dat");
 		}
+		
+	}
+	
+
+	
+	public List<String> readFile(String filePath) {
+		List<String> lines =new ArrayList<>();
+		try{
+			InputStream file = this.getClass().getResourceAsStream(filePath);
+			BufferedReader br = new BufferedReader(new InputStreamReader(file));
+			String linew =null;
+			while ((linew = br.readLine()) != null) {
+				lines.add(linew);
+			}
+		}catch(IOException e){
+			System.out.println("Cant read file " + filePath);
+		}
+		return lines;
 	}
 	
 	public ExperimentalDataBinaryList getBinaryExperimentalListFromFileTxy(
 			String filePath,Compound methanol,Compound water) throws IOException{
-		InputStream file = this.getClass().getResourceAsStream(filePath);
-		//Path path = Paths.get(filePath);
-		
-		
-		List<String> lines =new ArrayList<>();//Files.readAllLines(file);
-		BufferedReader br = new BufferedReader(new InputStreamReader(file));
-		String linew =null;
-		while ((linew = br.readLine()) != null) {
-			lines.add(linew);
-		}         
+				
+		List<String> lines = readFile(filePath);
+		    
 		ExperimentalDataBinaryList blist = new ExperimentalDataBinaryList();
 		blist.setName("Ejemplo");
 		
