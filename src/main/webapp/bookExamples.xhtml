@@ -9,7 +9,22 @@
 		<ui:define name="content">
 			 <emcomp:ChartTable divId="equilibria" 
                              chartType="Scatter"
-                            googleChartInfo="#{bookExamples.dataTable()}"/>
+							showTable="false"                             
+                            googleChartInfo="#{bookExamples.methanenpentane.dataTable()}"/>
+			  <emcomp:ChartTable divId="ipropanolwater" 
+	                      chartType="Scatter"
+						showTable="false"                             
+	                     googleChartInfo="#{bookExamples.ipropanewater.dataTable()}"/>
+              <h:form>
+              	<h:commandButton action="#{bookExamples.ipropanewater.download(353,0)}" value="reporte" />
+			  </h:form> 
+             - <emcomp:ChartTable divId="ipropanolwaterWS" 
+	                      chartType="Scatter"
+						showTable="false"                             
+	                     googleChartInfo="#{bookExamples.ipropanewaterWS.dataTable()}"/>
+              <h:form>
+              	<h:commandButton action="#{bookExamples.ipropanewaterWS.download(353,0)}" value="reporte" />
+              </h:form> 
 		</ui:define>
 	</ui:composition>
 </html>

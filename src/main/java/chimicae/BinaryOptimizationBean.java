@@ -99,7 +99,7 @@ public class BinaryOptimizationBean implements Serializable,PropertyChangeListen
 		
 		double pressure = Double.valueOf(lines.get(0).split("\\s+")[1]);
 
-		List<ExperimentalDataBinary> list = new ArrayList();
+		List<ExperimentalDataBinary> list = new ArrayList<>();
 		
 		for(String line: lines){
 			 String[] lineWords = line.split("\\s+");

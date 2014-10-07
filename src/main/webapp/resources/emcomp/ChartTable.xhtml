@@ -7,6 +7,7 @@
         <composite:attribute name="googleChartInfo" required="true"  type="hugo.productions.google.GoogleGraphInfo"/>
         <composite:attribute required="true" name="divId" />
         <composite:attribute name="chartType" default="Line"/>
+        <composite:attribute name="showTable" default="true"/>
         
         <composite:implementation>
             
@@ -68,8 +69,10 @@
                     
                     
                    
-                    var table = new google.visualization.Table(document.getElementById('table_#{cc.attrs.divId}'));                  
-                    table.draw(data);
+                    var table = new google.visualization.Table(document.getElementById('table_#{cc.attrs.divId}'));
+                    if( #{cc.attrs.showTable}){                  
+                 	   table.draw(data);
+                	}
                 }
             //]]>
             </script>   
