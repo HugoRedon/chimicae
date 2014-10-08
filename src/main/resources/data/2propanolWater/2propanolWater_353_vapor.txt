@@ -1,4 +1,5 @@
 #DataThief /home/hugo/Pictures/2propanolWater.png Friday 3-Oct-2014 3:53:51 PM
+#info:{"label":"Presión experimental","temperature":"353","phase":"VAPOR"}
 9.7689e-3, 0.479
 0.0886, 0.5165
 0.2285, 0.6097

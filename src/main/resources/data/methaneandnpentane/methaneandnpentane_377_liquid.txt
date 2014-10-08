@@ -1,0 +1,15 @@
+#DataThief /home/hugo/Documents/repositories/chimicae/src/main/resources/data/methaneandnpentane/methaneandnpentane.png Wednesday 8-Oct-2014 1:18:49 PM
+#info:{"label":"Presión experimental","temperature":"377","phase":"LIQUID"}
+2.218e-4, 6.5873
+1.9645e-3, 6.9163
+0.0142, 10.2081
+0.0282, 13.4995
+0.0578, 20.4113
+0.0892, 26.6642
+0.1434, 40.4887
+0.1958, 54.9723
+0.2534, 68.467
+0.3197, 85.2538
+0.381, 103.0297
+0.4543, 120.8035
+0.5657, 137.9123

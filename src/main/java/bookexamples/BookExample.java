@@ -5,6 +5,7 @@ import hugo.productions.google.GoogleColumn;
 import hugo.productions.google.GoogleColumnType;
 import hugo.productions.google.GoogleDataTable;
 import hugo.productions.google.GoogleGraphInfo;
+import hugo.productions.google.GoogleOptionSerie;
 import hugo.productions.google.GoogleOptions;
 import hugo.productions.google.GoogleRow;
 
@@ -14,42 +15,49 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import chimicae.AvailableCompounds;
-import excel.SaturationPressureReport;
 import termo.binaryParameter.ActivityModelBinaryParameter;
 import termo.component.Compound;
-import termo.eos.EquationsOfState;
-import termo.eos.alpha.Alphas;
-import termo.eos.mixingRule.MixingRules;
 import termo.matter.HeterogeneousMixture;
+import termo.phase.Phase;
 import termo.utils.IterationInfo;
+import chimicae.AvailableCompounds;
+
+import com.google.gson.Gson;
+
+import excel.SaturationPressureReport;
 
 public abstract class BookExample {
 	public Compound referenceCompound;
 	public Compound nonReferenceCompound;
-	public List<Point> liquidLine = new ArrayList<>();
-	public List<Point> vaporLine = new ArrayList<>();
+//	public List<Point> liquidLine = new ArrayList<>();
+//	public List<Point> vaporLine = new ArrayList<>();
+//	
+	List<ListPoint> lines = new ArrayList<>();
+	
+	
 	public HeterogeneousMixture hm;
 
 	AvailableCompounds availableCompounds;
 	
-	String liquidFilePath;
-	String vaporFilePath;
+	String[] filesPath;
 	
-	public BookExample(AvailableCompounds availableCompounds,String liquidFilePath,String vaporFilePath){
-		this.liquidFilePath = liquidFilePath;
-		this.vaporFilePath = vaporFilePath;
+	public static String[] files(String... files){
+		return files;
+	}
+	public BookExample(){
+		
+	}
+	
+	public BookExample(AvailableCompounds availableCompounds,String[] filesPath){
+		this.filesPath = filesPath;
 		this.availableCompounds = availableCompounds;
 		createCompoundsAndMixture();
 		readFiles();
@@ -60,11 +68,10 @@ public abstract class BookExample {
 	
 	public void readFiles(){
 	
-		List<String> liquidLines =readFile(liquidFilePath);
-		List<String> vaporLines = readFile(vaporFilePath);
-		
-		liquidLines.forEach(l-> liquidLine.add(readLine(l)));
-		vaporLines.forEach(l-> vaporLine.add(readLine(l)));			
+		for(String filePath: filesPath){
+			ListPoint liquidLines =readFile(filePath);
+			lines.add(liquidLines);
+		}		
 	}
 	public Point readLine(String line){
 		String[] words = line.split(",");
@@ -73,21 +80,39 @@ public abstract class BookExample {
 		return new Point(x,pressure);
 	}
 	
-	public List<String> readFile(String filePath) {
-		List<String> lines =new ArrayList<>();
+	public ListPoint readFile(String filePath) {
+		ListPoint listPoint =new ListPoint();
 		try{
 			InputStream file = this.getClass().getResourceAsStream(filePath);
 			BufferedReader br = new BufferedReader(new InputStreamReader(file));
 			String linew =null;
 			while ((linew = br.readLine()) != null) {
-				if(!linew.substring(0, 1).equals("#")){
-					lines.add(linew);
+				if(linew.substring(0, 1).equals("#")){
+					if(linew.substring(1,5).equals("info")){
+						String json = linew.substring(6);
+						Class<?> classs = Info.class;
+						Info info =(Info) new Gson().fromJson(json,classs);
+						Double temp = info.getTemperature();
+						Phase phase = info.getPhase();
+						listPoint.setLabel("Experimental " + temp +" [K] "+ phase);
+						
+						if(info.getPhase()==null){
+							System.out.println("phase nula para el archivo " + filePath);
+						}
+						
+						listPoint.setPhase(phase);
+						listPoint.setId(phase+ temp.toString());
+						listPoint.setTemperature(temp);
+						
+					}			
+				}else{
+					listPoint.getList().add(readLine(linew));
 				}
 			}
 		}catch(IOException e){
 			System.out.println("Cant read file " + filePath);
 		}
-		return lines;
+		return listPoint;
 	}
 	public double getMinX(List<Point> list){
 		double minX = list.get(0).getX();
@@ -123,70 +148,98 @@ public abstract class BookExample {
        GoogleDataTable table = new GoogleDataTable( );
       
        table.addColumns(
-           new GoogleColumn("molarFraction", "Fracción molar " + referenceCompound , GoogleColumnType.number),
-           new GoogleColumn("Texp", "Presión experimental [K] (liquido)" , GoogleColumnType.number),
-           new GoogleColumn("Tcalc", "Presión calculada [K] (liquido)" , GoogleColumnType.number),
-           new GoogleColumn("TexpV", "Presión experimental [K] (vapor)", GoogleColumnType.number),
-           new GoogleColumn("TcalcV", "Presión calculada [K] (vapor)", GoogleColumnType.number)
+           new GoogleColumn("molarFraction", "Fracción molar " + referenceCompound , GoogleColumnType.number)
        );
      
-       
-       
-       calculateLiquidLine(table);
-       calculateVaporLine(table);
-       
-      
-       
-       for (Point point: liquidLine){
-           double liquidFraction = point.getX();
-           double pressure = point.getY();                            
-           table.addRow(new GoogleRow(liquidFraction,pressure));           
+       GoogleOptions options = GoogleOptions.googleOptions(
+               "Fracción molar vs Presión", 
+               "Fracción molar", 
+               "Presión[Pa]",ChartType.scatterFunctionScatterFunction);
+       for(ListPoint lp: lines){
+    	   table.addColumn(new GoogleColumn(lp.getId(), lp.getLabel(), GoogleColumnType.number));
+    	   table.addColumn(new GoogleColumn(lp.getId()+"c","Presión calculada [Pa] " + lp.getTemperature() + " [K]" , GoogleColumnType.number));
+    	   
+    	   addPoints(lp, table,lines.indexOf(lp),options);
        }
        
-       for (Point point: vaporLine){
-            double vaporFraction = point.getX();   
-            double p = point.getY();
-                 
-            table.addRow( new GoogleRow(vaporFraction,null, null,p));
-       }
                  
        GoogleGraphInfo pressureComparison = new GoogleGraphInfo();
        pressureComparison.setData(table);
-        pressureComparison.setOptions(GoogleOptions.googleOptions(
-              "Fracción molar vs Presión", 
-              "Fracción molar", 
-              "Presión[Pa]",ChartType.scatterFunctionScatterFunction));
+        pressureComparison.setOptions(options);
        return pressureComparison;
    }
+	public void addPoints(ListPoint lp,GoogleDataTable table,int index,GoogleOptions options){
+		options.addSerie(index, GoogleOptionSerie.SCATTER);
+		 for (Point point: lp.getList()){
+	           double fraction = point.getX();
+	           double pressure = point.getY(); 
+	           Number[] columns = new Number[index+2];
+	           columns[0] = fraction;
+        	   columns[index+ 1] = pressure;
+        	   
+	           table.addRow( new GoogleRow(columns));
+	           	           
+	       }
+		 int functionSerieIndex = lines.size()+index;
+		 options.addSerie(functionSerieIndex, GoogleOptionSerie.FUNCTION);
+		 calculateLine(table, lp,functionSerieIndex);
+	}
 	
-	
-	public void calculateVaporLine(GoogleDataTable table){
-		 
+	public void calculateLine(GoogleDataTable table,ListPoint listPoint,int index){
+		 	
+			List<Point> line = listPoint.getList();
+			hm.setTemperature(listPoint.getTemperature());
 	       
-	       double minX = getMinX(vaporLine);
-	       double maxX = getMaxX(vaporLine);
+	       double minX = getMinX(line);
+	       double maxX = getMaxX(line);
 	       
-	       double maxY = getMaxY(vaporLine);
-	       Integer n = 50;
+	       double maxY = getMaxY(line);
+	       Integer n = 25;
+	       
 	       
 	       double xStep = (maxX - minX)/n.doubleValue();
 	       for(Integer i =0;i < n; i++ ){
-	    	   double vaporMolarFraction = minX  + i.doubleValue() * xStep;
+	    	   double molarFraction = minX  + i.doubleValue() * xStep;
 	    	   
-	    	   Map<String,Double>vaporFractions = hm.getLiquid().getFractions();
+	    	   Map<String,Double>estimateFractions ;
 	    	   double pressureEstimate = hm.getPressure();
 	    	   
-	    	   hm.setZFraction(referenceCompound, vaporMolarFraction);
-	    	   hm.setZFraction(nonReferenceCompound, 1-vaporMolarFraction);
+	    	   hm.setZFraction(referenceCompound, molarFraction);
+	    	   hm.setZFraction(nonReferenceCompound, 1-molarFraction);
 	    	   
-	    	   if(i==0){
-	    		   hm.dewPressure();
+	    	   
+	    	   if(listPoint.getPhase().equals(Phase.VAPOR)){
+	    		   estimateFractions = hm.getLiquid().getFractions();
+		    	   if(i==0 ){
+		    		   hm.dewPressure();
+		    		 
+		    	   }else{
+		    		   hm.dewPressure(pressureEstimate,estimateFractions);
+		    	   }
 	    	   }else{
-	    		   hm.dewPressure(pressureEstimate,vaporFractions);
+	    		   estimateFractions = hm.getVapor().getFractions();
+	    		   if(i==0){
+		    		   hm.bubblePressure();
+		    		
+		    	   }else{
+		    		   hm.bubblePressure(pressureEstimate,estimateFractions);
+		    	   }
 	    	   }
+	    	   
 	    	   Double pressure = hm.getPressure();
+	    	   if(pressure.equals(pressureEstimate)){
+	    		   if(listPoint.getPhase().equals(Phase.VAPOR)){
+	    			   hm.dewPressure();
+	    		   }else{
+	    			   hm.bubblePressure();
+	    		   }
+	    		   
+	    	   }
 	    	   if(!pressure.isNaN()){
-	    		   table.addRow(new GoogleRow(vaporMolarFraction,null,null,null,pressure));
+	    		   Number[] columns = new Number[index+2];
+	    		   columns[0] =molarFraction;
+	    		   columns[index+1] = pressure;
+	    		   table.addRow(new GoogleRow(columns));
 	    	   }else{
 	    		   pressure = pressureEstimate;
 	    		   for(IterationInfo ii:hm.getCalculationReport()){
@@ -198,61 +251,67 @@ public abstract class BookExample {
 	       }
 	       
 	       
-	       double minPressure = hm.getPressure();
-	       double temperature = hm.getTemperature();
-	       n = 25;
-	       
-	       double pressureStep = (maxY-minPressure)/n.doubleValue();
-	       
-	       for(Integer i = 0; i < n ; i ++){
-	    	   double pressure = minPressure  + pressureStep* i.doubleValue(); 
-	    	   
-	    	   hm.flash(temperature, pressure ,hm.getVapor().getFractions(),hm.getLiquid().getFractions(),1);
-	           Double vmf =hm.getVapor().getReadOnlyFractions().get(referenceCompound);
-	           
-	           if(!vmf.isNaN()){
-	        	   table.addRow(new GoogleRow(vmf,null,null,null,pressure));
-	           }else{
-	        	   
-	        	   System.out.println("flash molar fraction : " + vmf);   
-	           }
+	       if(listPoint.getPhase().equals(Phase.VAPOR)){
+		       double minPressure = hm.getPressure();
+		       double temperature = hm.getTemperature();
+		       n = 25;
+		       
+		       double pressureStep = (maxY-minPressure)/n.doubleValue();
+		       
+		       for(Integer i = 0; i < n ; i ++){
+		    	   double pressure = minPressure  + pressureStep* i.doubleValue(); 
+		    	   
+		    	   hm.flash(temperature, pressure ,hm.getVapor().getFractions(),hm.getLiquid().getFractions(),1);
+		           Double vmf =hm.getVapor().getReadOnlyFractions().get(referenceCompound);
+		           
+		           if(!vmf.isNaN()){
+		        	   
+		        	   Number[] columns = new Number[index+2];
+		    		   columns[0] =vmf;
+		    		   columns[index+1] = pressure;
+		    		   table.addRow(new GoogleRow(columns));
+		           }else{
+		        	   
+		        	   System.out.println("flash molar fraction : " + vmf);   
+		           }
+		       }
 	       }
 	       
 	}
-	
-	public void calculateLiquidLine(GoogleDataTable table){
-		double minX = getMinX(liquidLine);
-	       double maxX = getMaxX(liquidLine);
-	       
-	       Integer n = 20;
-	       double xStep = (maxX - minX)/n.doubleValue();
-	       for(Integer i =0;i < n; i++ ){
-	    	   double liquidMolarFraction = minX  + i.doubleValue() * xStep;
-	    	   
-	    	   Map<String,Double>vaporFractions = hm.getVapor().getFractions();
-	    	   double pressureEstimate = hm.getPressure();
-	    	   
-	    	   hm.setZFraction(referenceCompound, liquidMolarFraction);
-	    	   hm.setZFraction(nonReferenceCompound, 1-liquidMolarFraction);
-	    	   
-	    	   if(i==0){
-	    		   hm.bubblePressure();
-	    	   }else{
-	    		   hm.bubblePressure(pressureEstimate,vaporFractions);
-	    	   }
-	    	   Double pressure = hm.getPressure();
-	    	   if(!pressure.isNaN()){
-	    		   table.addRow(new GoogleRow(liquidMolarFraction,null,pressure));
-	    	   }else{
-	    		   pressure = pressureEstimate;
-	    		   for(IterationInfo ii:hm.getCalculationReport()){
-	    			   System.out.println("pressure: " + ii.getPressure() + " pressure_: "+ ii.getPressure_() 
-	    					   + " temperature: " + ii.getTemperature() + " newPressure : " + ii.getNewPressure() 
-	    					   + " error: " +ii.getError() + " error_: " + ii.getError_());
-	    		   }
-	    	   }
-	       }
-	}
+
+//	public void calculateLiquidLine(GoogleDataTable table){
+//		double minX = getMinX(liquidLine);
+//	       double maxX = getMaxX(liquidLine);
+//	       
+//	       Integer n = 100;
+//	       double xStep = (maxX - minX)/n.doubleValue();
+//	       for(Integer i =0;i < n; i++ ){
+//	    	   double liquidMolarFraction = minX  + i.doubleValue() * xStep;
+//	    	   
+//	    	   Map<String,Double>vaporFractions = hm.getVapor().getFractions();
+//	    	   double pressureEstimate = hm.getPressure();
+//	    	   
+//	    	   hm.setZFraction(referenceCompound, liquidMolarFraction);
+//	    	   hm.setZFraction(nonReferenceCompound, 1-liquidMolarFraction);
+//	    	   
+//	    	   if(i==0){
+//	    		   hm.bubblePressure();
+//	    	   }else{
+//	    		   hm.bubblePressure(pressureEstimate,vaporFractions);
+//	    	   }
+//	    	   Double pressure = hm.getPressure();
+//	    	   if(!pressure.isNaN()){
+//	    		   table.addRow(new GoogleRow(liquidMolarFraction,null,pressure));
+//	    	   }else{
+//	    		   pressure = pressureEstimate;
+//	    		   for(IterationInfo ii:hm.getCalculationReport()){
+//	    			   System.out.println("pressure: " + ii.getPressure() + " pressure_: "+ ii.getPressure_() 
+//	    					   + " temperature: " + ii.getTemperature() + " newPressure : " + ii.getNewPressure() 
+//	    					   + " error: " +ii.getError() + " error_: " + ii.getError_());
+//	    		   }
+//	    	   }
+//	       }
+//	}
 
 	public void download(double temperature, double referenceFraction) throws IOException {
 	    FacesContext fc = FacesContext.getCurrentInstance();
@@ -294,5 +353,31 @@ public abstract class BookExample {
 		System.out.println("av12: " + av12);
 		return new SaturationPressureReport().createReport(hm);
 	}
+	
 
+
+}
+
+class Info{
+	String label;
+	double temperature;
+	Phase phase;
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	public double getTemperature() {
+		return temperature;
+	}
+	public void setTemperature(double temperature) {
+		this.temperature = temperature;
+	}
+	public Phase getPhase() {
+		return phase;
+	}
+	public void setPhase(Phase phase) {
+		this.phase = phase;
+	}
 }

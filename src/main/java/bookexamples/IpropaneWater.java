@@ -3,6 +3,8 @@ package bookexamples;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Test;
+
 import chimicae.AvailableCompounds;
 import termo.Constants;
 import termo.activityModel.NRTLActivityModel;
@@ -16,11 +18,14 @@ import termo.matter.HeterogeneousMixture;
 
 public class IpropaneWater extends BookExample{
 	public IpropaneWater(AvailableCompounds availableCompounds) {
-		super(availableCompounds,
+		super(availableCompounds,files(
 				"/data/2propanolWater/2propanolWater_353_liquid.txt",
-				"/data/2propanolWater/2propanolWater_353_vapor.txt");
+				"/data/2propanolWater/2propanolWater_353_vapor.txt"));
 	}
-
+	public IpropaneWater() {
+		super();
+	}
+	
 	@Override
 	public void createCompoundsAndMixture() {
 		System.out.println("available" + availableCompounds);

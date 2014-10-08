@@ -17,9 +17,9 @@ import chimicae.AvailableCompounds;
 public class IPropaneWaterWS extends BookExample {
 
 	public IPropaneWaterWS(AvailableCompounds availableCompounds) {
-		super(availableCompounds,
+		super(availableCompounds,files(
 				"/data/2propanolWater/2propanolWater_353_liquid.txt",
-				"/data/2propanolWater/2propanolWater_353_vapor.txt");
+				"/data/2propanolWater/2propanolWater_353_vapor.txt"));
 	}
 
 	@Override

@@ -8,7 +8,8 @@ public class GoogleOptionSerie {
     private int lineWidth;
     private int pointSize;
 
-
+    public static GoogleOptionSerie SCATTER  = new GoogleOptionSerie(7,0);
+    public static GoogleOptionSerie FUNCTION  = new GoogleOptionSerie(0,3);
     
     public GoogleOptionSerie(){
         
@@ -18,6 +19,7 @@ public class GoogleOptionSerie {
         this.pointSize = pointSize;
         this.lineWidth = lineWidth;
     }
+    
     
     
     

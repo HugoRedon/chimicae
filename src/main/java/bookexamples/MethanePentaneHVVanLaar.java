@@ -3,17 +3,19 @@ package bookexamples;
 import java.util.HashSet;
 import java.util.Set;
 
-import chimicae.AvailableCompounds;
+import termo.activityModel.VanLaarActivityModel;
 import termo.binaryParameter.ActivityModelBinaryParameter;
 import termo.component.Compound;
+import termo.eos.Cubic;
 import termo.eos.EquationsOfState;
 import termo.eos.alpha.Alphas;
 import termo.eos.mixingRule.MixingRules;
 import termo.matter.HeterogeneousMixture;
+import chimicae.AvailableCompounds;
 
-public class MethanePentane extends BookExample{
-	
-	public MethanePentane(AvailableCompounds availableCompounds) {		
+public class MethanePentaneHVVanLaar extends BookExample{
+
+	public MethanePentaneHVVanLaar(AvailableCompounds availableCompounds) {
 		super(availableCompounds,files(
 				"/data/methaneandnpentane/methaneandnpentane_310_liquid.txt",
 				"/data/methaneandnpentane/methaneandnpentane_310_vapor.txt",
@@ -25,7 +27,8 @@ public class MethanePentane extends BookExample{
 	}
 
 	@Override
-	public void createCompoundsAndMixture(){
+	public void createCompoundsAndMixture() {
+		
 		referenceCompound = availableCompounds.getCompoundByExactName("methane");
 		referenceCompound.setK_StryjekAndVera(-0.00159);
 		
@@ -39,13 +42,16 @@ public class MethanePentane extends BookExample{
 		compounds.add(nonReferenceCompound);
 		
 		ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
-		k.setSymmetric(true);
-		k.setValue(referenceCompound, nonReferenceCompound, 0.0215);
 		
-		 hm = new HeterogeneousMixture(EquationsOfState.pengRobinson(),
+		k.getA_vanLaar().setValue(referenceCompound, nonReferenceCompound, 0.1201);
+		k.getA_vanLaar().setValue(nonReferenceCompound, referenceCompound, 0.1430);
+		
+		Cubic eos = EquationsOfState.pengRobinson();
+		 hm = new HeterogeneousMixture(eos,
 				Alphas.getStryjekAndVeraExpression(),
-				MixingRules.vanDerWaals(),
+				MixingRules.huronVidal(new VanLaarActivityModel(), eos),
 				compounds, k);
-		 //hm.setTemperature(310);		
+		 hm.setTemperature(310);
 	}
+
 }
