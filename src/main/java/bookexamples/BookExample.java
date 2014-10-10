@@ -16,13 +16,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+import com.google.gson.Gson;
 
 import termo.binaryParameter.ActivityModelBinaryParameter;
 import termo.component.Compound;
@@ -30,22 +34,18 @@ import termo.matter.HeterogeneousMixture;
 import termo.phase.Phase;
 import termo.utils.IterationInfo;
 import chimicae.AvailableCompounds;
-
-import com.google.gson.Gson;
-
 import excel.SaturationPressureReport;
 
-public abstract class BookExample {
+public class BookExample {
 	public Compound referenceCompound;
 	public Compound nonReferenceCompound;
-//	public List<Point> liquidLine = new ArrayList<>();
-//	public List<Point> vaporLine = new ArrayList<>();
-//	
+
 	List<ListPoint> lines = new ArrayList<>();
-	GoogleGraphInfo dataTable;
-	
+	GoogleGraphInfo dataTable;	
 	
 	public HeterogeneousMixture hm;
+	String divId ;
+	String imagePath;
 
 	AvailableCompounds availableCompounds;
 	
@@ -65,60 +65,32 @@ public abstract class BookExample {
 		readFiles();
 		
 	}
+
+	public void createCompoundsAndMixture(){
+		
+	}
 	public BookExample(AvailableCompounds availableCompounds){
 		this.availableCompounds = availableCompounds;
 	}
 	
-	
-	public abstract void createCompoundsAndMixture(); 
-	
-	
-	public void readFiles(){
-		for(String filePath: filesPath){
-			lines.add(readFile(filePath));
-		}		
-	}
-	public Point readLine(String line){
-		String[] words = line.split(",");
-		double x = Double.valueOf(words[0]);
-		double pressure = 100000*(Double.valueOf(words[1]));		
-		return new Point(x,pressure);
+	public BookExample(MixtureSystem ms,String divId,String imagePath){
+		this.divId = divId;
+		this.imagePath = imagePath;
+		this.lines = ms.getExperimentalLines();
+		this.referenceCompound =ms.getReferenceCompound();
+		this.nonReferenceCompound = ms.getNonReferenceCompound();
+		Set<Compound> compounds = new HashSet<>();
+		compounds.add(referenceCompound);
+		compounds.add(nonReferenceCompound);
+		
+		hm = new HeterogeneousMixture(ms.eos, ms.alpha, ms.mr, compounds, ms.k);
 	}
 	
-	public ListPoint readFile(String filePath) {
-		ListPoint listPoint =new ListPoint();
-		try{
-			InputStream file = this.getClass().getResourceAsStream(filePath);
-			BufferedReader br = new BufferedReader(new InputStreamReader(file));
-			String linew =null;
-			while ((linew = br.readLine()) != null) {
-				if(linew.substring(0, 1).equals("#")){
-					if(linew.substring(1,5).equals("info")){
-						String json = linew.substring(6);
-						Class<?> classs = Info.class;
-						Info info =(Info) new Gson().fromJson(json,classs);
-						Double temp = info.getTemperature();
-						Phase phase = info.getPhase();
-						listPoint.setLabel("Experimental " + temp +" [K] ");
-						
-						if(info.getPhase()==null){
-							System.out.println("phase nula para el archivo " + filePath);
-						}
-						
-						listPoint.setPhase(phase);
-						listPoint.setId(phase+ temp.toString());
-						listPoint.setTemperature(temp);
-						
-					}			
-				}else{
-					listPoint.getList().add(readLine(linew));
-				}
-			}
-		}catch(IOException e){
-			System.out.println("Cant read file " + filePath);
-		}
-		return listPoint;
-	}
+	
+	//public abstract void createCompoundsAndMixture(); 
+	
+	
+	
 	public double getMinX(List<Point> list){
 		double minX = list.get(0).getX();
 		for(Point p : list){
@@ -397,31 +369,70 @@ public abstract class BookExample {
 		System.out.println("av12: " + av12);
 		return new SaturationPressureReport().createReport(hm);
 	}
-	
-	public void createLists(String[] files,boolean calculateLine,
-			boolean calculateOtherPhaseLine,Integer NForCalculation){
-		for(String file:files){
-			ListPoint lp =readFile(file);
-			lp.setLineToBeCalculated(calculateLine);
-			lp.setOtherPhaseToBeCalculated(calculateOtherPhaseLine);
-			lp.setNForCalculation(NForCalculation);
-			lines.add(lp);
-		}
-		
+	public void readFiles(){
+		for(String filePath: filesPath){
+			lines.add(readFile(filePath));
+		}		
 	}
-	public void createLists(String[]files){
-		for(String file:files){
-			ListPoint lp = readFile(file);
-			lp.setLineToBeCalculated(false);
-			lp.setOtherPhaseToBeCalculated(false);
-			lines.add(lp);
+
+	public ListPoint readFile(String filePath) {
+		ListPoint listPoint =new ListPoint();
+		try{
+			InputStream file = this.getClass().getResourceAsStream(filePath);
+			BufferedReader br = new BufferedReader(new InputStreamReader(file));
+			String linew =null;
+			while ((linew = br.readLine()) != null) {
+				if(linew.substring(0, 1).equals("#")){
+					if(linew.substring(1,5).equals("info")){
+						String json = linew.substring(6);
+						Class<?> classs = Info.class;
+						Info info =(Info) new Gson().fromJson(json,classs);
+						Double temp = info.getTemperature();
+						Phase phase = info.getPhase();
+						listPoint.setLabel("Experimental " + temp +" [K] ");
+						
+						if(info.getPhase()==null){
+							System.out.println("phase nula para el archivo " + filePath);
+						}
+						
+						listPoint.setPhase(phase);
+						listPoint.setId(phase+ temp.toString());
+						listPoint.setTemperature(temp);
+						
+					}			
+				}else{
+					listPoint.getList().add(readLine(linew));
+				}
+			}
+		}catch(IOException e){
+			System.out.println("Cant read file " + filePath);
 		}
+		return listPoint;
 	}
+	public Point readLine(String line){
+		String[] words = line.split(",");
+		double x = Double.valueOf(words[0]);
+		double pressure = 100000*(Double.valueOf(words[1]));		
+		return new Point(x,pressure);
+	}
+
 	public List<ListPoint> getLines() {
 		return lines;
 	}
 	public void setLines(List<ListPoint> lines) {
 		this.lines = lines;
+	}
+	public String getDivId() {
+		return divId;
+	}
+	public void setDivId(String divId) {
+		this.divId = divId;
+	}
+	public String getImagePath() {
+		return imagePath;
+	}
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
 	}
 
 

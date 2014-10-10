@@ -21,7 +21,7 @@ public class IpropaneWater2PDVW extends BookExample{
 				"/data/2propanolWater/2propanolWater_353_vapor.txt"));
 	}
 
-	@Override
+	
 	public void createCompoundsAndMixture() {
 		referenceCompound = availableCompounds.getCompoundByExactName("isopropanol");
 		referenceCompound.setK_StryjekAndVera(0.23264);

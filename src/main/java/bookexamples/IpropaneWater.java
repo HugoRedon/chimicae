@@ -22,11 +22,12 @@ public class IpropaneWater extends BookExample{
 				"/data/2propanolWater/2propanolWater_353_liquid.txt",
 				"/data/2propanolWater/2propanolWater_353_vapor.txt"));
 	}
-	public IpropaneWater() {
-		super();
+
+	public IpropaneWater(){
+		
 	}
 	
-	@Override
+	
 	public void createCompoundsAndMixture() {
 		System.out.println("available" + availableCompounds);
 		referenceCompound = availableCompounds.getCompoundByExactName("isopropanol");
