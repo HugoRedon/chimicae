@@ -22,6 +22,7 @@ public class BookExamples implements Serializable {
 	BookExample ipropanewaterWS;
 	BookExample methanepentaneHVVL;
 	BookExample iPropaneWater2PDVW;
+	BookExample methanepentaneMHV1VL;
 	
 	@Inject AvailableCompounds availableCompounds;
 	
@@ -32,6 +33,7 @@ public class BookExamples implements Serializable {
 		ipropanewaterWS = new IPropaneWaterWS(availableCompounds);
 		methanepentaneHVVL = new MethanePentaneHVVanLaar(availableCompounds);
 		iPropaneWater2PDVW = new IpropaneWater2PDVW(availableCompounds);
+		methanepentaneMHV1VL = new MethanePentaneMHV1VL(availableCompounds);
 	}
 	
 	public BookExample getMethanenpentane() {
@@ -74,6 +76,14 @@ public class BookExamples implements Serializable {
 		this.iPropaneWater2PDVW = iPropaneWater2PDVW;
 	}
 
+	public BookExample getMethanepentaneMHV1VL() {
+		return methanepentaneMHV1VL;
+	}
+
+	public void setMethanepentaneMHV1VL(BookExample methanepentaneMHV1VL) {
+		this.methanepentaneMHV1VL = methanepentaneMHV1VL;
+	}
+
 	
 	
 	
@@ -81,69 +91,5 @@ public class BookExamples implements Serializable {
 	
 }
 
-class ListPoint{
-	String label;
-	String id ;
-	double temperature;
-	Phase phase ;
-	
-	List<Point> list = new ArrayList<>();
-	double Temperature ;
-	public String getLabel() {
-		return label;
-	}
-	public void setLabel(String label) {
-		this.label = label;
-	}
-	public List<Point> getList() {
-		return list;
-	}
-	public void setList(List<Point> list) {
-		this.list = list;
-	}
-	public double getTemperature() {
-		return Temperature;
-	}
-	public void setTemperature(double temperature) {
-		Temperature = temperature;
-	}
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public Phase getPhase() {
-		return phase;
-	}
-	public void setPhase(Phase phase) {
-		this.phase = phase;
-	}
-	
-}
 
 
-class Point{
-	double x;
-	double y;
-	
-	public Point() {
-	}
-	
-	public Point(double x, double y) {
-		this.x = x;
-		this.y = y;
-	}
-	public double getX() {
-		return x;
-	}
-	public void setX(double x) {
-		this.x = x;
-	}
-	public double getY() {
-		return y;
-	}
-	public void setY(double y) {
-		this.y = y;
-	}
-}

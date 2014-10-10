@@ -3,27 +3,34 @@ package bookexamples;
 import java.util.HashSet;
 import java.util.Set;
 
-import chimicae.AvailableCompounds;
 import termo.binaryParameter.ActivityModelBinaryParameter;
 import termo.component.Compound;
 import termo.eos.EquationsOfState;
 import termo.eos.alpha.Alphas;
 import termo.eos.mixingRule.MixingRules;
 import termo.matter.HeterogeneousMixture;
+import chimicae.AvailableCompounds;
 
 public class MethanePentane extends BookExample{
 	
 	public MethanePentane(AvailableCompounds availableCompounds) {		
-		super(availableCompounds,files(
-				"/data/methaneandnpentane/methaneandnpentane_310_liquid.txt",
-				"/data/methaneandnpentane/methaneandnpentane_310_vapor.txt",
-				"/data/methaneandnpentane/methaneandnpentane_377_liquid.txt",
-				"/data/methaneandnpentane/methaneandnpentane_377_vapor.txt",
-				"/data/methaneandnpentane/methaneandnpentane_444_liquid.txt",
-				"/data/methaneandnpentane/methaneandnpentane_444_vapor.txt"
+		super(availableCompounds);
+		createLists(files("/data/methaneandnpentane/methaneandnpentane_310_liquid.txt",
+				"/data/methaneandnpentane/methaneandnpentane_377_liquid.txt"				
 				));
+		createLists(files("/data/methaneandnpentane/methaneandnpentane_310_vapor.txt",
+				"/data/methaneandnpentane/methaneandnpentane_377_vapor.txt"
+				
+				)
+				,true,true,100);
+		createLists(files("/data/methaneandnpentane/methaneandnpentane_444_liquid.txt",
+				"/data/methaneandnpentane/methaneandnpentane_444_vapor.txt")
+				,false,false,50);
+		
+		createCompoundsAndMixture();
 	}
-
+	
+	
 	@Override
 	public void createCompoundsAndMixture(){
 		referenceCompound = availableCompounds.getCompoundByExactName("methane");

@@ -15,9 +15,20 @@ public class GoogleOptions {
     private GoogleOptionLegend legend;
     Map<Integer,GoogleOptionSerie> series = new HashMap();
     
+    private GoogleChartArea chartArea;
+    
     private GoogleAxis vAxis;
     private GoogleAxis hAxis;
     
+    	public static GoogleOptions googleOptions(String title,String hAxis,String vAxis,GooglePosition position){
+    	      GoogleOptions options = new GoogleOptions();
+    	        options.setTitle(title);
+    	        options.setCurveType(CurveType.function);
+    	        options.setLegend(new GoogleOptionLegend(position));
+    	        options.setvAxis(new GoogleAxis(vAxis));
+    	        options.sethAxis(new GoogleAxis(hAxis));
+    	        return options;
+    	}
      public static GoogleOptions googleOptions(String title, String hAxis, String vAxis,ChartType chartType){
         GoogleOptions options = new GoogleOptions();
         options.setTitle(title);
@@ -159,6 +170,12 @@ public class GoogleOptions {
     public void sethAxis(GoogleAxis hAxis) {
         this.hAxis = hAxis;
     }
+	public GoogleChartArea getChartArea() {
+		return chartArea;
+	}
+	public void setChartArea(GoogleChartArea chartArea) {
+		this.chartArea = chartArea;
+	}
     
     
     

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+<head>
+<title>Not present in rendered output</title>
+</head>
+<body>
+<composite:interface>
+	<composite:attribute name="bookexample" required="true"  type="bookexamples.BookExample"/>
+	
+</composite:interface>
+<composite:implementation>
+<h:panelGrid columns="2">
+<h:dataTable value="#{cc.attrs.bookexample.lines}" var="line">
+             		<h:column >
+             			<f:facet name="header">
+             				<h:outputText value="Etiqueta" />
+             			</f:facet>
+             			<h:outputText value="#{line.label}"/>
+             		</h:column>
+             		<h:column >
+             			<f:facet name="header">
+             				<h:outputText value="Fase" />
+             			</f:facet>
+             			<h:outputText value="#{line.phase}"/>
+             		</h:column>
+             		<h:column >
+             			<f:facet name="header">
+             				<h:outputText value="¿Mostrar línea?" />
+             			</f:facet>
+             			<h:selectBooleanCheckbox value="#{line.show}"/>
+             		</h:column>
+             		<h:column >
+             			<f:facet name="header">
+             				<h:outputText value="¿Calcular línea?" />
+             			</f:facet>
+             			<h:selectBooleanCheckbox value="#{line.lineToBeCalculated}"/>
+             		</h:column>
+             		<h:column >
+             			<f:facet name="header">
+             				<h:outputText value="¿Calcular la línea de la otra fase?" />
+             			</f:facet>
+             			<h:selectBooleanCheckbox value="#{line.otherPhaseToBeCalculated}"/>
+             		</h:column>
+             		<h:column >
+             			<f:facet name="header">
+             				<h:outputText value="Puntos para la línea de cálculo" />
+             			</f:facet>
+             			<h:inputText value="#{line.NForCalculation}"/>
+             		</h:column>
+             		
+             	</h:dataTable>
+             	<h:commandButton action="#{cc.attrs.bookexample.calculateDataTable()}" value="Aplicar cambios" >
+             		<f:ajax render="@form" execute="@form"/>
+             	</h:commandButton>
+  	</h:panelGrid> 
+</composite:implementation>
+</body>
+</html>

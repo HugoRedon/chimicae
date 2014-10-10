@@ -1,13 +1,14 @@
 package bookexamples;
 
-import hugo.productions.google.ChartType;
+import hugo.productions.google.GoogleChartArea;
 import hugo.productions.google.GoogleColumn;
 import hugo.productions.google.GoogleColumnType;
-import hugo.productions.google.GoogleDataTable;
 import hugo.productions.google.GoogleGraphInfo;
 import hugo.productions.google.GoogleOptionSerie;
 import hugo.productions.google.GoogleOptions;
-import hugo.productions.google.GoogleRow;
+import hugo.productions.google.GooglePosition;
+import hugo.productions.google.ListPoint;
+import hugo.productions.google.Point;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public abstract class BookExample {
 //	public List<Point> vaporLine = new ArrayList<>();
 //	
 	List<ListPoint> lines = new ArrayList<>();
+	GoogleGraphInfo dataTable;
 	
 	
 	public HeterogeneousMixture hm;
@@ -61,16 +63,19 @@ public abstract class BookExample {
 		this.availableCompounds = availableCompounds;
 		createCompoundsAndMixture();
 		readFiles();
+		
 	}
+	public BookExample(AvailableCompounds availableCompounds){
+		this.availableCompounds = availableCompounds;
+	}
+	
 	
 	public abstract void createCompoundsAndMixture(); 
 	
 	
 	public void readFiles(){
-	
 		for(String filePath: filesPath){
-			ListPoint liquidLines =readFile(filePath);
-			lines.add(liquidLines);
+			lines.add(readFile(filePath));
 		}		
 	}
 	public Point readLine(String line){
@@ -94,7 +99,7 @@ public abstract class BookExample {
 						Info info =(Info) new Gson().fromJson(json,classs);
 						Double temp = info.getTemperature();
 						Phase phase = info.getPhase();
-						listPoint.setLabel("Experimental " + temp +" [K] "+ phase);
+						listPoint.setLabel("Experimental " + temp +" [K] ");
 						
 						if(info.getPhase()==null){
 							System.out.println("phase nula para el archivo " + filePath);
@@ -142,59 +147,64 @@ public abstract class BookExample {
 		return maxY;
 		
 	}
-	
-	public GoogleGraphInfo dataTable(){
-        System.out.println("paint");
-       GoogleDataTable table = new GoogleDataTable( );
-      
-       table.addColumns(
+	public void calculateDataTable(){
+		System.out.println("paint");
+        GoogleOptions options = GoogleOptions.googleOptions(
+                "Fracción molar vs Presión", 
+                "Fracción molar", 
+                "Presión[Pa]",GooglePosition.right);
+        GoogleChartArea area = new GoogleChartArea();
+        area.setWidth("50%");
+        options.setChartArea(area);
+        dataTable = new GoogleGraphInfo();
+       dataTable.setOptions(options);
+       dataTable.getData().addColumn(
            new GoogleColumn("molarFraction", "Fracción molar " + referenceCompound , GoogleColumnType.number)
        );
      
-       GoogleOptions options = GoogleOptions.googleOptions(
-               "Fracción molar vs Presión", 
-               "Fracción molar", 
-               "Presión[Pa]",ChartType.scatterFunctionScatterFunction);
+   
        for(ListPoint lp: lines){
-    	   table.addColumn(new GoogleColumn(lp.getId(), lp.getLabel(), GoogleColumnType.number));
-    	   table.addColumn(new GoogleColumn(lp.getId()+"c","Presión calculada [Pa] " + lp.getTemperature() + " [K]" , GoogleColumnType.number));
-    	   
-    	   addPoints(lp, table,lines.indexOf(lp),options);
-       }
-       
-                 
-       GoogleGraphInfo pressureComparison = new GoogleGraphInfo();
-       pressureComparison.setData(table);
-        pressureComparison.setOptions(options);
-       return pressureComparison;
-   }
-	public void addPoints(ListPoint lp,GoogleDataTable table,int index,GoogleOptions options){
-		options.addSerie(index, GoogleOptionSerie.SCATTER);
-		 for (Point point: lp.getList()){
-	           double fraction = point.getX();
-	           double pressure = point.getY(); 
-	           Number[] columns = new Number[index+2];
-	           columns[0] = fraction;
-        	   columns[index+ 1] = pressure;
-        	   
-	           table.addRow( new GoogleRow(columns));
-	           	           
-	       }
-		 int functionSerieIndex = lines.size()+index;
-		 options.addSerie(functionSerieIndex, GoogleOptionSerie.FUNCTION);
-		 calculateLine(table, lp,functionSerieIndex);
+    	   if(lp.isShow()){
+	    	   int index =dataTable.getData().addColumn(new GoogleColumn(lp.getId(), lp.getLabel() + " " + lp.getPhase(), GoogleColumnType.number));
+	    	   dataTable.addListPoint(lp.getList(), index, GoogleOptionSerie.SCATTER);
+    	   }
+    	   if(lp.isLineToBeCalculated()){
+    		   int i =dataTable.getData().addColumn(new GoogleColumn(lp.getId()+"c","Calculada " 
+    	   + lp.getTemperature() + " [K] "  + lp.getPhase(), GoogleColumnType.number));
+    		   List<Point> calculatedLine =calculateLine(lp,false);
+    		   
+    		   dataTable.addListPoint(calculatedLine, i, GoogleOptionSerie.FUNCTION);
+    	   }if(lp.isOtherPhaseToBeCalculated()){
+    		   Phase phase = (lp.getPhase().equals(Phase.VAPOR))?Phase.LIQUID:Phase.VAPOR;
+    		   int i =dataTable.getData().addColumn(new GoogleColumn(lp.getId()+ "co","Calculada " 
+    	   + lp.getTemperature() + " [K]" + phase,GoogleColumnType.number));
+    		   List<Point> otherPhaseCalculatedLine = calculateLine(lp,true);
+    		   dataTable.addListPoint(otherPhaseCalculatedLine, i, GoogleOptionSerie.FUNCTION);
+    	   }
+       }              
 	}
 	
-	public void calculateLine(GoogleDataTable table,ListPoint listPoint,int index){
+	public GoogleGraphInfo dataTable(){
+        if(dataTable==null){
+        	calculateDataTable();
+        }
+       return dataTable;
+   }
+
+	
+	
+	public List<Point> calculateLine(ListPoint listPoint,boolean otherPhase){
 		 	
-			List<Point> line = listPoint.getList();
+			List<Point> experimentalLine = listPoint.getList();
 			hm.setTemperature(listPoint.getTemperature());
 	       
-	       double minX = getMinX(line);
-	       double maxX = getMaxX(line);
+	       double minX = getMinX(experimentalLine);
+	       double maxX = getMaxX(experimentalLine);
 	       
-	       double maxY = getMaxY(line);
-	       Integer n = 25;
+	       double maxY = getMaxY(experimentalLine);
+	       Integer n = listPoint.getNForCalculation();
+	       
+	       List<Point> calculatedLine = new ArrayList<>();
 	       
 	       
 	       double xStep = (maxX - minX)/n.doubleValue();
@@ -235,11 +245,24 @@ public abstract class BookExample {
 	    		   }
 	    		   
 	    	   }
-	    	   if(!pressure.isNaN()){
-	    		   Number[] columns = new Number[index+2];
-	    		   columns[0] =molarFraction;
-	    		   columns[index+1] = pressure;
-	    		   table.addRow(new GoogleRow(columns));
+	    	   Double vaporFraction = hm.getVapor().getFractions().get(referenceCompound.getName());
+	    	   Double liquidFraction = hm.getLiquid().getFractions().get(referenceCompound.getName());
+	    	   if(!pressure.isNaN()&& !vaporFraction.isNaN()&& !liquidFraction.isNaN()){
+	    		   Point p ;
+	    		   if(otherPhase){
+	    			   double fraction = 0;
+	    			   if(listPoint.getPhase().equals(Phase.VAPOR)){
+	    				   fraction = liquidFraction;
+	    			   }else{
+	    				   fraction = vaporFraction;
+	    			   }
+	    			   
+	    			    p = new Point(fraction,pressure);
+	    		   }else{
+		    		    p = new Point(molarFraction, pressure);
+		    		   
+	    		   }
+	    		   calculatedLine.add(p);
 	    	   }else{
 	    		   pressure = pressureEstimate;
 	    		   for(IterationInfo ii:hm.getCalculationReport()){
@@ -254,30 +277,51 @@ public abstract class BookExample {
 	       if(listPoint.getPhase().equals(Phase.VAPOR)){
 		       double minPressure = hm.getPressure();
 		       double temperature = hm.getTemperature();
-		       n = 25;
+		       n = listPoint.getNForCalculation();
 		       
 		       double pressureStep = (maxY-minPressure)/n.doubleValue();
 		       
 		       for(Integer i = 0; i < n ; i ++){
 		    	   double pressure = minPressure  + pressureStep* i.doubleValue(); 
+		    	   Map<String,Double>yestimates =hm.getVapor().getFractions();
+		    	   Map<String,Double>xestimates = hm.getLiquid().getFractions();
 		    	   
-		    	   hm.flash(temperature, pressure ,hm.getVapor().getFractions(),hm.getLiquid().getFractions(),1);
-		           Double vmf =hm.getVapor().getReadOnlyFractions().get(referenceCompound);
+		    	   hm.flash(temperature, pressure ,yestimates,xestimates,1);
 		           
-		           if(!vmf.isNaN()){
-		        	   
-		        	   Number[] columns = new Number[index+2];
-		    		   columns[0] =vmf;
-		    		   columns[index+1] = pressure;
-		    		   table.addRow(new GoogleRow(columns));
+		           
+		           Double vaporFraction = hm.getVapor().getFractions().get(referenceCompound.getName());
+		    	   Double liquidFraction = hm.getLiquid().getFractions().get(referenceCompound.getName());
+		    	   if( !vaporFraction.isNaN()&& !liquidFraction.isNaN()){
+		        	   Point p ;
+		        	   if(otherPhase){
+		        		   Double fraction;
+		        		   if(listPoint.getPhase().equals(Phase.VAPOR)){
+		        			   fraction = liquidFraction;
+		        		   }else{
+		        			   fraction = vaporFraction;
+		        		   }
+		        		   if(!fraction.isNaN()){
+		        			   p = new Point(fraction,pressure);
+		        		   }else{
+		        			   continue;
+		        		   }
+		        	   }else{
+		        		   p = new Point(vaporFraction,pressure);
+		        	   }
+		        	   calculatedLine.add(p);		        	   
 		           }else{
 		        	   
-		        	   System.out.println("flash molar fraction : " + vmf);   
+		        	   System.out.println("flash molar fraction : " + vaporFraction);
+		        	   break;
 		           }
 		       }
+		       
 	       }
-	       
+	       return calculatedLine;
 	}
+	
+	
+
 
 //	public void calculateLiquidLine(GoogleDataTable table){
 //		double minX = getMinX(liquidLine);
@@ -354,6 +398,31 @@ public abstract class BookExample {
 		return new SaturationPressureReport().createReport(hm);
 	}
 	
+	public void createLists(String[] files,boolean calculateLine,
+			boolean calculateOtherPhaseLine,Integer NForCalculation){
+		for(String file:files){
+			ListPoint lp =readFile(file);
+			lp.setLineToBeCalculated(calculateLine);
+			lp.setOtherPhaseToBeCalculated(calculateOtherPhaseLine);
+			lp.setNForCalculation(NForCalculation);
+			lines.add(lp);
+		}
+		
+	}
+	public void createLists(String[]files){
+		for(String file:files){
+			ListPoint lp = readFile(file);
+			lp.setLineToBeCalculated(false);
+			lp.setOtherPhaseToBeCalculated(false);
+			lines.add(lp);
+		}
+	}
+	public List<ListPoint> getLines() {
+		return lines;
+	}
+	public void setLines(List<ListPoint> lines) {
+		this.lines = lines;
+	}
 
 
 }

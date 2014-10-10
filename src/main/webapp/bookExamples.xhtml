@@ -7,51 +7,60 @@
 
 	<ui:composition template="googlePlotTemplate.xhtml">
 		<ui:define name="content">
+<!-- _____________________________________________________________ -->
+		<h:form id="methanepentanevdw">
+			<h:panelGrid columns="2">
+			 	<emcomp:ChartTable divId="equilibria" 
+                             chartType="Scatter"
+							showTable="false"                             
+                            googleChartInfo="#{bookExamples.methanenpentane.dataTable()}"/>
+             	<h:graphicImage value="/images/methaneandnpentane.png" />
+             	<emcomp:pointLineProperties bookexample="#{bookExamples.methanenpentane}"/>
+             </h:panelGrid>
+         </h:form>
+		
+<!-- _____________________________________________________________ -->
+		<h:form>
 		 <h:panelGrid columns="2">
 	              <emcomp:ChartTable divId="ipropanewater2pvdw" 
 		                      chartType="Scatter"
 							showTable="false"                             
 		                     googleChartInfo="#{bookExamples.iPropaneWater2PDVW.dataTable()}"/>
                      <h:graphicImage value="/images/2pvdw2propanolwater.png" />
-	              <h:form>
+	              
 	              	<h:commandButton action="#{bookExamples.iPropaneWater2PDVW.download(353,1)}" value="reporte" />
-	              </h:form>
+	              <emcomp:pointLineProperties bookexample="#{bookExamples.iPropaneWater2PDVW}"/>
               </h:panelGrid> 
-		
-			<h:panelGrid columns="2">
-			 	<emcomp:ChartTable divId="equilibria" 
-                             chartType="Scatter"
-							showTable="false"                             
-                            googleChartInfo="#{bookExamples.methanenpentane.dataTable()}"/>
-             	<h:graphicImage value="/images/methaneandnpentane.png" /> 
-             </h:panelGrid>
-             
-             
+		</h:form>
+<!-- _____________________________________________________________ -->
+      <h:form id="propanolwaterform">
              <h:panelGrid columns="2">
 			  	<emcomp:ChartTable divId="ipropanolwater" 
 	                      chartType="Scatter"
 						showTable="false"                             
 	                     googleChartInfo="#{bookExamples.ipropanewater.dataTable()}"/>
                  <h:graphicImage value="/images/2propanolWater.png"	 />
-              
-              <h:form>
-              	<h:commandButton action="#{bookExamples.ipropanewater.download(353,0)}" value="reporte" />
-			  </h:form>
+              <emcomp:pointLineProperties bookexample="#{bookExamples.ipropanewater}"/>
+				<!--<h:form>
+              	<h:commandButton action="{bookExamples.ipropanewater.download(353,0)}" value="reporte" />
+			  </h:form> -->
 			  </h:panelGrid>
-			  
-			  
+	  </h:form>
+  <!-- _____________________________________________________________ -->
+  		<h:form>
 			  <h:panelGrid columns="2"> 
               	<emcomp:ChartTable divId="ipropanolwaterWS" 
 	                      chartType="Scatter"
 						showTable="false"                             
 	                     googleChartInfo="#{bookExamples.ipropanewaterWS.dataTable()}"/>
                    <h:graphicImage value="/images/2propanolWater_WS.png" />
-	              <h:form>
+                   <emcomp:pointLineProperties bookexample="#{bookExamples.ipropanewaterWS}"/>
+	              <!-- <h:form>
 	              	<h:commandButton action="#{bookExamples.ipropanewaterWS.download(353,0)}" value="reporte" />
-	              </h:form>
+	              </h:form> -->
               </h:panelGrid>
-	              
-	              
+        </h:form>
+<!-- _____________________________________________________________ -->              
            	<h:panelGrid columns="2">
               <emcomp:ChartTable divId="methanepentaneHVVL" 
 	                      chartType="Scatter"
@@ -62,8 +71,18 @@
               	<h:commandButton action="#{bookExamples.methanepentaneHVVL.download(310,0)}" value="reporte" />
               </h:form>
              </h:panelGrid>
-             
-               
+ <!-- _____________________________________________________________ -->        
+               	<h:panelGrid columns="2">
+              <emcomp:ChartTable divId="methanepentaneMHV1VL" 
+	                      chartType="Scatter"
+						showTable="false"                             
+	                     googleChartInfo="#{bookExamples.methanepentaneMHV1VL.dataTable()}"/>
+                 <!--  <h:graphicImage value="/images/metanepentaneMHV1VL.png" /> -->
+              <h:form>
+              	<h:commandButton action="#{bookExamples.methanepentaneMHV1VL.download(310,0)}" value="reporte" />
+              </h:form>
+             </h:panelGrid>
+<!-- _____________________________________________________________ -->           
 		</ui:define>
 	</ui:composition>
 </html>

@@ -10,17 +10,20 @@ import com.google.gson.Gson;
  * @author Hugo
  */
 public class GoogleDataTable {
-    private ArrayList<GoogleColumn> cols = new ArrayList();
-    private ArrayList<GoogleRow> rows = new ArrayList();
+    private ArrayList<GoogleColumn> cols = new ArrayList<>();
+    private ArrayList<GoogleRow> rows = new ArrayList<>();
     
-    public void addColumn(GoogleColumn col){
+    public int addColumn(GoogleColumn col){
         this.cols.add(col);
+        return cols.indexOf(col);
     }
     public void addColumns(GoogleColumn... cols){
         for(GoogleColumn col : cols){
             this.cols.add(col);
         }
     }
+    
+  
    
     
     public void addRow(GoogleRow row){
