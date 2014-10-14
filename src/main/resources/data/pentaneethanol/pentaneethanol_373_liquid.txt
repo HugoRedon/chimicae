@@ -1,0 +1,10 @@
+#DataThief /home/hugo/Documents/repositories/chimicae/src/main/resources/data/pentaneethanol/pentaneethanolvdw.png Friday 10-Oct-2014 8:28:58 PM
+#info:{"label":"Presión experimental","temperature":"373","phase":"LIQUID","k":"0.0964"}
+0.0802, 4.2115
+0.1706, 5.3713
+0.3026, 6.1225
+0.4415, 6.4656
+0.6254, 6.7766
+0.7364, 6.8376
+0.8422, 6.7732
+0.9358, 6.552

@@ -1,0 +1,13 @@
+#DataThief /home/hugo/Documents/repositories/chimicae/src/main/resources/data/carbondioxidepropane/carbondioxidepropanevdw.png Friday 10-Oct-2014 8:20:26 PM
+#info:{"label":"Experimental","temperature":"344","phase":"VAPOR"}
+1.5254e-3, 26.6632
+0.031, 27.5467
+0.1177, 31.0882
+0.187, 34.5069
+0.2389, 37.9301
+0.2876, 41.4813
+0.3241, 44.9083
+0.3536, 48.21
+0.3796, 51.5125
+0.3988, 54.944
+0.4092, 58.2504

@@ -169,9 +169,19 @@ public class BookExample {
 		 	
 			List<Point> experimentalLine = listPoint.getList();
 			hm.setTemperature(listPoint.getTemperature());
+			if(listPoint.getK()!=0){
+				hm.getInteractionParameters().setValue(referenceCompound, nonReferenceCompound, listPoint.getK());
+			}
 	       
 	       double minX = getMinX(experimentalLine);
 	       double maxX = getMaxX(experimentalLine);
+	       
+	       if(listPoint.getMinX() !=null){
+	    	   minX = listPoint.getMinX();
+	       }
+	       if(listPoint.getMaxX() !=null){
+	    	   maxX = listPoint.getMaxX();
+	       }
 	       
 	       double maxY = getMaxY(experimentalLine);
 	       Integer n = listPoint.getNForCalculation();
@@ -204,18 +214,19 @@ public class BookExample {
 		    		   hm.bubblePressure();
 		    		
 		    	   }else{
-		    		   hm.bubblePressure(pressureEstimate,estimateFractions);
+		    		   	hm.bubblePressure(pressureEstimate,estimateFractions);
 		    	   }
 	    	   }
 	    	   
 	    	   Double pressure = hm.getPressure();
 	    	   if(pressure.equals(pressureEstimate)){
-	    		   if(listPoint.getPhase().equals(Phase.VAPOR)){
-	    			   hm.dewPressure();
-	    		   }else{
-	    			   hm.bubblePressure();
+	    		   if(i<10){
+		    		   if(listPoint.getPhase().equals(Phase.VAPOR)){
+		    			   hm.dewPressure();
+		    		   }else{
+		    			   hm.bubblePressure();
+		    		   }
 	    		   }
-	    		   
 	    	   }
 	    	   Double vaporFraction = hm.getVapor().getFractions().get(referenceCompound.getName());
 	    	   Double liquidFraction = hm.getLiquid().getFractions().get(referenceCompound.getName());
@@ -442,6 +453,8 @@ class Info{
 	String label;
 	double temperature;
 	Phase phase;
+	
+	double k;
 	public String getLabel() {
 		return label;
 	}
@@ -459,5 +472,11 @@ class Info{
 	}
 	public void setPhase(Phase phase) {
 		this.phase = phase;
+	}
+	public double getK() {
+		return k;
+	}
+	public void setK(double k) {
+		this.k = k;
 	}
 }

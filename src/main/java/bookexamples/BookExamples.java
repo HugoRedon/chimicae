@@ -32,6 +32,7 @@ import termo.eos.alpha.Alpha;
 import termo.eos.alpha.Alphas;
 import termo.eos.mixingRule.MixingRule;
 import termo.eos.mixingRule.MixingRules;
+import termo.eos.mixingRule.TwoParameterVanDerWaals;
 import termo.matter.HeterogeneousMixture;
 import termo.phase.Phase;
 import chimicae.AvailableCompounds;
@@ -47,43 +48,30 @@ public class BookExamples implements Serializable {
 	Compound isopropanol;
 	Compound water;
 	
+	Compound carbonDioxide;
+	Compound propane;
+	
+	Compound ethanol;
+	
 	MixtureSystem methanePentaneSystem;
 	MixtureSystem isopropanolWaterSystem;
+	MixtureSystem carbonDioxidePropaneSystem;
+	MixtureSystem pentaneEthanolSystem;
 	
 	
 	List<BookExample> list = new ArrayList<>();
-	
-
-//	BookExample ipropanewater;
-//	BookExample ipropanewaterWS;
-
-//	BookExample iPropaneWater2PDVW;
-
-	
 	@Inject AvailableCompounds availableCompounds;
 	
 	@PostConstruct
 	public void init(){
 		initializeCompounds();
-		Cubic eos = EquationsOfState.pengRobinson();
-		Alpha alpha = Alphas.getStryjekAndVeraExpression();
+		Cubic eos = EquationsOfState.pengRobinson();		
 		ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
 		
-		methanePentaneSystem = new MixtureSystem();
-		methanePentaneSystem.setEos(eos);
-		methanePentaneSystem.setAlpha(alpha);
-		methanePentaneSystem.setReferenceCompound(methane);
-		methanePentaneSystem.setNonReferenceCompound(pentane);
-		methanePentaneSystem.setExperimentalLines(getMethanePentaneLines());
-		
-		
-		isopropanolWaterSystem = new MixtureSystem();
-		isopropanolWaterSystem.setEos(eos);
-		isopropanolWaterSystem.setAlpha(alpha);
-		isopropanolWaterSystem.setReferenceCompound(isopropanol);
-		isopropanolWaterSystem.setNonReferenceCompound(water);
-		isopropanolWaterSystem.setExperimentalLines(getIsopropanolWaterLines());
-		
+		createMethanePentaneSystem();
+		createIsopropanolWaterSystem();
+		createCarbonDioxidePropaneSystem();
+		createPentaneEthanolSystem();
 		
 //	_________________________________________________________	
 		
@@ -94,6 +82,19 @@ public class BookExamples implements Serializable {
 		list.add(new BookExample(methanePentaneSystem,"mpvdw","/images/methaneandnpentane.png"));
 		//methanenpentane = new MethanePentane(availableCompounds);
 		
+		carbonDioxidePropaneSystem.setMr(MixingRules.vanDerWaals());
+		k = new ActivityModelBinaryParameter();
+		k.setSymmetric(true);
+		k.setValue(carbonDioxide, propane, 0.121);
+		carbonDioxidePropaneSystem.setK(k);
+		list.add(new BookExample(carbonDioxidePropaneSystem,"cpvdw","/images/carbondioxidepropanevdw.png"));
+		
+		pentaneEthanolSystem.setMr(MixingRules.vanDerWaals());
+		k= new ActivityModelBinaryParameter();
+		k.setSymmetric(true);
+		k.setValue(pentane, ethanol, .0964);
+		pentaneEthanolSystem.setK(k);
+		list.add(new BookExample(pentaneEthanolSystem, "pevdw", "/images/pentaneethanolvdw.png"));
 		
 		isopropanolWaterSystem.setMr(MixingRules.huronVidal(new NRTLActivityModel(), eos));
 		k = new ActivityModelBinaryParameter();
@@ -133,8 +134,13 @@ public class BookExamples implements Serializable {
 		list.add(new BookExample(methanePentaneSystem,"mphvvl","/images/metanepentaneHVVL.png"));
 		//methanepentaneHVVL = new MethanePentaneHVVanLaar(availableCompounds);
 		
-		
+		isopropanolWaterSystem.setMr(new TwoParameterVanDerWaals());
+		k = new ActivityModelBinaryParameter();
+		k.getTwoParameterVanDerWaals().setValue(isopropanol,water, 0.0953);
+		k.getTwoParameterVanDerWaals().setValue(water, isopropanol, 0.0249);
 		//iPropaneWater2PDVW = new IpropaneWater2PDVW(availableCompounds);
+		isopropanolWaterSystem.setK(k);
+		list.add(new BookExample(isopropanolWaterSystem,"iwtpvdw","/images/2pvdw2propanolwater.png"));
 		
 		methanePentaneSystem.setMr(MixingRules.ModifiedHuronVidalFirstOrderMixingRule(new VanLaarActivityModel(), eos));
 		k = new ActivityModelBinaryParameter();
@@ -145,6 +151,40 @@ public class BookExamples implements Serializable {
 		//list.add(new BookExample(methanePentaneSystem,"mpmhv1vl","/images/metanepentaneMHV1VL.png"));
 		//methanepentaneMHV1VL = new MethanePentaneMHV1VL(availableCompounds);
 	}
+	
+	
+	
+	
+	
+	
+	public void createMethanePentaneSystem(){
+		methanePentaneSystem = new MixtureSystem();
+		methanePentaneSystem.setReferenceCompound(methane);
+		methanePentaneSystem.setNonReferenceCompound(pentane);
+		methanePentaneSystem.setExperimentalLines(getMethanePentaneLines());
+		
+	}
+	public void createIsopropanolWaterSystem(){
+		isopropanolWaterSystem = new MixtureSystem();
+		isopropanolWaterSystem.setReferenceCompound(isopropanol);
+		isopropanolWaterSystem.setNonReferenceCompound(water);
+		isopropanolWaterSystem.setExperimentalLines(getIsopropanolWaterLines());		
+	}
+	
+	public void createCarbonDioxidePropaneSystem(){
+		carbonDioxidePropaneSystem = new MixtureSystem();
+		carbonDioxidePropaneSystem.setReferenceCompound(carbonDioxide);
+		carbonDioxidePropaneSystem.setNonReferenceCompound(propane);
+		carbonDioxidePropaneSystem.setExperimentalLines(getCarbonDioxidePropaneLines());
+		
+	}
+	public void createPentaneEthanolSystem(){
+		pentaneEthanolSystem= new MixtureSystem();
+		pentaneEthanolSystem.setReferenceCompound(pentane);
+		pentaneEthanolSystem.setNonReferenceCompound(ethanol);
+		pentaneEthanolSystem.setExperimentalLines(getPentaneEthanolLines());
+	}
+	
 	
 	public void initializeCompounds(){
 		methane = availableCompounds.getCompoundByExactName("methane");
@@ -159,14 +199,42 @@ public class BookExamples implements Serializable {
 		
 		water= availableCompounds.getCompoundByExactName("water");
 		water.setK_StryjekAndVera(-0.06635);
+		
+		carbonDioxide = availableCompounds.getCompoundByExactName("carbon dioxide");
+		carbonDioxide.setK_StryjekAndVera(0.04285);
+		
+		propane = availableCompounds.getCompoundByExactName("propane");
+		propane.setK_StryjekAndVera(0.03136);
+				
+		ethanol = availableCompounds.getCompoundByExactName("ethanol");
+		ethanol.setK_StryjekAndVera(-0.03374);
 	}
 	public static String[] files(String... files){
 		return files;
 	}
 	
+	public List<ListPoint> getPentaneEthanolLines(){
+		List<ListPoint> result = new ArrayList<>();
+		
+		result.addAll(createLists(files(
+				"/data/pentaneethanol/pentaneethanol_373_liquid.txt",
+				"/data/pentaneethanol/pentaneethanol_373_vapor.txt",
+				
+				"/data/pentaneethanol/pentaneethanol_398_liquid.txt",
+				"/data/pentaneethanol/pentaneethanol_398_vapor.txt",
+				
+				"/data/pentaneethanol/pentaneethanol_423_liquid.txt",
+				"/data/pentaneethanol/pentaneethanol_423_vapor.txt"
+				
+				)
+				,true,false,50,0d,1d));
+		return result;
+	}
+	
 	public List<ListPoint> getMethanePentaneLines(){
 		List<ListPoint> result = new ArrayList<>();
-		result.addAll(createLists(files("/data/methaneandnpentane/methaneandnpentane_310_liquid.txt",
+		result.addAll(createLists(files(
+				"/data/methaneandnpentane/methaneandnpentane_310_liquid.txt",
 				"/data/methaneandnpentane/methaneandnpentane_377_liquid.txt"				
 				)));
 		result.addAll(createLists(files("/data/methaneandnpentane/methaneandnpentane_310_vapor.txt",
@@ -191,6 +259,24 @@ public class BookExamples implements Serializable {
 	}
 	
 	
+	public List<ListPoint> getCarbonDioxidePropaneLines(){
+		List<ListPoint> result = new ArrayList<>();
+		result.addAll(createLists(files(
+				"/data/carbondioxidepropane/carbondioxidepropane_277_liquid.txt",
+				"/data/carbondioxidepropane/carbondioxidepropane_277_vapor.txt",
+				"/data/carbondioxidepropane/carbondioxidepropane_310_liquid.txt",
+				"/data/carbondioxidepropane/carbondioxidepropane_310_vapor.txt",
+				"/data/carbondioxidepropane/carbondioxidepropane_344_liquid.txt",
+				"/data/carbondioxidepropane/carbondioxidepropane_344_vapor.txt")
+				,true,false,70));
+		return result;
+	}
+	
+	
+	
+	
+	
+	
 	public List<ListPoint> createLists(String[] files,boolean calculateLine,
 			boolean calculateOtherPhaseLine,Integer NForCalculation){
 		List<ListPoint> lines = new ArrayList<>();
@@ -204,6 +290,21 @@ public class BookExamples implements Serializable {
 		return lines;
 		
 	}
+	
+	
+	public List<ListPoint> createLists(String[] files,boolean calculateLine,
+		boolean calculateOtherPhaseLine,Integer NForCalculation,
+		double minX,double maxX){
+		List<ListPoint>lines =createLists(files, calculateLine, 
+				calculateOtherPhaseLine, NForCalculation);
+		for(ListPoint line: lines){
+			line.setMinX(minX);
+			line.setMaxX(maxX);
+		}
+		return lines;
+		
+	}
+	
 	public List<ListPoint> createLists(String[]files){
 		List<ListPoint> lines = new ArrayList<>();
 		for(String file:files){
@@ -212,6 +313,7 @@ public class BookExamples implements Serializable {
 			lp.setOtherPhaseToBeCalculated(false);
 			lines.add(lp);
 		}
+		
 		return lines;
 	}
 	
@@ -240,6 +342,8 @@ public class BookExamples implements Serializable {
 						Phase phase = info.getPhase();
 						listPoint.setLabel("Experimental " + temp +" [K] ");
 
+						System.out.println("k:"+info.k);
+						listPoint.setK(info.k);
 						
 						listPoint.setPhase(phase);
 						listPoint.setId(phase+ temp.toString());
@@ -280,12 +384,20 @@ public class BookExamples implements Serializable {
 
 
 class MixtureSystem{
-	Cubic eos;
-	Alpha alpha;
+	Cubic eos = EquationsOfState.pengRobinson();
+	Alpha alpha = Alphas.getStryjekAndVeraExpression();
 	MixingRule mr;
 	Compound referenceCompound;
 	Compound nonReferenceCompound;
 	InteractionParameter k;
+	
+	public String compoundInitials(){
+		if(referenceCompound!=null && nonReferenceCompound!= null){
+			return referenceCompound.getName().substring(0,1) +
+					nonReferenceCompound.getName().substring(0,1); 
+		}
+		return "";
+	}
 	
 	List<ListPoint> experimentalLines;
 	

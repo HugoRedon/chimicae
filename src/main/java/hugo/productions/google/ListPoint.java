@@ -3,6 +3,7 @@ package hugo.productions.google;
 import java.util.ArrayList;
 import java.util.List;
 
+import termo.binaryParameter.ActivityModelBinaryParameter;
 import termo.phase.Phase;
 
 public class ListPoint{
@@ -11,6 +12,10 @@ public class ListPoint{
 	String id ;
 	double temperature;
 	Phase phase ;
+	double k;
+	
+	Double minX;
+	Double maxX;
 	
 	Integer nForCalculation =25; 
 	boolean lineToBeCalculated =true;
@@ -72,5 +77,24 @@ public class ListPoint{
 	public void setShow(boolean show) {
 		this.show = show;
 	}
+	public double getK() {
+		return k;
+	}
+	public void setK(double k) {
+		this.k = k;
+	}
+	public Double getMinX() {
+		return minX;
+	}
+	public void setMinX(Double minX) {
+		this.minX = minX;
+	}
+	public Double getMaxX() {
+		return maxX;
+	}
+	public void setMaxX(Double maxX) {
+		this.maxX = maxX;
+	}
+
 	
 }
