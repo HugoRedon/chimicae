@@ -1,0 +1,15 @@
+#DataThief /home/hugo/Documents/repositories/chimicae/src/main/resources/data/propanemethanol/propanemethanolvdw.png Tuesday 14-Oct-2014 4:56:05 PM
+#info:{"label":"Presión experimental","temperature":"313","phase":"VAPOR"}
+0.8772, 003.58
+0.8998, 005.21
+0.9276, 006.28
+0.9381, 007.19
+0.9485, 008.45
+0.9556, 010.62
+0.9695, 011.53
+0.9713, 012.53
+0.9696, 013.12
+0.9696, 013.25
+0.9679, 013.33
+0.9679, 013.6
+0.9957, 013.79

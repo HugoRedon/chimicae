@@ -1,0 +1,15 @@
+#DataThief /home/hugo/Documents/repositories/chimicae/src/main/resources/data/2propanolWater/propanolwater523vdw.png Tuesday 14-Oct-2014 6:53:36 PM
+#info:{"label":"Presión experimental","temperature":"523","phase":"LIQUID"}
+1.9655e-3, 39.6087
+0.0105, 43.3006
+0.0251, 47.0633
+0.0373, 49.2938
+0.0567, 52.0827
+0.0774, 54.6629
+0.1163, 56.9683
+0.177, 59.1388
+0.2522, 61.521
+0.382, 64.2623
+0.4913, 65.6764
+0.5422, 66.2436
+0.6065, 66.3261

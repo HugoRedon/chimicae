@@ -1,0 +1,16 @@
+#DataThief /home/hugo/Documents/repositories/chimicae/src/main/resources/data/acetonewater/acetonewatervdw.png Tuesday 14-Oct-2014 5:10:10 PM
+#info:{"label":"Presión experimental","temperature":"298","phase":"VAPOR"}
+3.3684e-3, 0.0329
+0.5228, 0.0665
+0.6197, 0.0816
+0.7147, 0.1089
+0.7581, 0.1216
+0.8393, 0.1678
+0.8601, 0.1915
+0.8756, 0.2
+0.8756, 0.2134
+0.8859, 0.2341
+0.8944, 0.245
+0.9118, 0.2639
+0.9445, 0.2827
+1.0, 0.3052

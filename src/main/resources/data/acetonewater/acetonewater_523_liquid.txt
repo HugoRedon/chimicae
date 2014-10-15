@@ -1,0 +1,15 @@
+#DataThief /home/hugo/Documents/repositories/chimicae/src/main/webapp/images/acetonewater523vdw.png Wednesday 15-Oct-2014 10:08:46 AM
+#info:{"label":"Presión experimental","temperature":"523","phase":"LIQUID"}
+4.9661e-3, 40.1494
+6.1622e-3, 40.8111
+8.5663e-3, 41.6383
+0.0278, 46.4917
+0.104, 55.3761
+0.2287, 60.3523
+0.288, 62.9502
+0.2965, 63.282
+0.3644, 64.6682
+0.4019, 65.4444
+0.414, 65.7766
+0.4952, 66.8887
+0.5594, 67.4476
