@@ -1,0 +1,23 @@
+#DataThief /home/hugo/Documents/repositories/chimicae/src/main/resources/data/acetonewater/acetonewater373wsvl.png Wednesday 15-Oct-2014 2:12:26 PM
+#info:{"label":"Presión experimental","temperature":"373","phase":"VAPOR"}
+2.1055e-3, 1.0197
+0.0924, 1.1081
+0.106, 1.1179
+0.1197, 1.1705
+0.2079, 1.2983
+0.5429, 2.237
+0.6101, 2.4405
+0.6364, 2.6638
+0.6292, 2.7887
+0.7027, 3.0711
+0.7143, 3.1992
+0.7238, 3.3372
+0.7427, 3.4258
+0.7427, 3.4784
+0.8098, 3.4979
+0.7973, 3.5702
+0.8204, 3.6063
+0.8351, 3.6324
+0.874, 3.685
+0.9432, 3.7045
+0.9716, 3.7044

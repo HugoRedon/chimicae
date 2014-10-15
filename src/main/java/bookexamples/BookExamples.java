@@ -325,6 +325,56 @@ public class BookExamples implements Serializable {
 		
 		
 		
+		isopropanolWaterSystem.setMr(MixingRules.wongSandler(new NRTLActivityModel(),eos));
+		k = new ActivityModelBinaryParameter();
+		
+		k.getAlpha().setSymmetric(true);
+		k.getAlpha().setValue(isopropanol, water, 0.2893);
+		
+		k.getA().setValue(isopropanol, water, -0.4302*Constants.R*523);
+		k.getA().setValue(water, isopropanol, 2.5280*Constants.R*523);
+		
+		k.getK().setSymmetric(true);
+		k.getK().setValue(isopropanol, water, 0.3159);
+		isopropanolWaterSystem.setK(k);
+		isopropanolWaterSystem.setExperimentalLines(getPropanolWaterLines());
+		list.add(new BookExample(isopropanolWaterSystem, "iw523wsnrtl", "/images/propanolwater523wsnrtl.png"));
+		//ipropanewaterWS = new IPropaneWaterWS(availableCompounds);
+				
+		createIsopropanolWaterSystem();
+		
+		
+		acetoneWaterSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel()		, eos));
+		k= new ActivityModelBinaryParameter();
+		k.getA_vanLaar().setValue(acetone, water, 1.7724);
+		k.getA_vanLaar().setValue(water, acetone, 2.0291);
+		k.getK().setValue(acetone, water, 0.2529);
+		acetoneWaterSystem.setK(k);
+		list.add(new BookExample(acetoneWaterSystem, "awwsvl", "/images/acetonewaterwsvl.png"));
+	
+		
+		acetoneWaterSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel()		, eos));
+		k= new ActivityModelBinaryParameter();
+		k.getA_vanLaar().setValue(acetone, water, 2.0287);
+		k.getA_vanLaar().setValue(water, acetone, 1.6009);
+		k.getK().setValue(acetone, water, 0.2779);
+		acetoneWaterSystem.setK(k);
+		acetoneWaterSystem.setExperimentalLines(getAcetoneWater372Lines());
+		list.add(new BookExample(acetoneWaterSystem, "aw373wsvl", "/images/acetonewater373wsvl.png"));
+	
+		
+		acetoneWaterSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel()		, eos));
+		k= new ActivityModelBinaryParameter();
+		k.getA_vanLaar().setValue(acetone, water, 1.9520);
+		k.getA_vanLaar().setValue(water, acetone, 1.3812);
+		k.getK().setValue(acetone, water, 0.2641);
+		acetoneWaterSystem.setK(k);
+		acetoneWaterSystem.setExperimentalLines(getAcetoneWater523Lines());
+		list.add(new BookExample(acetoneWaterSystem, "aw523wsvl", "/images/acetonewater523wsvl.png"));
+	
+		
+		createAcetoneWaterSystem();
+		
 		
 		//_______________________________________________________________end ws
 
@@ -431,18 +481,15 @@ public class BookExamples implements Serializable {
 	
 	public List<ListPoint> getMethanePentaneLines(){
 		List<ListPoint> result = new ArrayList<>();
+
 		result.addAll(createLists(files(
+				"/data/methaneandnpentane/methaneandnpentane_310_vapor.txt",
 				"/data/methaneandnpentane/methaneandnpentane_310_liquid.txt",
-				"/data/methaneandnpentane/methaneandnpentane_377_liquid.txt"				
-				)));
-		result.addAll(createLists(files("/data/methaneandnpentane/methaneandnpentane_310_vapor.txt",
-				"/data/methaneandnpentane/methaneandnpentane_377_vapor.txt"
-				
-				)
-				,true,true,100));
-		result.addAll(createLists(files("/data/methaneandnpentane/methaneandnpentane_444_liquid.txt",
+				"/data/methaneandnpentane/methaneandnpentane_377_vapor.txt",
+				"/data/methaneandnpentane/methaneandnpentane_377_liquid.txt",
+				"/data/methaneandnpentane/methaneandnpentane_444_liquid.txt",
 				"/data/methaneandnpentane/methaneandnpentane_444_vapor.txt")
-				,false,false,50));
+				,true,false,100));
 		
 		return result;
 	}
@@ -505,7 +552,14 @@ public class BookExamples implements Serializable {
 		return result;
 	}
 	
-	
+	public List<ListPoint> getAcetoneWater372Lines(){
+		List<ListPoint> result = new ArrayList<>();
+		result.addAll(createLists(files(
+				"/data/acetonewater/acetonewater_373_liquid.txt",
+				"/data/acetonewater/acetonewater_373_vapor.txt"
+				),true,false,70));
+		return result;
+	}
 	
 	
 	

@@ -257,7 +257,7 @@ public class BookExample {
 	       }
 	       
 	       
-	       if(listPoint.getPhase().equals(Phase.VAPOR)){
+	       if(listPoint.getPhase().equals(Phase.VAPOR)&& referenceCompound.getName().equals("methane")){
 		       double minPressure = hm.getPressure();
 		       double temperature = hm.getTemperature();
 		       n = listPoint.getNForCalculation();
