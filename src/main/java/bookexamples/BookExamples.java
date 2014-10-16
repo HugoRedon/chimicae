@@ -68,6 +68,8 @@ public class BookExamples implements Serializable {
 	methylAcetateCyclohexaneSystem,//
 	ethanolHeptaneSystem;//
 	
+	String viewName = "bookExamples";
+	
 	public void createEthanolHeptaneSystem(){
 		ethanolHeptaneSystem = new MixtureSystem(ethanol, heptane);
 		//ethanolHeptaneSystem.setExperimentalLines(getEthanolHeptaneLines());
@@ -124,20 +126,10 @@ public class BookExamples implements Serializable {
 	List<BookExample> list = new ArrayList<>();
 	@Inject AvailableCompounds availableCompounds;
 	
-	@PostConstruct
-	public void init(){
-		initializeCompounds();
+	public String vdwDemos(){
 		Cubic eos = EquationsOfState.pengRobinson();		
 		ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
-		
-		createMethanePentaneSystem();
-		createIsopropanolWaterSystem();
-		createCarbonDioxidePropaneSystem();
-		createPentaneEthanolSystem();
-		createPropaneMethanolSystem();
-		createAcetoneWaterSystem();
-		
-//	_________________________________________________________vdw	
+		list.clear();
 		
 		methanePentaneSystem.setMr(MixingRules.vanDerWaals());
 		k.setSymmetric(true);
@@ -205,195 +197,230 @@ public class BookExamples implements Serializable {
 		
 		
 		createAcetoneWaterSystem();//restaurandolineas experimentales
-		//___________________________________________________________end vdw
 		
-		
+		return viewName;
+	}
+	
+	
+	public String hvoDemos(){
+		Cubic eos = EquationsOfState.pengRobinson();		
+		ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
+		list.clear();
 		//_____________________________________________________________hvo
 		
-		methanePentaneSystem.setMr(MixingRules.huronVidal(
-				new VanLaarActivityModel(), eos));
-		k = new ActivityModelBinaryParameter();
-		k.getA_vanLaar().setValue(methane, pentane, 0.1201);
-		k.getA_vanLaar().setValue(pentane, methane, 0.1430);
-		methanePentaneSystem.setK(k);
-		list.add(new BookExample(methanePentaneSystem,"mphvvl","/images/metanepentaneHVVL.png"));
-		//methanepentaneHVVL = new MethanePentaneHVVanLaar(availableCompounds);
+				methanePentaneSystem.setMr(MixingRules.huronVidal(
+						new VanLaarActivityModel(), eos));
+				k = new ActivityModelBinaryParameter();
+				k.getA_vanLaar().setValue(methane, pentane, 0.1201);
+				k.getA_vanLaar().setValue(pentane, methane, 0.1430);
+				methanePentaneSystem.setK(k);
+				list.add(new BookExample(methanePentaneSystem,"mphvvl","/images/metanepentaneHVVL.png"));
+				//methanepentaneHVVL = new MethanePentaneHVVanLaar(availableCompounds);
+				
+				carbonDioxidePropaneSystem.setMr(MixingRules.huronVidal(new VanLaarActivityModel(), eos));
+				k = new ActivityModelBinaryParameter();
+				
+				k.getA_vanLaar().setValue(carbonDioxide, propane, 1.1816);
+				k.getA_vanLaar().setValue(propane, carbonDioxide, 1.6901);
+				carbonDioxidePropaneSystem.setK(k);
+				list.add(new BookExample(carbonDioxidePropaneSystem, "cdphvvl", "/images/carbondioxidepropanehvvl.png"));
+				
+				
+				acetoneWaterSystem.setMr(MixingRules.huronVidal(new VanLaarActivityModel(), eos));
+				k = new ActivityModelBinaryParameter();
+				
+				k.getA_vanLaar().setValue(acetone, water, 3.5121);
+				k.getA_vanLaar().setValue(water, acetone, 2.2227);
+				acetoneWaterSystem.setK(k);
+				list.add(new BookExample(acetoneWaterSystem, "awhvvl", "/images/acetonewaterhvvl.png"));
+				
+				acetoneWaterSystem.setMr(MixingRules.huronVidal(new VanLaarActivityModel(), eos));
+				k = new ActivityModelBinaryParameter();
+				
+				k.getA_vanLaar().setValue(acetone, water, 4.2206);
+				k.getA_vanLaar().setValue(water, acetone, 1.7264);
+				acetoneWaterSystem.setExperimentalLines(getAcetoneWater523Lines());
+				acetoneWaterSystem.setK(k);
+				list.add(new BookExample(acetoneWaterSystem, "aw523hvvl", "/images/acetonewater523hvvl.png"));		
+				createAcetoneWaterSystem();//restaurando lineas experimentales
+				
+				
+				
+				isopropanolWaterSystem.setMr(MixingRules.huronVidal(new NRTLActivityModel(), eos));
+				k = new ActivityModelBinaryParameter();
+				
+				k.getAlpha().setSymmetric(true);
+				k.getAlpha().setValue(isopropanol,water, 0.2893);
+				
+				k.getA().setValue(isopropanol,water, 0.7882*Constants.R*353);
+				k.getA().setValue(water, isopropanol, 3.9479*Constants.R*353);
+				isopropanolWaterSystem.setK(k);
+				list.add(new BookExample(isopropanolWaterSystem, "iwhvnrtl", "/images/2propanolWater.png"));
+				//ipropanewater = new IpropaneWater(availableCompounds);
+				
+				
+				
+				
+				isopropanolWaterSystem.setMr(MixingRules.huronVidal(new NRTLActivityModel(), eos));
+				k = new ActivityModelBinaryParameter();
+				
+				k.getAlpha().setSymmetric(true);
+				k.getAlpha().setValue(isopropanol,water, 0.2893);
+				
+				k.getA().setValue(isopropanol,water, 0.3952*Constants.R*523);
+				k.getA().setValue(water, isopropanol, 4.1518*Constants.R*523);
+				isopropanolWaterSystem.setK(k);
+				isopropanolWaterSystem.setExperimentalLines(getPropanolWaterLines());
+				list.add(new BookExample(isopropanolWaterSystem, "iw523hvnrtl", "/images/propanolwater523hvnrtl.png"));
+				
+				
+				
+				createIsopropanolWaterSystem();//restaurando lineas experimentales
+				//________________________________________________________-end hvo
+				
 		
-		carbonDioxidePropaneSystem.setMr(MixingRules.huronVidal(new VanLaarActivityModel(), eos));
-		k = new ActivityModelBinaryParameter();
-		
-		k.getA_vanLaar().setValue(carbonDioxide, propane, 1.1816);
-		k.getA_vanLaar().setValue(propane, carbonDioxide, 1.6901);
-		carbonDioxidePropaneSystem.setK(k);
-		list.add(new BookExample(carbonDioxidePropaneSystem, "cdphvvl", "/images/carbondioxidepropanehvvl.png"));
-		
-		
-		acetoneWaterSystem.setMr(MixingRules.huronVidal(new VanLaarActivityModel(), eos));
-		k = new ActivityModelBinaryParameter();
-		
-		k.getA_vanLaar().setValue(acetone, water, 3.5121);
-		k.getA_vanLaar().setValue(water, acetone, 2.2227);
-		acetoneWaterSystem.setK(k);
-		list.add(new BookExample(acetoneWaterSystem, "awhvvl", "/images/acetonewaterhvvl.png"));
-		
-		acetoneWaterSystem.setMr(MixingRules.huronVidal(new VanLaarActivityModel(), eos));
-		k = new ActivityModelBinaryParameter();
-		
-		k.getA_vanLaar().setValue(acetone, water, 4.2206);
-		k.getA_vanLaar().setValue(water, acetone, 1.7264);
-		acetoneWaterSystem.setExperimentalLines(getAcetoneWater523Lines());
-		acetoneWaterSystem.setK(k);
-		list.add(new BookExample(acetoneWaterSystem, "aw523hvvl", "/images/acetonewater523hvvl.png"));		
-		createAcetoneWaterSystem();//restaurando lineas experimentales
-		
-		
-		
-		isopropanolWaterSystem.setMr(MixingRules.huronVidal(new NRTLActivityModel(), eos));
-		k = new ActivityModelBinaryParameter();
-		
-		k.getAlpha().setSymmetric(true);
-		k.getAlpha().setValue(isopropanol,water, 0.2893);
-		
-		k.getA().setValue(isopropanol,water, 0.7882*Constants.R*353);
-		k.getA().setValue(water, isopropanol, 3.9479*Constants.R*353);
-		isopropanolWaterSystem.setK(k);
-		list.add(new BookExample(isopropanolWaterSystem, "iwhvnrtl", "/images/2propanolWater.png"));
-		//ipropanewater = new IpropaneWater(availableCompounds);
-		
-		
-		
-		
-		isopropanolWaterSystem.setMr(MixingRules.huronVidal(new NRTLActivityModel(), eos));
-		k = new ActivityModelBinaryParameter();
-		
-		k.getAlpha().setSymmetric(true);
-		k.getAlpha().setValue(isopropanol,water, 0.2893);
-		
-		k.getA().setValue(isopropanol,water, 0.3952*Constants.R*523);
-		k.getA().setValue(water, isopropanol, 4.1518*Constants.R*523);
-		isopropanolWaterSystem.setK(k);
-		isopropanolWaterSystem.setExperimentalLines(getPropanolWaterLines());
-		list.add(new BookExample(isopropanolWaterSystem, "iw523hvnrtl", "/images/propanolwater523hvnrtl.png"));
-		
-		
-		
-		createIsopropanolWaterSystem();//restaurando lineas experimentales
-		//________________________________________________________-end hvo
-		
-		
-		
+		return viewName;
+	}
+	
+	public String wsDemos(){
+		Cubic eos = EquationsOfState.pengRobinson();		
+		ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
+		list.clear();
 		//_____________________________________________________________ws
 		
-		methanePentaneSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel(), eos));
-		k = new ActivityModelBinaryParameter();
-		k.getA_vanLaar().setValue(methane, pentane, 0.1924);
-		k.getA_vanLaar().setValue(pentane, methane, 0.6719);
-		
-		k.getK().setValue(methane	, pentane, 0.5216);
-		
-		methanePentaneSystem.setK(k);
-		list.add(new BookExample(methanePentaneSystem, "mpwsvl", "/images/methanepentanewsvl.png"));
-		
-		
-		
-		carbonDioxidePropaneSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel(), eos));
-		k = new ActivityModelBinaryParameter();
-		k.getA_vanLaar().setValue(carbonDioxide, propane, 0.7897);
-		k.getA_vanLaar().setValue(propane, carbonDioxide, 0.7928);
-		
-		k.getK().setValue(carbonDioxide, propane, 0.3565);
-		carbonDioxidePropaneSystem.setK(k);
-		list.add(new BookExample(carbonDioxidePropaneSystem, "cdpwsvl", "/images/carbondioxidepropanewsvl.png"));
-		
-		
-		
-		
-		isopropanolWaterSystem.setMr(MixingRules.wongSandler(new NRTLActivityModel(),eos));
-		k = new ActivityModelBinaryParameter();
-		
-		k.getAlpha().setSymmetric(true);
-		k.getAlpha().setValue(isopropanol, water, 0.2529);
-		
-		k.getA().setValue(isopropanol, water, 0.1562*Constants.R*353);
-		k.getA().setValue(water, isopropanol, 2.7548*Constants.R*353);
-		
-		k.getK().setSymmetric(true);
-		k.getK().setValue(isopropanol, water, 0.2529);
-		isopropanolWaterSystem.setK(k);
-		list.add(new BookExample(isopropanolWaterSystem, "iwwsnrtl", "/images/2propanolWater_WS.png"));
-		//ipropanewaterWS = new IPropaneWaterWS(availableCompounds);
-		
-		
-		
-		isopropanolWaterSystem.setMr(MixingRules.wongSandler(new NRTLActivityModel(),eos));
-		k = new ActivityModelBinaryParameter();
-		
-		k.getAlpha().setSymmetric(true);
-		k.getAlpha().setValue(isopropanol, water, 0.2893);
-		
-		k.getA().setValue(isopropanol, water, -0.4302*Constants.R*523);
-		k.getA().setValue(water, isopropanol, 2.5280*Constants.R*523);
-		
-		k.getK().setSymmetric(true);
-		k.getK().setValue(isopropanol, water, 0.3159);
-		isopropanolWaterSystem.setK(k);
-		isopropanolWaterSystem.setExperimentalLines(getPropanolWaterLines());
-		list.add(new BookExample(isopropanolWaterSystem, "iw523wsnrtl", "/images/propanolwater523wsnrtl.png"));
-		//ipropanewaterWS = new IPropaneWaterWS(availableCompounds);
+				methanePentaneSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel(), eos));
+				k = new ActivityModelBinaryParameter();
+				k.getA_vanLaar().setValue(methane, pentane, 0.1924);
+				k.getA_vanLaar().setValue(pentane, methane, 0.6719);
 				
+				k.getK().setValue(methane	, pentane, 0.5216);
+				
+				methanePentaneSystem.setK(k);
+				list.add(new BookExample(methanePentaneSystem, "mpwsvl", "/images/methanepentanewsvl.png"));
+				
+				
+				
+				carbonDioxidePropaneSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel(), eos));
+				k = new ActivityModelBinaryParameter();
+				k.getA_vanLaar().setValue(carbonDioxide, propane, 0.7897);
+				k.getA_vanLaar().setValue(propane, carbonDioxide, 0.7928);
+				
+				k.getK().setValue(carbonDioxide, propane, 0.3565);
+				carbonDioxidePropaneSystem.setK(k);
+				list.add(new BookExample(carbonDioxidePropaneSystem, "cdpwsvl", "/images/carbondioxidepropanewsvl.png"));
+				
+				
+				
+				
+				isopropanolWaterSystem.setMr(MixingRules.wongSandler(new NRTLActivityModel(),eos));
+				k = new ActivityModelBinaryParameter();
+				
+				k.getAlpha().setSymmetric(true);
+				k.getAlpha().setValue(isopropanol, water, 0.2529);
+				
+				k.getA().setValue(isopropanol, water, 0.1562*Constants.R*353);
+				k.getA().setValue(water, isopropanol, 2.7548*Constants.R*353);
+				
+				k.getK().setSymmetric(true);
+				k.getK().setValue(isopropanol, water, 0.2529);
+				isopropanolWaterSystem.setK(k);
+				list.add(new BookExample(isopropanolWaterSystem, "iwwsnrtl", "/images/2propanolWater_WS.png"));
+				//ipropanewaterWS = new IPropaneWaterWS(availableCompounds);
+				
+				
+				
+				isopropanolWaterSystem.setMr(MixingRules.wongSandler(new NRTLActivityModel(),eos));
+				k = new ActivityModelBinaryParameter();
+				
+				k.getAlpha().setSymmetric(true);
+				k.getAlpha().setValue(isopropanol, water, 0.2893);
+				
+				k.getA().setValue(isopropanol, water, -0.4302*Constants.R*523);
+				k.getA().setValue(water, isopropanol, 2.5280*Constants.R*523);
+				
+				k.getK().setSymmetric(true);
+				k.getK().setValue(isopropanol, water, 0.3159);
+				isopropanolWaterSystem.setK(k);
+				isopropanolWaterSystem.setExperimentalLines(getPropanolWaterLines());
+				list.add(new BookExample(isopropanolWaterSystem, "iw523wsnrtl", "/images/propanolwater523wsnrtl.png"));
+				//ipropanewaterWS = new IPropaneWaterWS(availableCompounds);
+						
+				createIsopropanolWaterSystem();
+				
+				
+				acetoneWaterSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel()		, eos));
+				k= new ActivityModelBinaryParameter();
+				k.getA_vanLaar().setValue(acetone, water, 1.7724);
+				k.getA_vanLaar().setValue(water, acetone, 2.0291);
+				k.getK().setValue(acetone, water, 0.2529);
+				acetoneWaterSystem.setK(k);
+				list.add(new BookExample(acetoneWaterSystem, "awwsvl", "/images/acetonewaterwsvl.png"));
+			
+				
+				acetoneWaterSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel()		, eos));
+				k= new ActivityModelBinaryParameter();
+				k.getA_vanLaar().setValue(acetone, water, 2.0287);
+				k.getA_vanLaar().setValue(water, acetone, 1.6009);
+				k.getK().setValue(acetone, water, 0.2779);
+				acetoneWaterSystem.setK(k);
+				acetoneWaterSystem.setExperimentalLines(getAcetoneWater372Lines());
+				list.add(new BookExample(acetoneWaterSystem, "aw373wsvl", "/images/acetonewater373wsvl.png"));
+			
+				
+				acetoneWaterSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel()		, eos));
+				k= new ActivityModelBinaryParameter();
+				k.getA_vanLaar().setValue(acetone, water, 1.9520);
+				k.getA_vanLaar().setValue(water, acetone, 1.3812);
+				k.getK().setValue(acetone, water, 0.2641);
+				acetoneWaterSystem.setK(k);
+				acetoneWaterSystem.setExperimentalLines(getAcetoneWater523Lines());
+				list.add(new BookExample(acetoneWaterSystem, "aw523wsvl", "/images/acetonewater523wsvl.png"));
+			
+				
+				createAcetoneWaterSystem();
+		
+		return viewName;
+	}
+	
+	@PostConstruct
+	public void init(){
+		initializeCompounds();
+		Cubic eos = EquationsOfState.pengRobinson();		
+		ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
+		
+		createMethanePentaneSystem();
 		createIsopropanolWaterSystem();
-		
-		
-		acetoneWaterSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel()		, eos));
-		k= new ActivityModelBinaryParameter();
-		k.getA_vanLaar().setValue(acetone, water, 1.7724);
-		k.getA_vanLaar().setValue(water, acetone, 2.0291);
-		k.getK().setValue(acetone, water, 0.2529);
-		acetoneWaterSystem.setK(k);
-		list.add(new BookExample(acetoneWaterSystem, "awwsvl", "/images/acetonewaterwsvl.png"));
-	
-		
-		acetoneWaterSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel()		, eos));
-		k= new ActivityModelBinaryParameter();
-		k.getA_vanLaar().setValue(acetone, water, 2.0287);
-		k.getA_vanLaar().setValue(water, acetone, 1.6009);
-		k.getK().setValue(acetone, water, 0.2779);
-		acetoneWaterSystem.setK(k);
-		acetoneWaterSystem.setExperimentalLines(getAcetoneWater372Lines());
-		list.add(new BookExample(acetoneWaterSystem, "aw373wsvl", "/images/acetonewater373wsvl.png"));
-	
-		
-		acetoneWaterSystem.setMr(MixingRules.wongSandler(new VanLaarActivityModel()		, eos));
-		k= new ActivityModelBinaryParameter();
-		k.getA_vanLaar().setValue(acetone, water, 1.9520);
-		k.getA_vanLaar().setValue(water, acetone, 1.3812);
-		k.getK().setValue(acetone, water, 0.2641);
-		acetoneWaterSystem.setK(k);
-		acetoneWaterSystem.setExperimentalLines(getAcetoneWater523Lines());
-		list.add(new BookExample(acetoneWaterSystem, "aw523wsvl", "/images/acetonewater523wsvl.png"));
-	
-		
+		createCarbonDioxidePropaneSystem();
+		createPentaneEthanolSystem();
+		createPropaneMethanolSystem();
 		createAcetoneWaterSystem();
+		
+
+		
+		
+		
+		
+		
 		
 		
 		//_______________________________________________________________end ws
 
-		isopropanolWaterSystem.setMr(new TwoParameterVanDerWaals());
-		k = new ActivityModelBinaryParameter();
-		k.getTwoParameterVanDerWaals().setValue(isopropanol,water, 0.0953);
-		k.getTwoParameterVanDerWaals().setValue(water, isopropanol, 0.0249);
-		//iPropaneWater2PDVW = new IpropaneWater2PDVW(availableCompounds);
-		isopropanolWaterSystem.setK(k);
-		list.add(new BookExample(isopropanolWaterSystem,"iwtpvdw","/images/2pvdw2propanolwater.png"));
-		
-		methanePentaneSystem.setMr(MixingRules.ModifiedHuronVidalFirstOrderMixingRule(new VanLaarActivityModel(), eos));
-		k = new ActivityModelBinaryParameter();
-		
-		k.getA_vanLaar().setValue(methane, pentane, -0.428);
-		k.getA_vanLaar().setValue(pentane, methane, -0.632);
-		methanePentaneSystem.setK(k);
-		list.add(new BookExample(methanePentaneSystem,"mpmhv1vl","/images/metanepentaneMHV1VL.png"));
-		//methanepentaneMHV1VL = new MethanePentaneMHV1VL(availableCompounds);
+//		isopropanolWaterSystem.setMr(new TwoParameterVanDerWaals());
+//		k = new ActivityModelBinaryParameter();
+//		k.getTwoParameterVanDerWaals().setValue(isopropanol,water, 0.0953);
+//		k.getTwoParameterVanDerWaals().setValue(water, isopropanol, 0.0249);
+//		//iPropaneWater2PDVW = new IpropaneWater2PDVW(availableCompounds);
+//		isopropanolWaterSystem.setK(k);
+//		list.add(new BookExample(isopropanolWaterSystem,"iwtpvdw","/images/2pvdw2propanolwater.png"));
+//		
+//		methanePentaneSystem.setMr(MixingRules.ModifiedHuronVidalFirstOrderMixingRule(new VanLaarActivityModel(), eos));
+//		k = new ActivityModelBinaryParameter();
+//		
+//		k.getA_vanLaar().setValue(methane, pentane, -0.428);
+//		k.getA_vanLaar().setValue(pentane, methane, -0.632);
+//		methanePentaneSystem.setK(k);
+//		list.add(new BookExample(methanePentaneSystem,"mpmhv1vl","/images/metanepentaneMHV1VL.png"));
+//		//methanepentaneMHV1VL = new MethanePentaneMHV1VL(availableCompounds);
 	}
 	
 	

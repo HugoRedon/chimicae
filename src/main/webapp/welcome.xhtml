@@ -11,11 +11,29 @@
 	<h1>Chimicae</h1>		
 		<h:form>
 		<ul >
-			<li><h:commandLink value="Instrucciones" action="instructions" target="main"/></li>
+			<li>
+				<h:commandLink value="Instrucciones" action="instructions" target="main"/>
+			</li>
 			<li>
 				<h:outputLink class="pdfLink" value="http://hugoredon.github.io/Materia/thesis.pdf#page=2" target="main" >Documentación (pdf)</h:outputLink>
 			</li>
-			<li><h2>Selección</h2>
+			<li><h2>Demostraciones</h2>
+				
+				<ul>
+					<li>
+						<h:commandLink value="Van Der Waals" action="#{bookExamples.vdwDemos()}" target="main"/>
+					</li>
+					<li>
+						<h:commandLink value="Huron Vidal" action="#{bookExamples.hvoDemos()}" target="main"/>
+					</li>
+					<li>
+						<h:commandLink value="Wong Sandler" action="#{bookExamples.wsDemos()}" target="main"/>
+					</li>
+				</ul>
+			</li>
+			
+			<li>
+				<h2>Selección</h2>
 				<ul>
 					<li>
 						<h:commandLink value="Compuestos" action="compounds"  target="main" />
