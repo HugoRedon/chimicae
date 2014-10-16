@@ -10,10 +10,11 @@ function hello(){
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function(){
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
-        	document.writeln("xmlhttp.status" + xmlhttp.status);
+        	//document.writeln("xmlhttp.status" + xmlhttp.status);
+        	document.writeln(xmlhttp.responseText);
             callback(xmlhttp.responseText);
         }
     }
-    xmlhttp.open("GET", "http://localhost:8080/chimicae/CallFromJavascriptTest?test=hola", true);
+    xmlhttp.open("GET", "http://localhost:8080/chimicae/CallFromJavascriptTest?test=holatuu", true);
     xmlhttp.send();
 }

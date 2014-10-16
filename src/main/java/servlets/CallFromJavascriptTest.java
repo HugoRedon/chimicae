@@ -27,7 +27,8 @@ public class CallFromJavascriptTest extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String test = (String)request.getParameter("test");
-		String 
+		response.getWriter().write(test);
+	
 		System.out.println(test);
 	}
 
