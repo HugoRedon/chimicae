@@ -122,8 +122,8 @@ public class BookExample {
 	public void calculateDataTable(){
 		System.out.println("paint");
         GoogleOptions options = GoogleOptions.googleOptions(
-                "Fracción molar vs Presión", 
-                "Fracción molar", 
+                hm.getMixingRule().getName() + " " + "(" +referenceCompound.getName()+ "," + nonReferenceCompound.getName()+")" , 
+                "Fracción molar "+referenceCompound.getName(), 
                 "Presión[Pa]",GooglePosition.right);
         GoogleChartArea area = new GoogleChartArea();
         area.setWidth("50%");

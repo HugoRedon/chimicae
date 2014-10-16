@@ -8,7 +8,8 @@
         <composite:attribute required="true" name="divId" />
         <composite:attribute name="chartType" default="Line"/>
         <composite:attribute name="showTable" default="true"/>
-        
+        <composite:attribute name="width" default="800px"/>
+        <composite:attribute name="height" default="600px"/>
         <composite:implementation>
             
             <script type="text/javascript">
@@ -77,7 +78,7 @@
             //]]>
             </script>   
             <h:panelGrid columns="1" >
-                <div id="chart_#{cc.attrs.divId}" style="width:800px;height: 600px;"></div>
+                <div id="chart_#{cc.attrs.divId}" style="width:#{cc.attrs.width};height: #{cc.attrs.height};"></div>
                 <div id="table_#{cc.attrs.divId}" ></div>
             </h:panelGrid>
             <script>

@@ -19,11 +19,17 @@
 			 	<emcomp:ChartTable divId="#{cc.attrs.bookexample.divId}" 
                              chartType="Scatter"
 							showTable="false"                             
-                            googleChartInfo="#{cc.attrs.bookexample.dataTable()}"/>
+                            googleChartInfo="#{cc.attrs.bookexample.dataTable()}"
+                            width="540px"
+                            height="540px"
+                            />
              	<h:graphicImage value="#{cc.attrs.bookexample.imagePath}" />
              	<emcomp:pointLineProperties bookexample="#{cc.attrs.bookexample}"/>
-             	<h:commandButton action="#{cc.attrs.bookexample.download(377,0.232668)}" value="Reporte 0.232668"/>
-             	<h:commandButton  action="#{cc.attrs.bookexample.download(377,0.2326765)}" value="Reporte 0.2326765"/>
+             	<h:commandButton action="#{cc.attrs.bookexample.calculateDataTable()}" value="Aplicar cambios" >
+             		<f:ajax render="@form" execute="@form"/>
+             	</h:commandButton>
+             	<!-- <h:commandButton action="{cc.attrs.bookexample.download(377,0.232668)}" value="Reporte 0.232668"/>
+             	<h:commandButton  action="{cc.attrs.bookexample.download(377,0.2326765)}" value="Reporte 0.2326765"/> -->
              </h:panelGrid>
          </h:form>
 </composite:implementation>
