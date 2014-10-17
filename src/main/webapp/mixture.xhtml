@@ -10,12 +10,15 @@
 		<h:form id="mixtureForm">
 			<h2><h:outputText value="Mezcla"/> </h2>
 			<f:ajax render="@form">
-				<emcomp:eos editParams="true" equationOfState="#{createMixture.cubic}" />
-				<emcomp:phase phase="#{createMixture.phase}"/>
-				<emcomp:mixingRule mixingRule="#{createMixture.mixingRule}"/>
+				<h:panelGrid columns="2">
+					<emcomp:eos editParams="true" equationOfState="#{createMixture.cubic}" />
+					<emcomp:mixingRule mixingRule="#{createMixture.mixingRule}"/>
+					<emcomp:phase phase="#{createMixture.phase}"/>
+					
+				</h:panelGrid>
 			</f:ajax>
 				
-				
+				<br/>
 			<f:ajax execute="@form" render="mixtureForm:mixtureTable mixtureForm:messages"
 						listener="#{createMixture.mixtureTableAction}">
 				<h:dataTable value="#{createMixture.compoundAlphaFractions}" var="row" id="mixtureTable">
@@ -60,7 +63,7 @@
 				<br/>
 				<br/>
 			
-			<h:commandButton action="#{createMixture.create()}" value="Crear mezcla" />
+			<h:commandButton action="#{createMixture.create()}" value="Crear mezcla" class="createButton" />
 			<h:messages id="messages"/>
 		
 		</h:form>

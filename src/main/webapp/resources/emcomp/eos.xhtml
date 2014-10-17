@@ -10,25 +10,29 @@
        <composite:attribute name="equationOfState" type="termo.eos.Cubic" required="true"/>
         <composite:implementation>
             <h:panelGrid columns="2" cellpadding="10" cellspacing="2" border="0">
-                <h3>Ecuación de estado </h3>
+            	
+               	<h:outputText value="Ecuación de estado : " class="notice"/>
+                
                 <h:selectOneMenu label="Ecuación de estado" 
                                  value="#{cc.attrs.equationOfState}" 
                                  converter="#{eosConverter}">
-                    <f:selectItems value="#{eqProUtils.eos}"/>
-                </h:selectOneMenu>
+                    <f:selectItems value="#{eqProUtils.eos}"/>                                                           
+                </h:selectOneMenu>                
             </h:panelGrid>
             <c:if test="#{cc.attrs.editParams}" >
+                	<h:panelGroup>	
+	             		Los parámetros \(u\) y  \(w\) para la ecuación de estado son:<br/>
+	                    <span class="indent">
+	                        <h:panelGrid columns="2" cellpadding="2" cellspacing="2" border="0">
+	                            \(u\) = <h:outputText value="#{cc.attrs.equationOfState.u}"/>
+	                            \(w\) = <h:outputText value="#{cc.attrs.equationOfState.w}"/>
+	                            \(\Omega_a\) = <h:outputText value="#{cc.attrs.equationOfState.omega_a}"/>
+	                            \(\Omega_b\) = <h:outputText value="#{cc.attrs.equationOfState.omega_b}"/>
+	                        </h:panelGrid>
+	                    </span>
+                    </h:panelGroup>
+	             </c:if>
             
-             Los parámetros \(u\) y  \(w\) para la ecuación de estado son:<br/>
-                    <span class="indent">
-                        <h:panelGrid columns="2" cellpadding="2" cellspacing="2" border="0">
-                            \(u\) = <h:outputText value="#{cc.attrs.equationOfState.u}"/>
-                            \(w\) = <h:outputText value="#{cc.attrs.equationOfState.w}"/>
-                            \(\Omega_a\) = <h:outputText value="#{cc.attrs.equationOfState.omega_a}"/>
-                            \(\Omega_b\) = <h:outputText value="#{cc.attrs.equationOfState.omega_b}"/>
-                        </h:panelGrid>
-                    </span>
-             </c:if>
              <script>
                 MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
             </script>

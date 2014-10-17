@@ -497,6 +497,7 @@
 			    
 			     controls = new THREE.OrbitControls( camera,renderer.domElement );
 				controls.damping = 0.2;
+				controls.maxPolarAngle = Math.PI/2; 
 			    // STATS
 			    stats = new Stats();
 			    stats.domElement.style.position = 'absolute';
@@ -699,7 +700,7 @@
 			}
 	
 	
-			function lightFloorSkybox(){
+			/* function lightFloorSkybox(){
 				//scene.add( new THREE.AmbientLight( 0xffffff ) );
 			    // LIGHT
 			    var light = new THREE.PointLight(0xffffff);
@@ -723,8 +724,6 @@
 			    
 		
 
-			    /* var sprite = new THREE.Sprite( new THREE.SpriteCanvasMaterial( { color: 0xff0040 } ) );
-			    light.add( sprite ); */
 				scene.add(light2);
 			    scene.add(light);
 			    
@@ -744,7 +743,60 @@
 			    var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
 			     scene.add(skyBox);
 			    //scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+			} */
+
+			function lightFloorSkybox(){
+				//scene.add( new THREE.AmbientLight( 0xffffff ) );
+			    // LIGHT
+			    var light = new THREE.PointLight(0xffffff);
+			    light.position.set(0,0,2500);
+			    light.castShadow =true;
+	
+			    var light2 = new THREE.PointLight(0xffffff);
+			    light2.position.set(2500,2500,2500);
+			    light2.castShadow =true;
+			    
+
+			    var light3 = new THREE.PointLight(0xffffff);
+			    light3.position.set(-300,-300,100);
+			    light3.castShadow =true;
+			    scene.add(light3);
+			    
+		
+
+			    /* var sprite = new THREE.Sprite( new THREE.SpriteCanvasMaterial( { color: 0xff0040 } ) );
+			    light.add( sprite ); */
+				scene.add(light2);
+			    scene.add(light);
+			    
+			    // FLOOR
+			    
+			    var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x555555, wireframe: true, side:THREE.DoubleSide } ); 
+			    var floorGeometry = new THREE.PlaneGeometry(20500, 20500, 10, 10);
+				
+				  var whitePhongMaterial =new THREE.MeshPhongMaterial( { 
+			            color: 0xffffff, 
+			            ambient: 0xffffff, // should generally match color
+			            specular: 0xffffff,
+			            side: THREE.DoubleSide,
+			            shininess: 100
+			        } ) ;
+			    var floor =new THREE.Mesh(floorGeometry, whitePhongMaterial);
+			    floor.position.z = -10;
+			    floor.position.x=500;
+			    floor.position.y=500;
+			    //floor.rotation.x = Math.PI / 2;
+			    scene.add(floor);
+			    // SKYBOX/FOG
+			    var skyBoxGeometry = new THREE.BoxGeometry( 10000, 10000, 10000 );
+			    var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0xeeeeee, side: THREE.BackSide } );
+			    var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+			     scene.add(skyBox);
+			    //scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 			}
+
+
+			
 			function slope(min,max){
             	return 1000/(max-min);
             }

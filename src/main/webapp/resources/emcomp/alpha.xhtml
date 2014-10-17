@@ -10,21 +10,23 @@
         <composite:attribute name="alpha" type="termo.eos.alpha.Alpha" required="true"/>
         <composite:implementation>
             
-            <h:panelGrid columns="2" cellpadding="10"  cellspacing="2" border="0">
+            <h:panelGrid columns="3" cellpadding="10"  cellspacing="2" border="0">
 
-                <h3>Expresión de <span>\(\alpha(T)\) </span></h3>
+               <span class="notice"> Expresión de <span>\(\alpha(T)\) : </span></span>
                 <h:selectOneMenu value="#{cc.attrs.alpha}" 
                                  converter="#{alphaConverter}">
                     <f:selectItems value="#{eqProUtils.alphaList}"/>
-                </h:selectOneMenu>
-                
+                </h:selectOneMenu>				
             </h:panelGrid>
-
             <c:if test="#{cc.attrs.showEquation}">
-                \(
-                    #{cc.attrs.alpha.equation}
-                \)
-            </c:if>
+            	<h:panelGroup>
+	                \(
+	                    #{cc.attrs.alpha.equation}
+	                \)
+               </h:panelGroup>
+           	</c:if>
+
+            
             <script>
                 MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
             </script>

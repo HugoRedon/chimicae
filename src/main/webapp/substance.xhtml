@@ -10,12 +10,14 @@
 		<h2><h:outputText value="Substancia"/>  </h2>
 		<h:form>
 			<f:ajax render="@form">
-				<emcomp:eos editParams="true" equationOfState="#{createSubstance.cubic}" />
-				<emcomp:alpha showEquation="true" alpha="#{createSubstance.alpha}"/>
-				<emcomp:component compound="#{createSubstance.compound}"/>
-				<emcomp:phase phase="#{createSubstance.phase}"/>
+				<h:panelGrid columns="2" cellspacing="25px">
+					<emcomp:eos editParams="true" equationOfState="#{createSubstance.cubic}" />
+					<emcomp:alpha showEquation="true" alpha="#{createSubstance.alpha}"/>
+					<emcomp:component compound="#{createSubstance.compound}"/>
+					<emcomp:phase phase="#{createSubstance.phase}"/>
+				</h:panelGrid>
 			</f:ajax>
-			<h:commandButton action="#{createSubstance.create()}" value="Crear substancia" />
+			<h:commandButton action="#{createSubstance.create()}" value="Crear substancia" class="createButton"/>
 			<h:messages />
 		</h:form>
 	</ui:define>

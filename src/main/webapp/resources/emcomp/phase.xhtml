@@ -8,7 +8,7 @@
     	<composite:attribute name="phase" required="true"/>
         <composite:implementation>
             <h:panelGrid columns="2" cellpadding="10" cellspacing="2" border="0">
-                <h3>Fase homogénea</h3>
+                <h:outputText value="Fase homogénea : " class="notice"/>
                 <h:selectOneMenu value="#{cc.attrs.phase}">
                     <f:selectItems value="#{eqProUtils.phases}"/>
                 </h:selectOneMenu>

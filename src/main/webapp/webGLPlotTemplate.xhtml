@@ -278,9 +278,17 @@
 			    // FLOOR
 			    
 			    var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x555555, wireframe: true, side:THREE.DoubleSide } ); 
-			    var floorGeometry = new THREE.PlaneGeometry(1500, 1500, 10, 10);
-			    var floor =new THREE.Mesh(floorGeometry, wireframeMaterial);
-			    //floor.position.z = 1000;
+			    var floorGeometry = new THREE.PlaneGeometry(20500, 20500, 10, 10);
+				
+				  var whitePhongMaterial =new THREE.MeshPhongMaterial( { 
+			            color: 0xffffff, 
+			            ambient: 0xffffff, // should generally match color
+			            specular: 0xffffff,
+			            side: THREE.DoubleSide,
+			            shininess: 100
+			        } ) ;
+			    var floor =new THREE.Mesh(floorGeometry, whitePhongMaterial);
+			    floor.position.z = -10;
 			    floor.position.x=500;
 			    floor.position.y=500;
 			    //floor.rotation.x = Math.PI / 2;
@@ -289,7 +297,7 @@
 			    var skyBoxGeometry = new THREE.BoxGeometry( 10000, 10000, 10000 );
 			    var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0xdddddd, side: THREE.BackSide } );
 			    var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-			     scene.add(skyBox);
+			     //scene.add(skyBox);
 			    //scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 			}
 			function slope(min,max){

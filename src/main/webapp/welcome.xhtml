@@ -7,10 +7,14 @@
 	<ui:composition template="template.xhtml">
 	<ui:define name="content">
 	
+	<h:graphicImage id="imageLogo" value="/images/UNAM.jpg"  />
+	<h:panelGrid columns="2">
+		<h1 >Chimicae</h1>		
+		
+	</h:panelGrid>
 	
-	<h1>Chimicae</h1>		
 		<h:form>
-		<ul >
+		<ul id="menuUl">
 			<li>
 				<h:commandLink value="Instrucciones" action="instructions" target="main"/>
 			</li>
