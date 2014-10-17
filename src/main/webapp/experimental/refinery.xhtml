@@ -45,8 +45,64 @@
             INTERSECTED, SELECTED;
             var sel;
 
+
+            var doneLoading = false;
+            
             init();
             animate();
+
+
+            function loadCylinder(){
+                var cyl = new THREE.CylinderGeometry( 100,100, 100, 32 );
+                var tankMaterial = new THREE.MeshBasicMaterial( {color: 0x222222} );
+                cylinder = new THREE.Mesh( cyl, tankMaterial );
+                cylinder.rotation.x=Math.PI/2;
+                cylinder.position.x=900;
+                cylinder.position.y=900;
+                cylinder.position.z=50;
+
+                cylinder.userData = {name:"Tanque"};
+                scene.add( cylinder );
+
+                objects.push(cylinder);
+             }
+
+            function loadHeatExchanger(){
+            	var loader = new THREE.JSONLoader();
+				//alert("start loading");
+				console.log("start loading");
+                loader.load( "models/simple-heat-exchanger.js", function( geometry ) {
+                	heatExchanger = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
+                	heatExchanger.scale.set( 20, 20, 20 );
+                	heatExchanger.position.y = 150;
+                	heatExchanger.position.x = 0;
+                	heatExchanger.rotation.x = Math.PI/2;
+                	 heatExchanger.castShadow = true;
+                     heatExchanger.receiveShadow = true;
+                	heatExchanger.userData={name:"Intercambiador de calor"}
+                	
+                    scene.add( heatExchanger );
+                    //alert("added");
+
+
+
+
+                	 var lineMaterial = new THREE.LineBasicMaterial({
+                         color: 0x0000ff
+                     });
+
+				     pipeLineGeom = new THREE.Geometry();
+				     pipeLineGeom.vertices.push(new THREE.Vector3(
+				         heatExchanger.position.x,heatExchanger.position.y,heatExchanger.position.z));
+				     
+				     pipeLineGeom.vertices.push(new THREE.Vector3(cylinder.position.x,cylinder.position.y,cylinder.position.z));
+				
+				     var pipeLine = new THREE.Line(pipeLineGeom, lineMaterial);
+				     scene.add( pipeLine );
+				     objects.push( heatExchanger );
+				     doneLoading = true;
+                } );
+             }
 
             function init() {
 
@@ -57,17 +113,10 @@
                 camera.position.z = 1000;
 
                 controls = new THREE.TrackballControls( camera );
-                // controls.rotateSpeed = 1.0;
-                // controls.zoomSpeed = 1.2;
-                // controls.panSpeed = 0.8;
-                // controls.noZoom = false;
-                // controls.noPan = false;
-                // controls.staticMoving = true;
-                // controls.dynamicDampingFactor = 0.3;
 
                 scene = new THREE.Scene();
 
-                scene.add( new THREE.AmbientLight( 0x505050 ) );
+                scene.add( new THREE.AmbientLight( 0xfff ) );
 
                 var light = new THREE.SpotLight( 0xffffff, 1.5 );
                 light.position.set( 0, 500, 2000 );
@@ -85,53 +134,29 @@
 
                 scene.add( light );
 
-                 record = new THREE.Mesh( new THREE.PlaneGeometry( 2000, 2000, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0x000022, opacity: 0.25, transparent: true, wireframe: false ,side:THREE.DoubleSide} ) );
+                 record = new THREE.Mesh( new THREE.PlaneGeometry( 5000, 5000, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0x000022, opacity: 0.25, transparent: false, wireframe: false ,side:THREE.DoubleSide} ) );
 
                  record.visible=false;
                 scene.add(record);
                 var geometry = new THREE.BoxGeometry( 40, 40, 40 );
 
 
-                var cyl = new THREE.CylinderGeometry( 100,100, 100, 32 );
-                var tankMaterial = new THREE.MeshBasicMaterial( {color: 0x222222} );
-                cylinder = new THREE.Mesh( cyl, tankMaterial );
-                cylinder.rotation.x=Math.PI/2;
-                cylinder.position.x=900;
-                cylinder.position.y=900;
-                cylinder.position.z=50;
-
-                cylinder.userData = {name:"Tanque"};
-                scene.add( cylinder );
-
-                objects.push(cylinder);
+            	loadCylinder();
                 
 
-                heatExchanger = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0x000088 } ) );
-                heatExchanger.position.x = Math.random() * 1000 - 500;
-                heatExchanger.position.y = Math.random() * 600 - 300;
-                heatExchanger.position.z = 20;
-                heatExchanger.material.ambient = heatExchanger.material.color;
+       
+ 
 
-                heatExchanger.castShadow = true;
-                heatExchanger.receiveShadow = true;
-                heatExchanger.userData={name:"Intercambiador de calor"}
-
-                scene.add( heatExchanger );
-
-                objects.push( heatExchanger );
-
-                var lineMaterial = new THREE.LineBasicMaterial({
-                                    color: 0x0000ff
-                                });
-
-                pipeLineGeom = new THREE.Geometry();
-                pipeLineGeom.vertices.push(new THREE.Vector3(
-                    heatExchanger.position.x,heatExchanger.position.y,heatExchanger.position.z));
                 
-                pipeLineGeom.vertices.push(new THREE.Vector3(cylinder.position.x,cylinder.position.y,cylinder.position.z));
 
-                var pipeLine = new THREE.Line(pipeLineGeom, lineMaterial);
-                scene.add( pipeLine );
+                
+            				
+
+                
+
+                
+
+               
 
                 
 
@@ -322,6 +347,9 @@
             function update(){
                 if ( keyboard.pressed("c") ){
                     info.innerHTML="Intercambiador creado";
+                }
+                if(doneLoading==true){
+                    
                 }
             }
 
