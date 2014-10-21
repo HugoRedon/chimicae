@@ -15,7 +15,8 @@
 		<h:outputScript name="js/three.min.js"  />
 		<h:outputScript name="js/Detector.js"  />
 		<h:outputScript name="js/Stats.js"  />
-		<h:outputScript name="js/controls/TrackballControls.js"  />
+		<!-- <h:outputScript name="js/controls/TrackballControls.js"  /> -->
+		<h:outputScript name="js/controls/OrbitControls.js"  /> 
 		<h:outputScript name="js/THREEx.KeyboardState.js"  />
 		<h:outputScript name="js/THREEx.FullScreen.js"  />
 		<h:outputScript name="js/THREEx.WindowResize.js"  />
@@ -178,8 +179,9 @@
 			    THREEx.WindowResize(renderer, camera);
 			    THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 			    // CONTROLS
-			    controls = new THREE.TrackballControls(camera,renderer.domElement);
-			    //controls = new THREE.OrbitControls( camera, renderer.domElement );
+			    //controls = new THREE.TrackballControls(camera,renderer.domElement);
+			    controls = new THREE.OrbitControls( camera, renderer.domElement );
+			    controls.maxPolarAngle = Math.PI/2; 
 			    // STATS
 			    stats = new Stats();
 			    stats.domElement.style.position = 'absolute';

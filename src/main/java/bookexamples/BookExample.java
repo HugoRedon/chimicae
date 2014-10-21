@@ -26,14 +26,16 @@ import javax.faces.context.FacesContext;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import com.google.gson.Gson;
-
 import termo.binaryParameter.ActivityModelBinaryParameter;
 import termo.component.Compound;
 import termo.matter.HeterogeneousMixture;
+import termo.matter.Substance;
 import termo.phase.Phase;
 import termo.utils.IterationInfo;
 import chimicae.AvailableCompounds;
+
+import com.google.gson.Gson;
+
 import excel.SaturationPressureReport;
 
 public class BookExample {
@@ -199,38 +201,34 @@ public class BookExample {
 	    	   hm.setZFraction(referenceCompound, molarFraction);
 	    	   hm.setZFraction(nonReferenceCompound, 1-molarFraction);
 	    	   
-	    	   
+	    	   int iterations = 0;
 	    	   if(listPoint.getPhase().equals(Phase.VAPOR)){
 	    		   estimateFractions = hm.getLiquid().getFractions();
 		    	   if(i==0 ){
-		    		   hm.dewPressure();
+		    		  iterations= hm.dewPressure();
 		    		 
 		    	   }else{
-		    		   hm.dewPressure(pressureEstimate,estimateFractions);
+		    		   iterations= hm.dewPressure(pressureEstimate,estimateFractions);
 		    	   }
 	    	   }else{
 	    		   estimateFractions = hm.getVapor().getFractions();
 	    		   if(i==0){
-		    		   hm.bubblePressure();
+		    		   iterations = hm.bubblePressure();
 		    		
 		    	   }else{
-		    		   	hm.bubblePressure(pressureEstimate,estimateFractions);
+		    		   	iterations = hm.bubblePressure(pressureEstimate,estimateFractions);
 		    	   }
 	    	   }
 	    	   
 	    	   Double pressure = hm.getPressure();
-	    	   if(pressure.equals(pressureEstimate)){
-	    		   if(i<10){
-		    		   if(listPoint.getPhase().equals(Phase.VAPOR)){
-		    			   hm.dewPressure();
-		    		   }else{
-		    			   hm.bubblePressure();
-		    		   }
-	    		   }
-	    	   }
+	    	   System.out.println("iterations : " + iterations);
+
 	    	   Double vaporFraction = hm.getVapor().getFractions().get(referenceCompound.getName());
 	    	   Double liquidFraction = hm.getLiquid().getFractions().get(referenceCompound.getName());
-	    	   if(!pressure.isNaN()&& !vaporFraction.isNaN()&& !liquidFraction.isNaN()){
+	    	   
+	    	   boolean forEndCondition = (i !=0 )?!(Math.abs(liquidFraction- vaporFraction) <1e-4):true;
+	    	   if(!pressure.isNaN()&& !vaporFraction.isNaN()&& !liquidFraction.isNaN() &&!(pressure < 0)
+	    			   && forEndCondition ){
 	    		   Point p ;
 	    		   if(otherPhase){
 	    			   double fraction = 0;
@@ -247,7 +245,18 @@ public class BookExample {
 	    		   }
 	    		   calculatedLine.add(p);
 	    	   }else{
-	    		   pressure = pressureEstimate;
+	    		   if(pressureEstimate>0){
+	    			   if(listPoint.getPhase().equals(Phase.VAPOR) && referenceCompound.getName().equals("methane")){
+	    				   for(Substance sub: hm.getLiquid().getPureSubstances()){
+	    					   hm.getLiquid().setFraction(sub.getComponent(), estimateFractions.get(sub.getComponent().getName()));
+	    				   }
+	    			   }else{
+	    				   for(Substance sub: hm.getVapor().getPureSubstances()){
+	    					   hm.getVapor().setFraction(sub.getComponent(), estimateFractions.get(sub.getComponent().getName()));
+	    				   } 
+	    			   }
+	    			   hm.setPressure(pressureEstimate);
+	    		   }
 	    		   for(IterationInfo ii:hm.getCalculationReport()){
 	    			   System.out.println("pressure: " + ii.getPressure() + " pressure_: "+ ii.getPressure_() 
 	    					   + " temperature: " + ii.getTemperature() + " newPressure : " + ii.getNewPressure() 
@@ -264,17 +273,32 @@ public class BookExample {
 		       
 		       double pressureStep = (maxY-minPressure)/n.doubleValue();
 		       
+		     
+		       
+		       
 		       for(Integer i = 0; i < n ; i ++){
 		    	   double pressure = minPressure  + pressureStep* i.doubleValue(); 
 		    	   Map<String,Double>yestimates =hm.getVapor().getFractions();
 		    	   Map<String,Double>xestimates = hm.getLiquid().getFractions();
 		    	   
-		    	   hm.flash(temperature, pressure ,yestimates,xestimates,1);
+		    	   double y = hm.getVapor().getPureSubstance(referenceCompound).getMolarFraction();
+			       double x = hm.getLiquid().getPureSubstance(referenceCompound).getMolarFraction();
+			       double z = (y+ x)/2d;
+			       hm.setZFraction(referenceCompound, z);
+			       hm.setZFraction(nonReferenceCompound, 1-z);
+		    	   
+		    	   
+		    	   double vF = hm.flash(temperature, pressure ,yestimates,xestimates,0.5);
 		           
+//		           if( vF >1.1 || vF <-0.1|| hm.getPressure()<0 ){		        	   
+//		        	   break;
+//		           }
+		           System.out.println("vf" + vF);
 		           
 		           Double vaporFraction = hm.getVapor().getFractions().get(referenceCompound.getName());
 		    	   Double liquidFraction = hm.getLiquid().getFractions().get(referenceCompound.getName());
-		    	   if( !vaporFraction.isNaN()&& !liquidFraction.isNaN()){
+		    	   if( !vaporFraction.isNaN()&& !liquidFraction.isNaN()
+		    			   && !(Math.abs(liquidFraction- vaporFraction) <1e-4)){
 		        	   Point p ;
 		        	   if(otherPhase){
 		        		   Double fraction;

@@ -558,7 +558,7 @@ public class BookExamples implements Serializable {
 				"/data/carbondioxidepropane/carbondioxidepropane_310_vapor.txt",
 				"/data/carbondioxidepropane/carbondioxidepropane_344_liquid.txt",
 				"/data/carbondioxidepropane/carbondioxidepropane_344_vapor.txt")
-				,true,false,70));
+				,true,false,80));
 		return result;
 	}
 	
