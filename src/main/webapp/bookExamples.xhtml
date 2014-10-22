@@ -11,8 +11,14 @@
 	<ui:repeat var="b" value="#{bookExamples.list}">
 		<emcomp:bookExample bookexample="#{b}"/>
 	</ui:repeat>
-
-
+				<!-- <h:form>
+					<h:inputText value="L2"/>
+						
+					<h:inputText value="{bookExamples.mhv2.l2}">
+						<f:ajax render="@all" event="valueChange"/>
+					</h:inputText>
+					
+				</h:form> -->
 		</ui:define>
 	</ui:composition>
 </html>
