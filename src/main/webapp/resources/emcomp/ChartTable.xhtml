@@ -11,7 +11,6 @@
         <composite:attribute name="width" default="800px"/>
         <composite:attribute name="height" default="600px"/>
         <composite:implementation>
-            
             <script type="text/javascript">
             //<![CDATA[           
 	            google.load("visualization", "1", {packages:['corechart','table']});     
@@ -19,9 +18,10 @@
                 function drawChart#{cc.attrs.divId}() {
                     var data = new google.visualization.DataTable(#{cc.attrs.googleChartInfo.data.toJson()});
                     var options = #{cc.attrs.googleChartInfo.options.toJson()};
+                    options.explorer={maxZoomOut:8};
                     var chart = new google.visualization.#{cc.attrs.chartType}Chart(document.getElementById('chart_#{cc.attrs.divId}'));
                
-                     
+                    options.chartArea= {left:30};
                      chart.draw(data, options);
                      
                      var columns = [];
@@ -69,7 +69,7 @@
                     
                     
                     
-                   
+                    document.getElementById('png_#{cc.attrs.divId}').innerHTML = '<a href="' + chart.getImageURI() + '" target="_blank">Ver gráfica como imagen</a>';
                     var table = new google.visualization.Table(document.getElementById('table_#{cc.attrs.divId}'));
                     if( #{cc.attrs.showTable}){                  
                  	   table.draw(data);
@@ -79,6 +79,7 @@
             </script>   
             <h:panelGrid columns="1" >
                 <div id="chart_#{cc.attrs.divId}" style="width:#{cc.attrs.width};height: #{cc.attrs.height};"></div>
+                <div id="png_#{cc.attrs.divId}"></div>
                 <div id="table_#{cc.attrs.divId}" ></div>
             </h:panelGrid>
             <script>

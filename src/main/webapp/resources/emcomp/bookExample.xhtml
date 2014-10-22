@@ -20,10 +20,10 @@
                              chartType="Scatter"
 							showTable="false"                             
                             googleChartInfo="#{cc.attrs.bookexample.dataTable()}"
-                            width="540px"
+                            width="660px"
                             height="540px"
                             />
-             	<h:graphicImage value="#{cc.attrs.bookexample.imagePath}" />
+             	<h:graphicImage value="#{cc.attrs.bookexample.imagePath}" width="350px"/>
              	<emcomp:pointLineProperties bookexample="#{cc.attrs.bookexample}"/>
              	 <emcomp:parameters setParameters="#{cc.attrs.bookexample.setParameters}"/> 
              	<h:commandButton action="#{cc.attrs.bookexample.calculateDataTable()}" value="Aplicar cambios" >

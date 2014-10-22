@@ -9,7 +9,7 @@ public class GoogleOptionSerie {
     private int pointSize;
 
     public static GoogleOptionSerie SCATTER  = new GoogleOptionSerie(7,0);
-    public static GoogleOptionSerie FUNCTION  = new GoogleOptionSerie(0,3);
+    public static GoogleOptionSerie FUNCTION  = new GoogleOptionSerie(0,2);
     
     public GoogleOptionSerie(){
         
