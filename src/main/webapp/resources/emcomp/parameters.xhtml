@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:emcomp="http://xmlns.jcp.org/jsf/composite/emcomp"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      
+<head>
+<title>Not present in rendered output</title>
+</head>
+<body>
+<composite:interface>
+	<composite:attribute name="setParameters" required="true" type="chimicae.SetParameters"/>
+</composite:interface>
+<composite:implementation>
+		<ui:repeat var="interactionParameter" value="#{cc.attrs.setParameters.list}">
+		
+			<emcomp:mixtureParameters modelList="#{interactionParameter}" name="#{interactionParameter.name}"/>
+		</ui:repeat>
+		
+		
+		<h:commandButton action="#{cc.attrs.setParameters.save()}" value="Aceptar"  >
+			<f:ajax render="@form" execute="@form"/>
+		</h:commandButton>
+		
+	
+</composite:implementation>
+</body>
+</html>

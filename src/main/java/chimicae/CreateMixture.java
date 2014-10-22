@@ -35,6 +35,7 @@ public class CreateMixture implements Serializable {
 	private Phase phase;
 	private MixingRule mixingRule =new VDWMixingRule();
 	private ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
+	private SetParameters setParameters ;
 
 	public MixingRule getMixingRule() {
 		return mixingRule;
@@ -51,6 +52,16 @@ public class CreateMixture implements Serializable {
 	public void mixtureTableAction(){
 		System.out.println("mixtureTableAction");
 		System.out.println("compoundsAlphaFractions size : "+ compoundAlphaFractions.size());
+	}
+	
+	public String prepareParameters(){
+		setParameters = new SetParameters(getListOfCompounds(), mixingRule, k);
+		return "parameters";
+	}
+	
+	public String saveParameters(){
+		setParameters.save();
+		return "mixture";
 	}
 	
 	@PostConstruct
@@ -212,6 +223,14 @@ public class CreateMixture implements Serializable {
 	}
 	public void setCubic(Cubic cubic) {
 		this.cubic = cubic;
+	}
+
+	public SetParameters getSetParameters() {
+		return setParameters;
+	}
+
+	public void setSetParameters(SetParameters setParameters) {
+		this.setParameters = setParameters;
 	}
 
 

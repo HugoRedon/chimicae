@@ -19,6 +19,11 @@ public class BinaryParameterModelList{
 	public void setName(String name){
 		this.name = name;
 	}
+	
+	public BinaryParameterModelList(InteractionParameter params,List<Compound> compounds,String name){
+		this(params,compounds);
+		this.name = name;
+	}
 	public BinaryParameterModelList(InteractionParameter params,List<Compound> caf){
 		this.caf = caf;
 		this.params = params;
@@ -34,7 +39,7 @@ public class BinaryParameterModelList{
 				
 				if(params.isSymmetric()){
 					if(binaryFor(cj, ci)!=null){
-						System.out.println("continue");
+						//System.out.println("continue");
 						continue;
 					}	
 				}
@@ -49,7 +54,7 @@ public class BinaryParameterModelList{
 	
 	public boolean isEmpty(Compound ci,Compound cj){
 		boolean result = binaryFor(ci, cj)==null; 
-		System.out.println(result);
+		//System.out.println(result);
 		
 		return result;
 	}

@@ -33,6 +33,7 @@ import termo.matter.Substance;
 import termo.phase.Phase;
 import termo.utils.IterationInfo;
 import chimicae.AvailableCompounds;
+import chimicae.SetParameters;
 
 import com.google.gson.Gson;
 
@@ -41,6 +42,8 @@ import excel.SaturationPressureReport;
 public class BookExample {
 	public Compound referenceCompound;
 	public Compound nonReferenceCompound;
+	
+	SetParameters setParameters;
 
 	List<ListPoint> lines = new ArrayList<>();
 	GoogleGraphInfo dataTable;	
@@ -49,7 +52,7 @@ public class BookExample {
 	String divId ;
 	String imagePath;
 
-	AvailableCompounds availableCompounds;
+	//AvailableCompounds availableCompounds;
 	
 	String[] filesPath;
 	
@@ -60,20 +63,20 @@ public class BookExample {
 		
 	}
 	
-	public BookExample(AvailableCompounds availableCompounds,String[] filesPath){
-		this.filesPath = filesPath;
-		this.availableCompounds = availableCompounds;
-		createCompoundsAndMixture();
-		readFiles();
-		
-	}
+//	public BookExample(AvailableCompounds availableCompounds,String[] filesPath){
+//		this.filesPath = filesPath;
+//		//this.availableCompounds = availableCompounds;
+//		createCompoundsAndMixture();
+//		readFiles();
+//		
+//	}
 
 	public void createCompoundsAndMixture(){
 		
 	}
-	public BookExample(AvailableCompounds availableCompounds){
-		this.availableCompounds = availableCompounds;
-	}
+//	public BookExample(AvailableCompounds availableCompounds){
+//		this.availableCompounds = availableCompounds;
+//	}
 	
 	public BookExample(MixtureSystem ms,String divId,String imagePath){
 		this.divId = divId;
@@ -86,6 +89,12 @@ public class BookExample {
 		compounds.add(nonReferenceCompound);
 		
 		hm = new HeterogeneousMixture(ms.eos, ms.alpha, ms.mr, compounds, ms.k);
+		ActivityModelBinaryParameter k =(ActivityModelBinaryParameter) ms.getK();
+		List<Compound> cs = new ArrayList<>();
+		cs.add(referenceCompound);
+		cs.add(nonReferenceCompound);
+		setParameters = new SetParameters(cs, ms.getMr(), k);
+		
 	}
 	
 	
@@ -122,7 +131,7 @@ public class BookExample {
 		
 	}
 	public void calculateDataTable(){
-		System.out.println("paint");
+		//System.out.println("paint");
         GoogleOptions options = GoogleOptions.googleOptions(
                 hm.getMixingRule().getName() + " " + "(" +referenceCompound.getName()+ "," + nonReferenceCompound.getName()+")" , 
                 "Fracción molar "+referenceCompound.getName(), 
@@ -221,7 +230,7 @@ public class BookExample {
 	    	   }
 	    	   
 	    	   Double pressure = hm.getPressure();
-	    	   System.out.println("iterations : " + iterations);
+	    	  // System.out.println("iterations : " + iterations);
 
 	    	   Double vaporFraction = hm.getVapor().getFractions().get(referenceCompound.getName());
 	    	   Double liquidFraction = hm.getLiquid().getFractions().get(referenceCompound.getName());
@@ -258,9 +267,9 @@ public class BookExample {
 	    			   hm.setPressure(pressureEstimate);
 	    		   }
 	    		   for(IterationInfo ii:hm.getCalculationReport()){
-	    			   System.out.println("pressure: " + ii.getPressure() + " pressure_: "+ ii.getPressure_() 
-	    					   + " temperature: " + ii.getTemperature() + " newPressure : " + ii.getNewPressure() 
-	    					   + " error: " +ii.getError() + " error_: " + ii.getError_());
+//	    			   System.out.println("pressure: " + ii.getPressure() + " pressure_: "+ ii.getPressure_() 
+//	    					   + " temperature: " + ii.getTemperature() + " newPressure : " + ii.getNewPressure() 
+//	    					   + " error: " +ii.getError() + " error_: " + ii.getError_());
 	    		   }
 	    	   }
 	       }
@@ -293,7 +302,7 @@ public class BookExample {
 //		           if( vF >1.1 || vF <-0.1|| hm.getPressure()<0 ){		        	   
 //		        	   break;
 //		           }
-		           System.out.println("vf" + vF);
+		     //      System.out.println("vf" + vF);
 		           
 		           Double vaporFraction = hm.getVapor().getFractions().get(referenceCompound.getName());
 		    	   Double liquidFraction = hm.getLiquid().getFractions().get(referenceCompound.getName());
@@ -318,7 +327,7 @@ public class BookExample {
 		        	   calculatedLine.add(p);		        	   
 		           }else{
 		        	   
-		        	   System.out.println("flash molar fraction : " + vaporFraction);
+		        	 //  System.out.println("flash molar fraction : " + vaporFraction);
 		        	   break;
 		           }
 		       }
@@ -399,9 +408,9 @@ public class BookExample {
 		double av12 = ((ActivityModelBinaryParameter)hm.getVapor().getBinaryParameters()).getA().getValue(referenceCompound, nonReferenceCompound);
 		
 		//((ActivityModelBinaryParameter)hm.getInteractionParameters()).getA().setValue(referenceCompound, nonReferenceCompound, 0.25);
-		System.out.println("ahm12: " + ahm12);
-		System.out.println("al12: " + al12);
-		System.out.println("av12: " + av12);
+//		System.out.println("ahm12: " + ahm12);
+//		System.out.println("al12: " + al12);
+//		System.out.println("av12: " + av12);
 		return new SaturationPressureReport().createReport(hm);
 	}
 	public void readFiles(){
@@ -468,6 +477,12 @@ public class BookExample {
 	}
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
+	}
+	public SetParameters getSetParameters() {
+		return setParameters;
+	}
+	public void setSetParameters(SetParameters setParameters) {
+		this.setParameters = setParameters;
 	}
 
 

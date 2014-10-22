@@ -25,13 +25,17 @@
                             />
              	<h:graphicImage value="#{cc.attrs.bookexample.imagePath}" />
              	<emcomp:pointLineProperties bookexample="#{cc.attrs.bookexample}"/>
+             	 <emcomp:parameters setParameters="#{cc.attrs.bookexample.setParameters}"/> 
              	<h:commandButton action="#{cc.attrs.bookexample.calculateDataTable()}" value="Aplicar cambios" >
              		<f:ajax render="@form" execute="@form"/>
              	</h:commandButton>
+             	
              	<!-- <h:commandButton action="{cc.attrs.bookexample.download(377,0.232668)}" value="Reporte 0.232668"/>
              	<h:commandButton  action="{cc.attrs.bookexample.download(377,0.2326765)}" value="Reporte 0.2326765"/> -->
              </h:panelGrid>
+             <h:messages />
          </h:form>
+         
 </composite:implementation>
 </body>
 </html>

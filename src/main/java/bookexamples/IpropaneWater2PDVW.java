@@ -13,44 +13,44 @@ import termo.eos.mixingRule.TwoParameterVanDerWaals;
 import termo.matter.HeterogeneousMixture;
 import chimicae.AvailableCompounds;
 
-public class IpropaneWater2PDVW extends BookExample{
+public class IpropaneWater2PDVW  {
 
-	public IpropaneWater2PDVW(AvailableCompounds availableCompounds) {
-		super(availableCompounds,files(
-				"/data/2propanolWater/2propanolWater_353_liquid.txt",
-				"/data/2propanolWater/2propanolWater_353_vapor.txt"));
-	}
-
-	
-	public void createCompoundsAndMixture() {
-		referenceCompound = availableCompounds.getCompoundByExactName("isopropanol");
-		referenceCompound.setK_StryjekAndVera(0.23264);
-		
-		nonReferenceCompound = availableCompounds.getCompoundByExactName("water");
-		nonReferenceCompound.setK_StryjekAndVera(-0.06635);
-		
-		Set<Compound> components = new HashSet<>();
-		
-		components.add(referenceCompound);
-		components.add(nonReferenceCompound);
-		
-		Cubic equationOfState = EquationsOfState .pengRobinson();
-		MixingRule mr = new TwoParameterVanDerWaals();
-		
-		ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
-					
-		k.getTwoParameterVanDerWaals().setValue(referenceCompound, nonReferenceCompound, 0.0953);
-		k.getTwoParameterVanDerWaals().setValue(nonReferenceCompound, referenceCompound, 0.0249);
-		
-		hm = new HeterogeneousMixture(equationOfState,
-				Alphas.getStryjekAndVeraExpression(),
-				mr, 
-				components, k);
-		
-		hm.setTemperature(353);
-			
-		
-	}
+//	public IpropaneWater2PDVW(AvailableCompounds availableCompounds) {
+//		super(availableCompounds,files(
+//				"/data/2propanolWater/2propanolWater_353_liquid.txt",
+//				"/data/2propanolWater/2propanolWater_353_vapor.txt"));
+//	}
+//
+//	
+//	public void createCompoundsAndMixture() {
+//		referenceCompound = availableCompounds.getCompoundByExactName("isopropanol");
+//		referenceCompound.setK_StryjekAndVera(0.23264);
+//		
+//		nonReferenceCompound = availableCompounds.getCompoundByExactName("water");
+//		nonReferenceCompound.setK_StryjekAndVera(-0.06635);
+//		
+//		Set<Compound> components = new HashSet<>();
+//		
+//		components.add(referenceCompound);
+//		components.add(nonReferenceCompound);
+//		
+//		Cubic equationOfState = EquationsOfState .pengRobinson();
+//		MixingRule mr = new TwoParameterVanDerWaals();
+//		
+//		ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
+//					
+//		k.getTwoParameterVanDerWaals().setValue(referenceCompound, nonReferenceCompound, 0.0953);
+//		k.getTwoParameterVanDerWaals().setValue(nonReferenceCompound, referenceCompound, 0.0249);
+//		
+//		hm = new HeterogeneousMixture(equationOfState,
+//				Alphas.getStryjekAndVeraExpression(),
+//				mr, 
+//				components, k);
+//		
+//		hm.setTemperature(353);
+//			
+//		
+//	}
 
 //	public void calculateVaporLine(GoogleDataTable table){
 //		 
