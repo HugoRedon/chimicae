@@ -1,0 +1,14 @@
+#DataThief /home/hugo/Documents/repositories/chimicae/src/main/resources/data/2propanolWater/propanolwater_298_uniquacws.png Thursday 23-Oct-2014 1:26:12 PM
+#info:{"label":"Presión experimental","temperature":"298","phase":"VAPOR"}
+1.8264e-3, 0.0316
+0.242, 0.0426
+0.4839, 0.0548
+0.5412, 0.0605
+0.5724, 0.0638
+0.5966, 0.0654
+0.6225, 0.0656
+0.6397, 0.0659
+0.7086, 0.066
+0.774, 0.0651
+0.8582, 0.0623
+0.9959, 0.0594

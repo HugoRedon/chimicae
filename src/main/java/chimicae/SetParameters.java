@@ -5,6 +5,7 @@ import java.util.List;
 
 import termo.activityModel.ActivityModel;
 import termo.activityModel.NRTLActivityModel;
+import termo.activityModel.UNIQUACActivityModel;
 import termo.activityModel.VanLaarActivityModel;
 import termo.activityModel.WilsonActivityModel;
 import termo.binaryParameter.ActivityModelBinaryParameter;
@@ -71,6 +72,9 @@ public class SetParameters  {
 			if(isVanLaarMR()){
 				list.add(new BinaryParameterModelList(k.getA_vanLaar(),compounds,"A"));
 			}
+			if(isUniquac()){
+				list.add(new BinaryParameterModelList(k.getA(), compounds, "U"));
+			}
 		}
 //		vanDerWaals = new BinaryParameterModelList(k,compounds);
 //		wongSandler_b = new BinaryParameterModelList(k.getK(), compounds);
@@ -88,6 +92,14 @@ public class SetParameters  {
 //		this.activityModel_B = activityModel_B;
 //	}
 //	
+	
+	public boolean isUniquac(){
+		if(isExcessGibbsBasedMixingRule()){
+			ActivityModel am = ((ExcessGibbsMixingRule)mr).getActivityModel();
+			return am instanceof UNIQUACActivityModel; 
+		}
+		return false;	
+	}
 	public boolean isVanLaarMR(){
 		if(isExcessGibbsBasedMixingRule()){
 			ActivityModel am = ((ExcessGibbsMixingRule)mr).getActivityModel();

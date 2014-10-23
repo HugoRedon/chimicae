@@ -24,15 +24,19 @@ import java.util.Set;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import models.PointInfo;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import termo.binaryParameter.ActivityModelBinaryParameter;
 import termo.component.Compound;
+import termo.data.ExperimentalDataBinary;
+import termo.data.ExperimentalDataBinaryList;
+import termo.data.ExperimentalDataBinaryType;
 import termo.matter.HeterogeneousMixture;
 import termo.matter.Substance;
 import termo.phase.Phase;
 import termo.utils.IterationInfo;
-import chimicae.AvailableCompounds;
 import chimicae.SetParameters;
 
 import com.google.gson.Gson;
@@ -94,7 +98,35 @@ public class BookExample {
 		cs.add(referenceCompound);
 		cs.add(nonReferenceCompound);
 		setParameters = new SetParameters(cs, ms.getMr(), k);
+					
+	}
+	
+	
+	public void estimate(ListPoint line){
+		ExperimentalDataBinaryList binaryList = new ExperimentalDataBinaryList("");
+		binaryList.setReferenceComponent(referenceCompound);
+		binaryList.setNonReferenceComponent(nonReferenceCompound);
+		binaryList.setType(ExperimentalDataBinaryType.isothermic);
 		
+		List<ExperimentalDataBinary> list = new ArrayList<>();
+		Phase aphase = line.getPhase();
+		for(Point p : line.getList()){
+			double temperature = line.getTemperature();
+			double pressure = p.getY();
+			double liquidFraction;
+			double vaporFraction = 0;
+			if(aphase.equals(Phase.LIQUID)){
+				liquidFraction = p.getX();
+			}else {
+				//not supported
+				return ;
+			}
+			list.add(new ExperimentalDataBinary(temperature, pressure, liquidFraction, vaporFraction));
+		}
+		binaryList.setList(list);
+		
+		hm.getErrorfunction().setExperimental(binaryList);
+		hm.getErrorfunction().minimize();
 	}
 	
 	

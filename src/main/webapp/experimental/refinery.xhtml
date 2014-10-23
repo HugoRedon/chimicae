@@ -23,7 +23,7 @@
 			//hello();
 		</script>
 		 <h:outputScript name="js/three.min.js"  />
-        <h:outputScript name="js/controls/TrackballControls.js"  />
+        <h:outputScript name="js/controls/OrbitControls.js"  />
         <h:outputScript name="js/Stats.js"  />
         <h:outputScript name="js/THREEx.KeyboardState.js"  />
         <script>
@@ -112,7 +112,7 @@
                 camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
                 camera.position.z = 1000;
 
-                controls = new THREE.TrackballControls( camera );
+                controls = new THREE.OrbitControls( camera );
 
                 scene = new THREE.Scene();
 
