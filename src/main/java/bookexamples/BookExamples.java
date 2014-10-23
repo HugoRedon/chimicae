@@ -417,58 +417,65 @@ public class BookExamples implements Serializable {
 				
 				createAcetoneWaterSystem();
 				
-				//_________________-two parameter vdw
-				isopropanolWaterSystem.setMr(new TwoParameterVanDerWaals());
-				k = new ActivityModelBinaryParameter();
-				k.getTwoParameterVanDerWaals().setValue(isopropanol,water, 0.0);
-				k.getTwoParameterVanDerWaals().setValue(water, isopropanol, 0.0);
-				//iPropaneWater2PDVW = new IpropaneWater2PDVW(availableCompounds);
-				isopropanolWaterSystem.setK(k);
-				isopropanolWaterSystem.setExperimentalLines(getIsopropanolWaterLines());
-				list.add(new BookExample(isopropanolWaterSystem,"iwtpvdw","/images/2pvdw2propanolwater.png"));
 				
-				
-				propaneMethanolSystem.setMr(new TwoParameterVanDerWaals());
-				k = new ActivityModelBinaryParameter();
-				k.getTwoParameterVanDerWaals().setValue(propane, methanol, 0.0953);
-				k.getTwoParameterVanDerWaals().setValue(methanol, propane, 0.0249);
-				propaneMethanolSystem.setK(k);
-				list.add(new BookExample(propaneMethanolSystem, "pmtpvdw", ""));
-				
-				
-				isopropanolWaterSystem.setMr(new TwoParameterVanDerWaals());
-				k = new ActivityModelBinaryParameter();
-				k.getTwoParameterVanDerWaals().setValue(isopropanol	, water, -0.0239);
-				k.getTwoParameterVanDerWaals().setValue(water, isopropanol, -0.1378);
-				isopropanolWaterSystem.setK(k);
-				isopropanolWaterSystem.setExperimentalLines(getPropanolWaterLines());
-				list.add(new BookExample(isopropanolWaterSystem, "iwtpvdw523", ""));
+		return viewName;
+	}
+	
+	public String twoParameterVDW(){
+		Cubic eos = EquationsOfState.pengRobinson();		
+		ActivityModelBinaryParameter k = new ActivityModelBinaryParameter();
+		list.clear();
+		//_________________-two parameter vdw
+		isopropanolWaterSystem.setMr(new TwoParameterVanDerWaals());
+		k = new ActivityModelBinaryParameter();
+		k.getTwoParameterVanDerWaals().setValue(isopropanol,water, 0.0);
+		k.getTwoParameterVanDerWaals().setValue(water, isopropanol, 0.0);
+		//iPropaneWater2PDVW = new IpropaneWater2PDVW(availableCompounds);
+		isopropanolWaterSystem.setK(k);
+		isopropanolWaterSystem.setExperimentalLines(getIsopropanolWaterLines());
+		list.add(new BookExample(isopropanolWaterSystem,"iwtpvdw","/images/2pvdw2propanolwater.png"));
 		
-				
-				acetoneWaterSystem.setMr(new TwoParameterVanDerWaals());
-				k = new ActivityModelBinaryParameter();
-				k.getTwoParameterVanDerWaals().setValue(acetone	, water, -0.1416);
-				k.getTwoParameterVanDerWaals().setValue(water, acetone, -0.2822);
-				acetoneWaterSystem.setK(k);
-				list.add(new BookExample(acetoneWaterSystem, "awtpvdw", ""));
-				
-				
-				acetoneWaterSystem.setMr(new TwoParameterVanDerWaals());
-				k = new ActivityModelBinaryParameter();
-				k.getTwoParameterVanDerWaals().setValue(acetone	, water, 0.0445);
-				k.getTwoParameterVanDerWaals().setValue(water, acetone, -0.1521);
-				acetoneWaterSystem.setK(k);
-				acetoneWaterSystem.setExperimentalLines(getAcetoneWater523Lines());
-				list.add(new BookExample(acetoneWaterSystem, "awtpvdw523", ""));
-				
-				createAcetoneWaterSystem();
-				
-//				ethanolHeptaneSystem.setMr(new TwoParameterVanDerWaals());
-//				k= new ActivityModelBinaryParameter();
-//				//k.getTwoParameterVanDerWaals().setValue(ethanol, heptane, value);				
-//				ethanolHeptaneSystem.setK(k);
-//				list.add(new BookExample(ethanolHeptaneSystem,"ehtpvdw",""));
-				
+		
+		propaneMethanolSystem.setMr(new TwoParameterVanDerWaals());
+		k = new ActivityModelBinaryParameter();
+		k.getTwoParameterVanDerWaals().setValue(propane, methanol, 0.0953);
+		k.getTwoParameterVanDerWaals().setValue(methanol, propane, 0.0249);
+		propaneMethanolSystem.setK(k);
+		list.add(new BookExample(propaneMethanolSystem, "pmtpvdw", ""));
+		
+		
+		isopropanolWaterSystem.setMr(new TwoParameterVanDerWaals());
+		k = new ActivityModelBinaryParameter();
+		k.getTwoParameterVanDerWaals().setValue(isopropanol	, water, -0.0239);
+		k.getTwoParameterVanDerWaals().setValue(water, isopropanol, -0.1378);
+		isopropanolWaterSystem.setK(k);
+		isopropanolWaterSystem.setExperimentalLines(getPropanolWaterLines());
+		list.add(new BookExample(isopropanolWaterSystem, "iwtpvdw523", ""));
+
+		
+		acetoneWaterSystem.setMr(new TwoParameterVanDerWaals());
+		k = new ActivityModelBinaryParameter();
+		k.getTwoParameterVanDerWaals().setValue(acetone	, water, -0.1416);
+		k.getTwoParameterVanDerWaals().setValue(water, acetone, -0.2822);
+		acetoneWaterSystem.setK(k);
+		list.add(new BookExample(acetoneWaterSystem, "awtpvdw", ""));
+		
+		
+		acetoneWaterSystem.setMr(new TwoParameterVanDerWaals());
+		k = new ActivityModelBinaryParameter();
+		k.getTwoParameterVanDerWaals().setValue(acetone	, water, 0.0445);
+		k.getTwoParameterVanDerWaals().setValue(water, acetone, -0.1521);
+		acetoneWaterSystem.setK(k);
+		acetoneWaterSystem.setExperimentalLines(getAcetoneWater523Lines());
+		list.add(new BookExample(acetoneWaterSystem, "awtpvdw523", ""));
+		
+		createAcetoneWaterSystem();
+		
+//		ethanolHeptaneSystem.setMr(new TwoParameterVanDerWaals());
+//		k= new ActivityModelBinaryParameter();
+//		//k.getTwoParameterVanDerWaals().setValue(ethanol, heptane, value);				
+//		ethanolHeptaneSystem.setK(k);
+//		list.add(new BookExample(ethanolHeptaneSystem,"ehtpvdw",""));
 		return viewName;
 	}
 	
