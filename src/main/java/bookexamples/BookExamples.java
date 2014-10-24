@@ -33,6 +33,7 @@ import termo.eos.alpha.Alpha;
 import termo.eos.alpha.Alphas;
 import termo.eos.mixingRule.HuronVidalModified2Order;
 import termo.eos.mixingRule.HuronVidalOrbeySandlerModification;
+import termo.eos.mixingRule.LinearCombinationOfHuronVidalAndMichelsenModels;
 import termo.eos.mixingRule.MixingRule;
 import termo.eos.mixingRule.MixingRules;
 import termo.eos.mixingRule.TwoParameterVanDerWaals;
@@ -341,6 +342,17 @@ public class BookExamples implements Serializable {
 		methanePentaneSystem.setK(k);
 		list.add(new BookExample(methanePentaneSystem,"mpmhv1vl","/images/metanepentaneMHV1VL.png"));
 		//methanepentaneMHV1VL = new MethanePentaneMHV1VL(availableCompounds);
+		
+		
+
+		
+		methanePentaneSystem.setMr(new LinearCombinationOfHuronVidalAndMichelsenModels(new VanLaarActivityModel(), eos,0.36));
+		k = new ActivityModelBinaryParameter();
+		
+		k.getA_vanLaar().setValue(methane, pentane, -0.268);
+		k.getA_vanLaar().setValue(pentane, methane, -0.350);
+		methanePentaneSystem.setK(k);
+		list.add(new BookExample(methanePentaneSystem,"mplchvmvl","/images/metanepentaneMHV1VL.png"));
 		
 		
 		
