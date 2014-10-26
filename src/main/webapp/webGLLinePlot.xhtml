@@ -473,8 +473,6 @@
 			    camera.up = new THREE.Vector3( 0, 0, 1 );
 			    
 			    scene.add(camera);
-
-			    
 			    camera.lookAt(scene.position);
 
 			    
@@ -782,6 +780,7 @@
 			            shininess: 100
 			        } ) ;
 			    var floor =new THREE.Mesh(floorGeometry, whitePhongMaterial);
+			    floor.recieveShadow=true;
 			    floor.position.z = -10;
 			    floor.position.x=500;
 			    floor.position.y=500;
@@ -911,6 +910,7 @@
 
 				
 				text = new THREE.Mesh( text3d, textMaterial );
+				text.castShadow=true;
 
 				//text.position.x = centerOffset;
 				text.position.x = position.x;
