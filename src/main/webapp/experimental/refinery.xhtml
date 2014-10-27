@@ -29,17 +29,21 @@
 			//hello();
 		</script>
 
-        <div id="labels" class="menu">
-				Propiedad<br/><br/>
-				<div class="lbl btn" id="btn_add">Tubería</div>
-				<div class="lbl btn" id="btn_sub">Entropía</div>
-				<div class="lbl btn" id="btn_rsub">E. Gibbs</div>
+        <div id="labels" class="menu onlyhover">
+			Agregar<br/><br/>
+			<div class="lbl btn" id="btn_add">Tanque esférico</div>
+			<div class="lbl btn" id="btn_addExchanger">Intercambiador de calor</div>
+			<div class="lbl btn" id="btn_addTower">Torre de destilación</div>
 
-				Líneas<br/><br/>
-				<div class="lbl btn" id="btn_pressure">Temperatura constante</div>
-				<div class="lbl btn" id="btn_tempLines">Presión constante</div>
-
-			</div>
+			Controles<br/><br/>
+			<div class="lbl btn" id="btn_delete">Eliminar</div>			
+		</div>
+		
+		<div id="properties" class="menu">
+			Propiedades<br/><br/>
+			
+			
+		</div>
         <script>
       //<![CDATA[
             var container, stats;
@@ -59,7 +63,7 @@
             INTERSECTED, SELECTED;
             var sel;
             var doneLoading = false;
-
+			var savedHex;
 
 
             scene = new THREE.Scene();
@@ -155,7 +159,9 @@
                 document.body.appendChild( container );
                 
                 camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
-                camera.position.z = 1000;
+                camera.position.x = 200;
+                camera.position.y = 500; 
+                camera.position.z = 200;
                 camera.up = new THREE.Vector3( 0, 0, 1 );
 
                 controls = new THREE.OrbitControls( camera );
@@ -265,9 +271,38 @@
             function eventListeners(){
                	var el = document.getElementById("btn_add");
                	el.addEventListener('click', function(){
-
-						plant.draw();
+						plant.addTank();
                    	});
+               	var eld = document.getElementById("btn_delete");
+               	eld.addEventListener('click',function(){
+                   	if(sel){
+                       	plant.remove(sel);
+                 	  	//scene.remove(sel);
+               		}
+               	});
+               	var elTank = document.getElementById('btn_addExchanger');
+               	elTank.addEventListener('click',function(){
+                   	if(sel){
+                       	var nextEquipment = plant.addHeatExchanger();
+                       	nextEquipment.previousEquipment = sel;
+                       	sel.nextEquipment = nextEquipment;
+                       	nextEquipment.position.x = sel.position.x + 200;
+                       	nextEquipment.position.y = sel.position.y + 200;
+                       	plant.drawTubes();
+                    }
+              	});
+
+              	var elTower = document.getElementById('btn_addTower');
+              	elTower.addEventListener('click',function(){
+					if(sel){
+						var nextEquipment = plant.addTower();
+						nextEquipment.previousEquipment = sel;
+						sel.nextEquipment = nextEquipment;
+						nextEquipment.position.x = sel.position.x + 200;
+                       	nextEquipment.position.y = sel.position.y + 200;
+						plant.drawTubes();
+					}
+                });
             }
 
             function onWindowResize() {
@@ -310,10 +345,10 @@
 
                     if ( INTERSECTED != intersects[ 0 ].object ) {
 
-                        if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+                      //  if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
 
                         INTERSECTED = intersects[ 0 ].object;
-                        INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+                        //INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
 
                         record.position.copy( INTERSECTED.position );
                         record.lookAt( camera.position );
@@ -324,7 +359,7 @@
 
                 } else {
 
-                    if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+                   // if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
 
                     INTERSECTED = null;
 
@@ -350,12 +385,17 @@
                     controls.enabled = false;
 
                     SELECTED = intersects[ 0 ].object;
+                    if(sel){
+                    	sel.material.color.setHex(savedHex);
+                	}
                     sel = SELECTED;
 
                     var intersects = raycaster.intersectObject( plane );
                     offset.copy( intersects[ 0 ].point ).sub( record.position );
 
                     container.style.cursor = 'move';
+                    savedHex = sel.material.color.getHex();
+                    SELECTED.material.color.setHex(0xff0000);
 
                 }
 
