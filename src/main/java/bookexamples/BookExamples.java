@@ -260,6 +260,7 @@ public class BookExamples implements Serializable {
 				k.getA().setValue(isopropanol,water, 0.7882*Constants.R*353);
 				k.getA().setValue(water, isopropanol, 3.9479*Constants.R*353);
 				isopropanolWaterSystem.setK(k);
+				isopropanolWaterSystem.setExperimentalLines(getIsopropanolWaterLines());
 				list.add(new BookExample(isopropanolWaterSystem, "iwhvnrtl", "/images/2propanolWater.png"));
 				//ipropanewater = new IpropaneWater(availableCompounds);
 				
@@ -316,7 +317,7 @@ public class BookExamples implements Serializable {
 		k.getA_vanLaar().setValue(methane, pentane, -0.428);
 		k.getA_vanLaar().setValue(pentane, methane, -0.632);
 		methanePentaneSystem.setK(k);
-		list.add(new BookExample(methanePentaneSystem,"mphvosm","/images/metanepentaneMHV1VL.png"));
+		list.add(new BookExample(methanePentaneSystem,"mphvosm","/images/hvmodificados.png"));
 		//methanepentaneMHV1VL = new MethanePentaneMHV1VL(availableCompounds);
 		
 		
@@ -330,7 +331,7 @@ public class BookExamples implements Serializable {
 		k.getA_vanLaar().setValue(methane, pentane, -0.154);
 		k.getA_vanLaar().setValue(pentane, methane, -1.066);
 		methanePentaneSystem.setK(k);
-		list.add(new BookExample(methanePentaneSystem,"mpmhv2vl","/images/metanepentaneMHV1VL.png"));
+		list.add(new BookExample(methanePentaneSystem,"mpmhv2vl","/images/hvmodificados.png"));
 		
 		
 		
@@ -340,7 +341,7 @@ public class BookExamples implements Serializable {
 		k.getA_vanLaar().setValue(methane, pentane, -0.432);
 		k.getA_vanLaar().setValue(pentane, methane, -0.677);
 		methanePentaneSystem.setK(k);
-		list.add(new BookExample(methanePentaneSystem,"mpmhv1vl","/images/metanepentaneMHV1VL.png"));
+		list.add(new BookExample(methanePentaneSystem,"mpmhv1vl","/images/hvmodificados.png"));
 		//methanepentaneMHV1VL = new MethanePentaneMHV1VL(availableCompounds);
 		
 		
@@ -352,7 +353,7 @@ public class BookExamples implements Serializable {
 		k.getA_vanLaar().setValue(methane, pentane, -0.268);
 		k.getA_vanLaar().setValue(pentane, methane, -0.350);
 		methanePentaneSystem.setK(k);
-		list.add(new BookExample(methanePentaneSystem,"mplchvmvl","/images/metanepentaneMHV1VL.png"));
+		list.add(new BookExample(methanePentaneSystem,"mplchvmvl","/images/hvmodificados.png"));
 		
 		
 		
