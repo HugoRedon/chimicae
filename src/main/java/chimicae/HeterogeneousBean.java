@@ -118,7 +118,7 @@ public class HeterogeneousBean implements Serializable {
 	                new GoogleColumn("Pcalc", log + "Presión calculada [Pa]" + log_, GoogleColumnType.number)
 	                );
 	  
-	        for (ErrorData row: selectedHeterogeneousSubstance.getErrorFunction().getErrorForEachExperimentalData()){
+	        for (ErrorData row: selectedHeterogeneousSubstance.getErrorFunction().getErrorForEachExperimentalData()){	       
 	            double expP = row.getExperimentalPressure();
 	            double temperature = row.getTemperature();
 	            double calcP = row.getCalculatedPressure();
