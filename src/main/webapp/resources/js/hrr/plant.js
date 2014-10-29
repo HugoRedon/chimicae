@@ -39,8 +39,11 @@ function Plant (scene) {
 
 	
 	
-	this.addTank = function(){
-		createMeshAndAdd( this.tankGeometry,"Tanque esférico");			
+	this.addTank = function(javaid){
+		var tank = createMeshAndAdd( this.tankGeometry,"Tanque esférico");
+		tank.javaid = javaid;
+		console.log(javaid);
+		console.log(tank);
 	}
 	this.addHeatExchanger = function(){
 		return createMeshAndAdd(this.heatExchangerGeometry,"Intercambiador de calor");
@@ -130,14 +133,14 @@ function Plant (scene) {
 	
 	this.loadGeometries= function(){
 		var loader = new THREE.JSONLoader();
-		loader.load( "models/sphericalTank.txt", function( geometry ){
+		loader.load( "experimental/models/sphericalTank.txt", function( geometry ){
 			plant.tankGeometry = geometry;				
 		});
 
-		loader.load( "models/simple-heat-exchanger.txt", function( geometry ){
+		loader.load( "experimental/models/simple-heat-exchanger.txt", function( geometry ){
 			plant.heatExchangerGeometry = geometry;				
 		});
-		loader.load( "models/towerModel.txt", function( geometry ){
+		loader.load( "experimental/models/towerModel.txt", function( geometry ){
 			plant.towerGeometry = geometry;				
 		});
 		

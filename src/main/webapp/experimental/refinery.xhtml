@@ -24,11 +24,6 @@
 	</h:head>
 	
 	<h:body>
-		<script >
-
-			//hello();
-		</script>
-
         <div id="labels" class="menu onlyhover">
 			Agregar<br/><br/>
 			<div class="lbl btn" id="btn_add">Tanque esférico</div>
@@ -40,10 +35,20 @@
 		</div>
 		
 		<div id="properties" class="menu">
-			Propiedades<br/><br/>
-			
-			
+			Propiedades<br/><br/>			
 		</div>
+		
+		<div id="controls" class="menu">
+			<h:form>
+				<!-- <h:selectOneMenu value="{saturationBean.selectedHeterogeneous}" converter="{heterogeneousConverter}">
+					<f:selectItems value="{saturationBean.heterogeneousList}"/>
+				</h:selectOneMenu>
+				<h:commandButton action="{refineryBean.createTank()}" value="Crear" >
+					<f:ajax render="@none" execute="@form" onevent="plant.addTank({refineryBean.equipmentCount});removeD('controls');"/>
+				</h:commandButton> -->
+			</h:form>
+		</div>
+		
         <script>
       //<![CDATA[
             var container, stats;
@@ -154,7 +159,7 @@
      }
 
             function init() {
-
+            	renderer = new THREE.WebGLRenderer( { antialias: true } );
                 container = document.createElement( 'div' );
                 document.body.appendChild( container );
                 
@@ -164,7 +169,7 @@
                 camera.position.z = 200;
                 camera.up = new THREE.Vector3( 0, 0, 1 );
 
-                controls = new THREE.OrbitControls( camera );
+                controls = new THREE.OrbitControls( camera ,renderer.domElement);
 
                 controls.maxPolarAngle = Math.PI/2; 
 
@@ -231,7 +236,7 @@
 
                 projector = new THREE.Projector();
 
-                renderer = new THREE.WebGLRenderer( { antialias: true } );
+                
                 //renderer.setClearColor( 0xf0f0f0 );
                 renderer.setSize( window.innerWidth, window.innerHeight );
                 renderer.sortObjects = false;
@@ -271,7 +276,70 @@
             function eventListeners(){
                	var el = document.getElementById("btn_add");
                	el.addEventListener('click', function(){
-						plant.addTank();
+	               
+               		 	heterogeneousList(function(responseText){
+							 
+							 var controlsDiv = document.getElementById( 'controls' );
+							 controlsDiv.style.display='block';
+							 
+							  var select = document.createElement('select');
+							  select.id = 'hlist';
+
+				  				console.log(responseText);
+							 var stringArray = eval(responseText);
+
+							for(var i = 0; i< stringArray.length;i++){
+								console.log(stringArray[i]);
+								var option = document.createElement('option');
+								option.value = i;
+								option.text = stringArray[i];
+								select.appendChild(option);
+							}
+
+							var temperatureTF  = document.createElement('input');
+							temperatureTF.type = 'text';
+							temperatureTF.id = 'tempTF';
+							temperatureTF.defaultValue='350';
+
+							var tempL = document.createElement('label');
+							tempL.htmlfor= 'tempTF';
+
+							var pressureTF = document.createElement('input');
+							pressureTF.type = 'text';
+							pressureTF.id='pressTF';
+							pressureTF.defaultValue='101325';
+
+							var pL = document.createElement('label');
+							pL.htmlfor='pressTF';
+
+							tempL.innerHTML='Temperatura [K]: ';
+							pL.innerHTML = 'Presión [Pa]: ';
+							
+							
+							var button = document.createElement('input');
+							button.type = 'button';
+							button.value='aceptar';
+							button.onclick = function(){
+								createTank();
+								};
+
+							var selectL = document.createElement('label');
+							selectL.htmlfor = 'hlist';
+							selectL.innerHTML='Sistema: ';
+
+							 controlsDiv.appendChild(selectL);
+							 controlsDiv.appendChild(select);
+							 controlsDiv.appendChild(tempL);
+							 controlsDiv.appendChild(temperatureTF);
+							 controlsDiv.appendChild(document.createElement('br'));
+							 controlsDiv.appendChild(pL);
+							 controlsDiv.appendChild(pressureTF);
+							 controlsDiv.appendChild(document.createElement('br'));
+							 controlsDiv.appendChild(button);
+			                
+							console.log(responseText)
+							});  
+						
                    	});
                	var eld = document.getElementById("btn_delete");
                	eld.addEventListener('click',function(){

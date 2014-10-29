@@ -90,6 +90,7 @@ public class SaturationBean implements Serializable,PropertyChangeListener	 {
 	public void update(){
 		List<Homogeneous> homogeneousList = homogeneousBean.getHomogeneousList();
 		heterogeneousList.clear();
+		System.out.println("size homogeneous"  + homogeneousList.size());
 		for(Homogeneous h: homogeneousList){
 			if(h instanceof Substance){				
 				HeterogeneousSubstance hSub = new HeterogeneousSubstance(

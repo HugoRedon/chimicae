@@ -7,11 +7,11 @@
 	<ui:composition template="template.xhtml">
 	<ui:define name="content">
 	
-	<h:graphicImage id="imageLogo" value="/images/UNAM.jpg"  />
-	<h:panelGrid columns="2">
-		<h1 >Chimicae</h1>		
-		
-	</h:panelGrid>
+		<h:graphicImage id="imageLogo" value="/images/UNAM.jpg"  />
+		<h:panelGrid columns="2">
+			<h1 >Chimicae</h1>		
+			
+		</h:panelGrid>
 	
 		<h:form>
 		<ul id="menuUl">
@@ -111,7 +111,7 @@
 			</li>
 			
 			
-			<li><h2>Estimación de parámetros</h2></li>
+			<li><h2>Estimación de parámetros</h2>
 			
 				<ul>
 					<li>
@@ -125,6 +125,16 @@
 						value="Parámetros binarios"  target="main"/>
 					</li>
 				</ul>
+			</li>
+			<li><h2>Experimental</h2>
+				<ul>
+					<li>
+						<h:commandLink action="experimental/refinery" 
+							value="planta"  target="main"/>
+					</li>
+				</ul>
+			</li>
+			
 			
 		</ul>
 			
