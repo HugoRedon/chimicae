@@ -11,7 +11,7 @@ body {
 	 display:none;  width:720px; height: 400px;
 }
 
-#properties {right:20px; top:100px;  width:100px; background:rgba(0,0,0,0.75);}
+#properties {right:20px; top:100px;  width:180px; background:rgba(0,0,0,0.75);}
 .menu { color: #fff; font-weight: bold; font-size: 12px; z-index: 100; width: 75px; position: absolute; top: 0px; padding: 16px;  }
 .menu img, .menu canvas { width: 75px; margin: 10px 0 }
 
@@ -37,3 +37,9 @@ body {
 
 /* #tooltip { width:180px;} */ 
 #tooltip{background: rgba(0,0,0,0.75);left:140px; width:200px;padding:6px;}
+
+#properties .propertiesTF{
+	background: transparent;
+    border: none;
+    color: darkorange;
+}

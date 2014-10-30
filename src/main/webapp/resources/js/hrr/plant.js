@@ -12,7 +12,7 @@ function Plant (scene) {
 											        shininess: 100
 											    } );  
 								
-   
+
        var parent;
        
 
@@ -36,17 +36,42 @@ function Plant (scene) {
 	
 
 	
-
+      
 	
 	
-	this.addTank = function(javaid){
+	this.addTank = function(report){
 		var tank = createMeshAndAdd( this.tankGeometry,"Tanque esférico");
-		tank.javaid = javaid;
-		console.log(javaid);
-		console.log(tank);
+		tank.javaid = report.id;
+		tank.report=report;
+		
+		tank.callback = function(){
+			 var propertiesDiv = document.getElementById( 'properties' );
+			 propertiesDiv.style.display='block';
+			 propertiesDiv.innerHTML='';
+	
+			 addProperty('idTF','id: ',report.id,propertiesDiv);
+			 addProperty('propertyTempTF','Temperatura [K]: ',report.pr.temperature,propertiesDiv);
+			 addProperty('propertyPressTF','Presión [Pa]: ',report.pr.pressure,propertiesDiv);
+			 addProperty('cnameTF','Compuesto: ',report.pr.compoundName,propertiesDiv);
+			 addProperty('capacityTF','Capacidad [m^3]: ',report.capacity,propertiesDiv);
+			 addProperty('enthalpyTF','Entalpía [J/kmol]: ',report.pr.enthalpy,propertiesDiv);
+			 addProperty('entropyTF','Entropía [J/kmol K]: ',report.pr.entropy,propertiesDiv);
+			 addProperty('gibbsTF','E. Gibbs [J/kmol]: ',report.pr.gibbs,propertiesDiv);
+			 addProperty('vFTF','Relación v/F',report.pr.vF,propertiesDiv);
+		};
+	   
+		
+		
 	}
-	this.addHeatExchanger = function(){
-		return createMeshAndAdd(this.heatExchangerGeometry,"Intercambiador de calor");
+	this.addHeatExchanger = function(report){
+		var he = createMeshAndAdd(this.heatExchangerGeometry,"Intercambiador de calor");
+		
+		he.callback=function(){
+			
+		}
+		
+		return he; 
+		
 	};
 	
 	this.addTower= function(){
